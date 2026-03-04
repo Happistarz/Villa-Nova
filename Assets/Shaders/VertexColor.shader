@@ -13,7 +13,6 @@
             #pragma vertex vert
             #pragma fragment frag
 
-            #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
             struct Attributes
@@ -43,12 +42,10 @@
             {
                 float3 normal = normalize(input.normalWS);
 
-                // Main directional light
                 Light mainLight = GetMainLight();
                 float NdotL     = saturate(dot(normal, mainLight.direction));
                 float3 diffuse  = mainLight.color * NdotL;
 
-                // Ambient / SH
                 float3 ambient = SampleSH(normal);
 
                 float3 lighting = ambient + diffuse;

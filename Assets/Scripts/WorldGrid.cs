@@ -1,3 +1,4 @@
+using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -20,12 +21,13 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     
     public event System.Action OnMapGenerated;
 
-    public TerrainRenderer terrainRenderer;
-    public DebugRenderer   debugRenderer;
-    public int  size = 10;
-    public int  seed;
-    public bool useRandomSeed = true;
-    public Transform centerMarker;
+    public  TerrainRenderer terrainRenderer;
+    public  DebugRenderer   debugRenderer;
+    public  int             size = 10;
+    public  int             seed;
+    public  bool            useRandomSeed = true;
+    public  Transform       centerMarker;
+    public  Transform       bedrockTransform;
 
     [Header("Terrain")]
     [Range(1f, 50f)] public float noiseScale = 20f;
@@ -60,7 +62,17 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     [Range(1,     6)]     public int   riverMaxWidth    = 3;
     [Range(1,     4)]     public int   riverOctaves     = 3;
 
+    private Vector3         CenterPosition => new(size / 2f, 0, size / 2f);
+    private Vector3         BedrockScale => new(size / 10f, 1, size / 10f);
+    
     public Cell[,] Cells;
+    
+    private void Start()
+    {
+        centerMarker.position = CenterPosition;
+        bedrockTransform.localScale = BedrockScale;
+        bedrockTransform.position = CenterPosition.WithY(-1f);
+    }
 
     public Cell? GetCell(Vector2Int _pos)
     {
@@ -109,7 +121,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
             seed = System.DateTime.Now.Millisecond;
 
         Random.InitState(seed);
-        centerMarker.position = new Vector3(size / 2f, 0, size / 2f);
+        centerMarker.position = CenterPosition;
+        bedrockTransform.localScale = BedrockScale;
+        bedrockTransform.position = CenterPosition.WithY(-1f);
 
         Cells = new Cell[size, size];
 
