@@ -26,9 +26,9 @@ public static class MathHelper
         return (_value - _from1) / (_to1 - _from1) * (_to2 - _from2) + _from2;
     }
 
-    public static float TriangleWave(float t)
+    public static float TriangleWave(float _t)
     {
-        return 1f - Mathf.Abs(2f * t - 1f);
+        return 1f - Mathf.Abs(2f * _t - 1f);
     }
 
     public static float Quantize(float _value, float _step)
@@ -40,7 +40,7 @@ public static class MathHelper
     {
         return new Vector2(-_v.y, _v.x);
     }
-    
+
     public static IEnumerable<Vector2Int> GetPointsInCircle(Vector2Int _center, int _radius)
     {
         for (var dx = -_radius; dx <= _radius; dx++)
@@ -68,7 +68,7 @@ public static class MathHelper
             }
         }
     }
-    
+
     public static IEnumerable<Vector2Int> BresenhamLine(Vector2Int _from, Vector2Int _to)
     {
         var x0 = _from.x;
@@ -100,13 +100,6 @@ public static class MathHelper
             err += dx;
             y0  += sy;
         }
-    }
-    
-    public static float Normalize(float _dx, float _dy, float _rx, float _ry)
-    {
-        var distance = Mathf.Sqrt(_dx * _dx + _dy * _dy);
-        var radius   = Mathf.Sqrt(_rx * _rx + _ry * _ry);
-        return distance / radius;
     }
 
     public static float GetEllipseNormalizedDistance(float _dx, float _dy, float _rx, float _ry)

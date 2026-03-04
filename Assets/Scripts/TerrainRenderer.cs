@@ -76,7 +76,7 @@ public class TerrainRenderer : MonoBehaviour
                                   List<Color> _colors, List<Vector3> _normals)
     {
         var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        var wallColor  = new Color(0.45f, 0.3f, 0.1f); // Dirt brown
+        var wallColor  = new Color(0.45f, 0.3f, 0.1f);
 
         var cell          = grid.Cells[_x, _y];
         var currentHeight = cell.Height;

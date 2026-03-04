@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using Random = UnityEngine.Random;
 
 public class WorldGrid : MonoBehaviour
@@ -28,8 +27,8 @@ public class WorldGrid : MonoBehaviour
     [Range(1f, 50f)] public float noiseScale = 20f;
 
     [Range(1f,    100f)] public float elevationNoiseScale = 40f;
-    [Range(0f,    5f)]   public float elevationScale      = 0.5f;  // Contrôle la hauteur des collines
-    [Range(0.01f, 1f)]   public float heightStep          = 0.25f; // Pas de hauteur pour les terrasses
+    [Range(0f,    5f)]   public float elevationScale      = 0.5f;
+    [Range(0.01f, 1f)]   public float heightStep          = 0.25f;
 
     [Range(1, 6)] public int terrainOctaves = 4;
 
@@ -59,16 +58,29 @@ public class WorldGrid : MonoBehaviour
 
     public Cell[,] Cells;
 
-
-    public void Start()
+    public Cell GetCell(Vector2Int _pos)
     {
-        GenerateMap();
+        return IsInBounds(_pos) ? Cells[_pos.x, _pos.y] : null;
     }
-
-    public void Update()
+    
+    public Cell[] GetTilesInRadius(Vector2Int _center, float _radius)
     {
-        if (Keyboard.current.spaceKey.wasPressedThisFrame)
-            GenerateMap();
+        var tiles = new System.Collections.Generic.List<Cell>();
+
+        var radiusCeil = Mathf.CeilToInt(_radius);
+        for (var dx = -radiusCeil; dx <= radiusCeil; dx++)
+        {
+            for (var dy = -radiusCeil; dy <= radiusCeil; dy++)
+            {
+                var pos = new Vector2Int(_center.x + dx, _center.y + dy);
+                if (!IsInBounds(pos)) continue;
+
+                if (Vector2Int.Distance(_center, pos) <= _radius)
+                    tiles.Add(Cells[pos.x, pos.y]);
+            }
+        }
+
+        return tiles.ToArray();
     }
 
     public bool IsInBounds(Vector2Int _pos)
