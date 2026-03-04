@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class CityGenerator : MonoBehaviour
 {
     public WorldGrid grid;
+    public WorldRevealAnimator revealAnimator;
     
     public float settlerSearchRadius = 5f;
     
@@ -11,7 +12,10 @@ public class CityGenerator : MonoBehaviour
     
     void Start()
     {
-        grid.OnMapGenerated += GenerateCity;
+        if (revealAnimator)
+            revealAnimator.OnRevealComplete += GenerateCity;
+        else
+            grid.OnMapGenerated += GenerateCity;
     }
     
     public void Update()

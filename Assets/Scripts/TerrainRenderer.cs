@@ -77,6 +77,12 @@ public class TerrainRenderer : AbstractRenderer
         _mesh.colors    = colors.ToArray();
         _mesh.normals   = normals.ToArray();
         _mesh.RecalculateBounds();
+
+        // Extend bounds vertically so the mesh isn't culled during the reveal animation
+        // (vertices are displaced far below by the shader)
+        var bounds = _mesh.bounds;
+        bounds.Expand(new Vector3(0f, 20f, 0f));
+        _mesh.bounds = bounds;
     }
 
     private void BuildCellBorders(int _x, int _y, List<Vector3> _vertices, List<int> _triangles,

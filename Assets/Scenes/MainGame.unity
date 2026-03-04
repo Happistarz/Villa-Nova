@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 163266146}
   - component: {fileID: 163266145}
   - component: {fileID: 163266147}
+  - component: {fileID: 163266148}
   m_Layer: 0
   m_Name: Renderer
   m_TagString: Untagged
@@ -178,7 +179,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5bfce37d6388c124f907dacc53df1cc4, type: 2}
+  - {fileID: 2100000, guid: c6f99d7f932be6a41928413d9798d03c, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -225,10 +226,53 @@ MonoBehaviour:
   toggleAction: {fileID: -6236523783486800423, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   meshRenderer: {fileID: 163266145}
   meshFilter: {fileID: 163266146}
-  enabledRender: 0
+  enabledRender: 1
   plainColor: {r: 0.18356177, g: 0.5188679, b: 0.18356177, a: 1}
   waterColor: {r: 0.013127446, g: 0.33205366, b: 0.5566038, a: 1}
   riverColor: {r: 0.03551085, g: 0.2292284, b: 0.3962264, a: 1}
+--- !u!114 &163266148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163266142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 575382dc240a4243a0f7d3a9cc31c0f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldRevealAnimator
+  terrainRenderer: {fileID: 163266147}
+  revealSpeed: 60
+  revealWidth: 3.5
+  dropHeight: -1
+  bounceStrength: 0.1
+  colorDarkness: 1
+  startDelay: 0
+  easingCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -677,6 +721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CityGenerator
   grid: {fileID: 1060733104}
+  revealAnimator: {fileID: 163266148}
   settlerSearchRadius: 5
 --- !u!4 &1327768807
 Transform:
@@ -742,7 +787,7 @@ MonoBehaviour:
   toggleAction: {fileID: -8547835360809595988, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   meshRenderer: {fileID: 1431205999}
   meshFilter: {fileID: 1431206000}
-  enabledRender: 1
+  enabledRender: 0
   height: 2
   plainColor: {r: 0.3, g: 0.8, b: 0.3, a: 0.7529412}
   waterColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.7529412}
