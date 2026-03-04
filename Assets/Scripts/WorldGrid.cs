@@ -22,6 +22,7 @@ public class WorldGrid : MonoBehaviour
     public int  size = 10;
     public int  seed;
     public bool useRandomSeed = true;
+    public Transform centerMarker;
 
     [Header("Terrain")]
     [Range(1f, 50f)] public float noiseScale = 20f;
@@ -106,6 +107,7 @@ public class WorldGrid : MonoBehaviour
             seed = System.DateTime.Now.Millisecond;
 
         Random.InitState(seed);
+        centerMarker.position = new Vector3(size / 2f, 0, size / 2f);
 
         Cells = new Cell[size, size];
 
