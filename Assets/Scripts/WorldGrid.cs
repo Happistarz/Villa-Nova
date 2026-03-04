@@ -1,7 +1,8 @@
+using Core.Patterns;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class WorldGrid : MonoBehaviour
+public class WorldGrid : MonoSingleton<WorldGrid>
 {
     public enum CellType
     {
@@ -11,14 +12,16 @@ public class WorldGrid : MonoBehaviour
         RIVER,
     }
 
-    public class Cell
+    public struct Cell
     {
         public CellType   Type;
-        public Vector2Int Position;
         public float      Height;
     }
+    
+    public event System.Action OnMapGenerated;
 
     public TerrainRenderer terrainRenderer;
+    public DebugRenderer   debugRenderer;
     public int  size = 10;
     public int  seed;
     public bool useRandomSeed = true;
@@ -59,7 +62,7 @@ public class WorldGrid : MonoBehaviour
 
     public Cell[,] Cells;
 
-    public Cell GetCell(Vector2Int _pos)
+    public Cell? GetCell(Vector2Int _pos)
     {
         return IsInBounds(_pos) ? Cells[_pos.x, _pos.y] : null;
     }
@@ -88,7 +91,6 @@ public class WorldGrid : MonoBehaviour
     {
         return _pos.x >= 0 && _pos.x < size && _pos.y >= 0 && _pos.y < size;
     }
-
 
     private Vector2Int GetEdgePosition(int _edge)
     {
@@ -122,7 +124,7 @@ public class WorldGrid : MonoBehaviour
                                               (y + elevationOffsetY) / elevationNoiseScale, terrainOctaves);
                 var height = MathHelper.Quantize(noiseVal * elevationScale, heightStep);
 
-                Cells[x, y] = new Cell { Type = CellType.PLAIN, Position = new Vector2Int(x, y), Height = height };
+                Cells[x, y] = new Cell { Type = CellType.PLAIN, Height = height };
             }
         }
 
@@ -134,7 +136,7 @@ public class WorldGrid : MonoBehaviour
         for (var r = 0; r < riverCount; r++)
             GenerateRiver();
 
-        terrainRenderer.BuildMesh();
+        OnMapGenerated?.Invoke();
     }
 
     private void GenerateCoasts()
@@ -303,10 +305,8 @@ public class WorldGrid : MonoBehaviour
                     PlaceRiverRadius(p, radius, ref riverCellCount, maxRiverCells);
                 }
             }
-            else if (IsInBounds(cell))
-            {
+            else if (IsInBounds(cell)) 
                 PlaceRiverRadius(cell, radius, ref riverCellCount, maxRiverCells);
-            }
 
             prevCell = cell;
         }

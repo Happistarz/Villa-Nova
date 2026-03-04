@@ -11,8 +11,7 @@ public class CityGenerator : MonoBehaviour
     
     void Start()
     {
-        grid.GenerateMap();
-        GenerateCity();
+        grid.OnMapGenerated += GenerateCity;
     }
     
     public void Update()
@@ -20,7 +19,6 @@ public class CityGenerator : MonoBehaviour
         if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
         
         grid.GenerateMap();
-        GenerateCity();
     }
     
     void GenerateCity()
@@ -81,7 +79,7 @@ public class CityGenerator : MonoBehaviour
         var distanceToCenter = Vector2Int.Distance(_point, center);
         score -= distanceToCenter * 0.3f;
         
-        if (cell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
+        if (cell?.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
         {
             score -= 999f;
         }

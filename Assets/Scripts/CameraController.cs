@@ -3,7 +3,11 @@ using UnityEngine.InputSystem;
 
 public class CameraController : MonoBehaviour
 {
-    public InputActionReference cameraMovement;
+    [Header("Input Actions")]
+    public InputActionReference panAction;
+
+    public InputActionReference rotateDelta;
+    public InputActionReference rotateButton;
 
     [Header("Pan")]
     public float panSpeed = 0.3f;
@@ -37,7 +41,9 @@ public class CameraController : MonoBehaviour
         _yaw           = transform.eulerAngles.y;
         _targetYaw     = _yaw;
 
-        cameraMovement?.action?.Enable();
+        panAction?.action?.Enable();
+        rotateDelta?.action?.Enable();
+        rotateButton?.action?.Enable();
     }
 
     private void Update()
@@ -49,20 +55,21 @@ public class CameraController : MonoBehaviour
 
     private void HandlePan()
     {
-        if (cameraMovement?.action == null) return;
-        var scroll = cameraMovement.action.ReadValue<float>();
-        
-        if (scroll == 0) return;
-        
+        if (panAction?.action == null) return;
+        var scroll = panAction.action.ReadValue<float>();
+        if (scroll == 0f) return;
+
         _targetBasePos -= YawRight   * (scroll * panSpeed * Time.deltaTime);
         _targetBasePos += YawForward * (scroll * panSpeed * Time.deltaTime);
     }
 
     private void HandleRotation()
     {
-        if (Mouse.current.rightButton.isPressed)
+        var isHeld = rotateButton?.action != null && rotateButton.action.IsPressed();
+
+        if (isHeld && rotateDelta?.action != null)
         {
-            var delta = Mouse.current.delta.ReadValue();
+            var delta = rotateDelta.action.ReadValue<Vector2>();
             _targetYaw += delta.x * rotateSpeed;
         }
         else
@@ -92,6 +99,17 @@ public class CameraController : MonoBehaviour
         transform.rotation = rotation;
     }
 
-    private void OnEnable()  => cameraMovement?.action?.Enable();
-    private void OnDisable() => cameraMovement?.action?.Disable();
+    private void OnEnable()
+    {
+        panAction?.action?.Enable();
+        rotateDelta?.action?.Enable();
+        rotateButton?.action?.Enable();
+    }
+
+    private void OnDisable()
+    {
+        panAction?.action?.Disable();
+        rotateDelta?.action?.Disable();
+        rotateButton?.action?.Disable();
+    }
 }

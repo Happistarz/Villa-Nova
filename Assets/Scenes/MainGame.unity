@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 1b46e5dd803e8d34eb13c710f857639d, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 163266145}
   - component: {fileID: 163266147}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -222,8 +222,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2f1c8ad30b1d4dc0a91be8eb34a81f78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TerrainRenderer
+  toggleAction: {fileID: -6236523783486800423, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  meshRenderer: {fileID: 163266145}
   meshFilter: {fileID: 163266146}
-  grid: {fileID: 1060733104}
+  enabledRender: 0
+  plainColor: {r: 0.18356177, g: 0.5188679, b: 0.18356177, a: 1}
+  waterColor: {r: 0.013127446, g: 0.33205366, b: 0.5566038, a: 1}
+  riverColor: {r: 0.03551085, g: 0.2292284, b: 0.3962264, a: 1}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -568,6 +573,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 163266143}
+  - {fileID: 1431205997}
   - {fileID: 1124133846}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -583,7 +589,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc6d865160d1bc40bbb17526c491e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldGrid
+  dontDestroyOnLoad: 1
   terrainRenderer: {fileID: 163266147}
+  debugRenderer: {fileID: 1431205998}
   size: 256
   seed: 214
   useRandomSeed: 1
@@ -685,6 +693,117 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1431205996
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1431205997}
+  - component: {fileID: 1431206000}
+  - component: {fileID: 1431205999}
+  - component: {fileID: 1431205998}
+  m_Layer: 0
+  m_Name: DebugRenderer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1431205997
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431205996}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1060733103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1431205998
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431205996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a0af3d7e15a421cba5a0ed06f752ed5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DebugRenderer
+  toggleAction: {fileID: -8547835360809595988, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  meshRenderer: {fileID: 1431205999}
+  meshFilter: {fileID: 1431206000}
+  enabledRender: 1
+  height: 2
+  plainColor: {r: 0.3, g: 0.8, b: 0.3, a: 0.7529412}
+  waterColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.7529412}
+  riverColor: {r: 0.1, g: 0.3, b: 0.7, a: 0.7529412}
+--- !u!23 &1431205999
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431205996}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 47bcb53733bfa024caeed5c29161d7c7, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1431206000
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1431205996}
+  m_Mesh: {fileID: 0}
 --- !u!1 &2068196066
 GameObject:
   m_ObjectHideFlags: 0
@@ -730,7 +849,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b4c3421327d47cabf2ceb86bb034b85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
-  cameraMovement: {fileID: 1572469283407340852, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  panAction: {fileID: 1572469283407340852, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  rotateDelta: {fileID: -1402871178121505492, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  rotateButton: {fileID: 2612019624454068222, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   panSpeed: 850
   rotationPivot: {fileID: 1124133846}
   rotateSpeed: 0.3

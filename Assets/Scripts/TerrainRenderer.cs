@@ -3,37 +3,44 @@ using UnityEngine;
 using UnityEngine.Rendering;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class TerrainRenderer : MonoBehaviour
+public class TerrainRenderer : AbstractRenderer
 {
-    public MeshFilter meshFilter;
-    public WorldGrid grid;
-    
+    public Color plainColor = new(0.3f, 0.8f, 0.3f);
+    public Color waterColor = new(0.2f, 0.4f, 0.8f);
+    public Color riverColor = new(0.1f, 0.3f, 0.7f);
+
     private Mesh _mesh;
-    
-    public void BuildMesh()
-    {   
-        _mesh      = new Mesh { name = "WorldGridMesh", indexFormat = IndexFormat.UInt32 };
-        meshFilter.mesh = _mesh;
-        
+
+    public override void BuildMesh()
+    {
+        if (!_mesh)
+        {
+            _mesh = new Mesh { name = "WorldGridMesh", indexFormat = IndexFormat.UInt32 };
+            
+            meshFilter.mesh = _mesh;
+        }
+
+        if (!ToggleRenderer()) return;
+
         var vertices  = new List<Vector3>();
         var triangles = new List<int>();
         var colors    = new List<Color>();
         var normals   = new List<Vector3>();
 
-        for (var x = 0; x < grid.size; x++)
+        for (var x = 0; x < WorldGrid.Instance.size; x++)
         {
-            for (var y = 0; y < grid.size; y++)
+            for (var y = 0; y < WorldGrid.Instance.size; y++)
             {
-                var cell = grid.Cells[x, y];
+                var cell = WorldGrid.Instance.Cells[x, y];
 
                 var color = cell.Type switch
                 {
-                    WorldGrid.CellType.PLAIN => new Color(0.3f, 0.8f, 0.3f),
-                    WorldGrid.CellType.WATER => new Color(0.2f, 0.4f, 0.8f),
-                    WorldGrid.CellType.RIVER => new Color(0.1f, 0.3f, 0.7f),
+                    WorldGrid.CellType.PLAIN => plainColor,
+                    WorldGrid.CellType.WATER => waterColor,
+                    WorldGrid.CellType.RIVER => riverColor,
                     _                        => Color.magenta
                 };
-                
+
                 var cellHeight = cell.Height;
 
                 var vIndex = vertices.Count;
@@ -78,7 +85,7 @@ public class TerrainRenderer : MonoBehaviour
         var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
         var wallColor  = new Color(0.45f, 0.3f, 0.1f);
 
-        var cell          = grid.Cells[_x, _y];
+        var cell          = WorldGrid.Instance.Cells[_x, _y];
         var currentHeight = cell.Height;
 
         foreach (var dir in directions)
@@ -88,10 +95,10 @@ public class TerrainRenderer : MonoBehaviour
 
             float neighborHeight;
 
-            if (!grid.IsInBounds(new Vector2Int(nx, ny)))
+            if (!WorldGrid.Instance.IsInBounds(new Vector2Int(nx, ny)))
                 neighborHeight = -2.0f;
             else
-                neighborHeight = grid.Cells[nx, ny].Height;
+                neighborHeight = WorldGrid.Instance.Cells[nx, ny].Height;
 
             if (currentHeight <= neighborHeight + 0.001f) continue;
 
@@ -102,31 +109,31 @@ public class TerrainRenderer : MonoBehaviour
 
             if (dir == Vector2Int.right) // X+1
             {
-                _vertices.Add(new Vector3(_x + 1, bottomY, _y));
-                _vertices.Add(new Vector3(_x + 1, currentHeight,    _y));
-                _vertices.Add(new Vector3(_x + 1, bottomY, _y + 1));
-                _vertices.Add(new Vector3(_x + 1, currentHeight,    _y + 1));
+                _vertices.Add(new Vector3(_x + 1, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + 1, currentHeight, _y));
+                _vertices.Add(new Vector3(_x + 1, bottomY,       _y + 1));
+                _vertices.Add(new Vector3(_x + 1, currentHeight, _y + 1));
             }
             else if (dir == Vector2Int.left) // X-1
             {
-                _vertices.Add(new Vector3(_x, bottomY, _y + 1));
-                _vertices.Add(new Vector3(_x, currentHeight,    _y + 1));
-                _vertices.Add(new Vector3(_x, bottomY, _y));
-                _vertices.Add(new Vector3(_x, currentHeight,    _y));
+                _vertices.Add(new Vector3(_x, bottomY,       _y + 1));
+                _vertices.Add(new Vector3(_x, currentHeight, _y + 1));
+                _vertices.Add(new Vector3(_x, bottomY,       _y));
+                _vertices.Add(new Vector3(_x, currentHeight, _y));
             }
             else if (dir == Vector2Int.up) // Y+1
             {
-                _vertices.Add(new Vector3(_x + 1, bottomY, _y + 1));
-                _vertices.Add(new Vector3(_x + 1, currentHeight,    _y + 1));
-                _vertices.Add(new Vector3(_x,     bottomY, _y + 1));
-                _vertices.Add(new Vector3(_x,     currentHeight,    _y + 1));
+                _vertices.Add(new Vector3(_x + 1, bottomY,       _y + 1));
+                _vertices.Add(new Vector3(_x + 1, currentHeight, _y + 1));
+                _vertices.Add(new Vector3(_x,     bottomY,       _y + 1));
+                _vertices.Add(new Vector3(_x,     currentHeight, _y + 1));
             }
             else // Y-1
             {
-                _vertices.Add(new Vector3(_x,     bottomY, _y));
-                _vertices.Add(new Vector3(_x,     currentHeight,    _y));
-                _vertices.Add(new Vector3(_x + 1, bottomY, _y));
-                _vertices.Add(new Vector3(_x + 1, currentHeight,    _y));
+                _vertices.Add(new Vector3(_x,     bottomY,       _y));
+                _vertices.Add(new Vector3(_x,     currentHeight, _y));
+                _vertices.Add(new Vector3(_x + 1, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + 1, currentHeight, _y));
             }
 
             _normals.Add(normal);
