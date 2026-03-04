@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 163266143}
   - component: {fileID: 163266146}
   - component: {fileID: 163266145}
+  - component: {fileID: 163266147}
   m_Layer: 0
   m_Name: Plane
   m_TagString: Untagged
@@ -209,6 +210,20 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 163266142}
   m_Mesh: {fileID: 0}
+--- !u!114 &163266147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 163266142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f1c8ad30b1d4dc0a91be8eb34a81f78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TerrainRenderer
+  meshFilter: {fileID: 163266146}
+  grid: {fileID: 1060733104}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,7 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbc6d865160d1bc40bbb17526c491e72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldGrid
-  meshFilter: {fileID: 163266146}
+  terrainRenderer: {fileID: 163266147}
   size: 256
   seed: 214
   useRandomSeed: 1
