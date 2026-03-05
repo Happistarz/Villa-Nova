@@ -3,55 +3,63 @@ using UnityEngine.InputSystem;
 
 public class CityGenerator : MonoBehaviour
 {
-    public WorldGrid grid;
     public WorldRevealAnimator revealAnimator;
-    
+
     public float settlerSearchRadius = 5f;
-    
-    private GameObject _settler;
-    
+
+    private WorldGrid _grid;
+
     void Start()
     {
+        _grid = WorldGrid.Instance;
+        
         if (revealAnimator)
             revealAnimator.OnRevealComplete += GenerateCity;
-        else
-            grid.OnMapGenerated += GenerateCity;
+
+        _grid.OnMapGenerated += OnMapGenerated;
     }
-    
+
+    private void OnMapGenerated()
+    {
+        if (!revealAnimator || !revealAnimator.isActiveAndEnabled)
+            GenerateCity();
+    }
+
     public void Update()
     {
         if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
-        
-        grid.GenerateMap();
+
+        _grid.GenerateMap();
     }
-    
+
     void GenerateCity()
     {
-        // find's map best home starting point
         var bestHomePoint = FindSettlePos();
-        
-        if (_settler) Destroy(_settler);
-        
-        _settler = GameObject.CreatePrimitive(PrimitiveType.Cube);
-        _settler.transform.position = new Vector3(bestHomePoint.x, 2, bestHomePoint.y);
-        _settler.transform.localScale = new Vector3(1, 4, 1);
-        _settler.GetComponent<Renderer>().material.color = Color.red;
+
+        var cell = _grid.GetCell(bestHomePoint);
+        if (cell == null) return;
+        var tempCell = cell.Value;
+        tempCell.Type = WorldGrid.CellType.CITY;
+        _grid.UpdateCell(bestHomePoint, tempCell);
+
+        if (_grid.debugRenderer && _grid.debugRenderer.enabledRender)
+            _grid.debugRenderer.BuildMesh();
     }
-    
+
     Vector2Int FindSettlePos()
     {
         var bestPoint = Vector2Int.zero;
         var bestScore = float.MinValue;
 
-        for (var x = 0; x < grid.size; x++)
+        for (var x = 0; x < _grid.size; x++)
         {
-            for (var y = 0; y < grid.size; y++)
+            for (var y = 0; y < _grid.size; y++)
             {
                 var point = new Vector2Int(x, y);
                 var score = EvaluateSettlePoint(point);
 
                 if (!(score > bestScore)) continue;
-                
+
                 bestScore = score;
                 bestPoint = point;
             }
@@ -59,13 +67,13 @@ public class CityGenerator : MonoBehaviour
 
         return bestPoint;
     }
-    
+
     float EvaluateSettlePoint(Vector2Int _point)
     {
         var score = 0f;
-        var cell  = grid.GetCell(_point);
-        
-        var nearbyCells = grid.GetTilesInRadius(_point, settlerSearchRadius);
+        var cell  = _grid.GetCell(_point);
+
+        var nearbyCells = _grid.GetTilesInRadius(_point, settlerSearchRadius);
         foreach (var nearbyCell in nearbyCells)
         {
             switch (nearbyCell.Type)
@@ -78,16 +86,16 @@ public class CityGenerator : MonoBehaviour
                     break;
             }
         }
-        
-        var center = new Vector2Int(grid.size / 2, grid.size / 2);
+
+        var center           = new Vector2Int(_grid.size / 2, _grid.size / 2);
         var distanceToCenter = Vector2Int.Distance(_point, center);
         score -= distanceToCenter * 0.3f;
-        
+
         if (cell?.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
         {
             score -= 999f;
         }
-        
+
         return score;
     }
 }

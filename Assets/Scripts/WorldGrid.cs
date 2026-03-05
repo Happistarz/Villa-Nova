@@ -7,16 +7,16 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 {
     public enum CellType
     {
+        CITY,
         PLAIN,
-        PATH,
         WATER,
         RIVER,
     }
 
     public struct Cell
     {
-        public CellType   Type;
-        public float      Height;
+        public CellType Type;
+        public float    Height;
     }
     
     public event System.Action OnMapGenerated;
@@ -77,6 +77,13 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     public Cell? GetCell(Vector2Int _pos)
     {
         return IsInBounds(_pos) ? Cells[_pos.x, _pos.y] : null;
+    }
+    
+    public void UpdateCell(Vector2Int _pos, Cell _cell)
+    {
+        if (!IsInBounds(_pos)) return;
+
+        Cells[_pos.x, _pos.y] = _cell;
     }
     
     public Cell[] GetTilesInRadius(Vector2Int _center, float _radius)

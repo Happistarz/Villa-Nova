@@ -13,6 +13,10 @@ public abstract class AbstractRenderer : MonoBehaviour
     protected void Start()
     {
         toggleAction?.action?.Enable();
+        
+        // Ensure component state matches our flag at start
+        if (meshRenderer) meshRenderer.enabled = enabledRender;
+
         WorldGrid.Instance.OnMapGenerated += BuildMesh;
     }
 

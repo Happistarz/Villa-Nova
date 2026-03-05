@@ -54,22 +54,36 @@ public class WorldRevealAnimator : MonoBehaviour
 
     public void StartReveal()
     {
+        if (!terrainRenderer)
+        {
+            OnRevealComplete?.Invoke();
+            return;
+        }
+
         var size = WorldGrid.Instance.size;
 
         _center = new Vector4(size / 2f, 0f, size / 2f, 0f);
-
         _maxRadius = size * 0.71f + revealWidth;
-
-        _totalDuration = _maxRadius / revealSpeed;
-        _elapsedTime   = -startDelay;
-        _currentRadius = -revealWidth;
-        _isRevealing   = true;
 
         _propBlock.SetVector(_REVEAL_CENTER_ID, _center);
         _propBlock.SetFloat(_REVEAL_WIDTH_ID, revealWidth);
         _propBlock.SetFloat(_DROP_HEIGHT_ID, dropHeight);
         _propBlock.SetFloat(_BOUNCE_STRENGTH_ID, bounceStrength);
         _propBlock.SetFloat(_COLOR_DARKNESS_ID, colorDarkness);
+
+        if (!terrainRenderer.enabledRender)
+        {
+            SetRevealRadius(_maxRadius + 100f);
+
+            OnRevealComplete?.Invoke();
+            return;
+        }
+
+        _totalDuration = _maxRadius / revealSpeed;
+        _elapsedTime   = -startDelay;
+        _currentRadius = -revealWidth;
+        _isRevealing   = true;
+
         SetRevealRadius(-revealWidth);
     }
 
