@@ -92,6 +92,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+      propertyPath: m_ForceMeshLod
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+      propertyPath: m_MeshLodSelectionBias
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: f28f57eb6a2ed2b4f94ed9a2759d326c, type: 2}
     - target: {fileID: 919132149155446097, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
       propertyPath: m_Name
       value: VilaNova_House_1x1_BASE(1) 1 (1)
@@ -99,10 +111,51 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1790283444173758627}
   m_SourcePrefab: {fileID: 100100000, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
 --- !u!4 &43245295566670740 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
   m_PrefabInstance: {fileID: 509779922576223359}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &851870765342331182 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+  m_PrefabInstance: {fileID: 509779922576223359}
+  m_PrefabAsset: {fileID: 0}
+--- !u!205 &1790283444173758627
+LODGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851870765342331182}
+  serializedVersion: 2
+  m_LocalReferencePoint: {x: 0, y: 0, z: 0}
+  m_Size: 0.1
+  m_FadeMode: 0
+  m_AnimateCrossFading: 1
+  m_LastLODIsBillboard: 0
+  m_LODs:
+  - screenRelativeHeight: 0.6
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.25
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.15
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.08
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.04
+    fadeTransitionWidth: 0
+    renderers: []
+  - screenRelativeHeight: 0.01
+    fadeTransitionWidth: 0
+    renderers: []
+  m_Enabled: 0

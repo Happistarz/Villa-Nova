@@ -8,8 +8,17 @@ public class TerrainRenderer : AbstractRenderer
     public Color plainColor = new(0.3f, 0.8f, 0.3f);
     public Color waterColor = new(0.2f, 0.4f, 0.8f);
     public Color riverColor = new(0.1f, 0.3f, 0.7f);
+    public Color wallColor  = new(0.45f, 0.3f, 0.1f);
 
     private Mesh _mesh;
+    
+    private void Awake()
+    {
+        OnRenderToggled += () =>
+        {
+            CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
+        };
+    }
 
     public override void BuildMesh()
     {
@@ -42,13 +51,14 @@ public class TerrainRenderer : AbstractRenderer
                 };
 
                 var cellHeight = cell.Height;
+                var cellSize = Constants.Instance.CellSize;
 
                 var vIndex = vertices.Count;
 
-                vertices.Add(new Vector3(x,     cellHeight, y));
-                vertices.Add(new Vector3(x + 1, cellHeight, y));
-                vertices.Add(new Vector3(x,     cellHeight, y + 1));
-                vertices.Add(new Vector3(x + 1, cellHeight, y + 1));
+                vertices.Add(new Vector3(x,            cellHeight, y));
+                vertices.Add(new Vector3(x + cellSize, cellHeight, y));
+                vertices.Add(new Vector3(x,            cellHeight, y + cellSize));
+                vertices.Add(new Vector3(x + cellSize, cellHeight, y + cellSize));
 
                 colors.Add(color);
                 colors.Add(color);
@@ -78,8 +88,6 @@ public class TerrainRenderer : AbstractRenderer
         _mesh.normals   = normals.ToArray();
         _mesh.RecalculateBounds();
 
-        // Extend bounds vertically so the mesh isn't culled during the reveal animation
-        // (vertices are displaced far below by the shader)
         var bounds = _mesh.bounds;
         bounds.Expand(new Vector3(0f, 20f, 0f));
         _mesh.bounds = bounds;
@@ -89,7 +97,6 @@ public class TerrainRenderer : AbstractRenderer
                                   List<Color> _colors, List<Vector3> _normals)
     {
         var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
-        var wallColor  = new Color(0.45f, 0.3f, 0.1f);
 
         var cell          = WorldGrid.Instance.Cells[_x, _y];
         var currentHeight = cell.Height;
@@ -112,34 +119,35 @@ public class TerrainRenderer : AbstractRenderer
             var normal = new Vector3(dir.x, 0, dir.y);
 
             var bottomY = neighborHeight;
+            var cellSize = Constants.Instance.CellSize;
 
             if (dir == Vector2Int.right) // X+1
             {
-                _vertices.Add(new Vector3(_x + 1, bottomY,       _y));
-                _vertices.Add(new Vector3(_x + 1, currentHeight, _y));
-                _vertices.Add(new Vector3(_x + 1, bottomY,       _y + 1));
-                _vertices.Add(new Vector3(_x + 1, currentHeight, _y + 1));
+                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y));
+                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y + cellSize));
+                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y + cellSize));
             }
             else if (dir == Vector2Int.left) // X-1
             {
-                _vertices.Add(new Vector3(_x, bottomY,       _y + 1));
-                _vertices.Add(new Vector3(_x, currentHeight, _y + 1));
+                _vertices.Add(new Vector3(_x, bottomY,       _y + cellSize));
+                _vertices.Add(new Vector3(_x, currentHeight, _y + cellSize));
                 _vertices.Add(new Vector3(_x, bottomY,       _y));
                 _vertices.Add(new Vector3(_x, currentHeight, _y));
             }
             else if (dir == Vector2Int.up) // Y+1
             {
-                _vertices.Add(new Vector3(_x + 1, bottomY,       _y + 1));
-                _vertices.Add(new Vector3(_x + 1, currentHeight, _y + 1));
-                _vertices.Add(new Vector3(_x,     bottomY,       _y + 1));
-                _vertices.Add(new Vector3(_x,     currentHeight, _y + 1));
+                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y + cellSize));
+                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y + cellSize));
+                _vertices.Add(new Vector3(_x,            bottomY,       _y + cellSize));
+                _vertices.Add(new Vector3(_x,            currentHeight, _y + cellSize));
             }
             else // Y-1
             {
-                _vertices.Add(new Vector3(_x,     bottomY,       _y));
-                _vertices.Add(new Vector3(_x,     currentHeight, _y));
-                _vertices.Add(new Vector3(_x + 1, bottomY,       _y));
-                _vertices.Add(new Vector3(_x + 1, currentHeight, _y));
+                _vertices.Add(new Vector3(_x,            bottomY,       _y));
+                _vertices.Add(new Vector3(_x,            currentHeight, _y));
+                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y));
             }
 
             _normals.Add(normal);

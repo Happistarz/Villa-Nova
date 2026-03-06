@@ -1,4 +1,5 @@
-﻿using Core.Events;
+﻿using System;
+using Core.Events;
 using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -11,6 +12,8 @@ public abstract class AbstractRenderer : MonoBehaviour
 
     public MeshRenderer meshRenderer;
     public MeshFilter   meshFilter;
+    
+    protected event Action OnRenderToggled;
 
     protected void Start()
     {
@@ -31,6 +34,7 @@ public abstract class AbstractRenderer : MonoBehaviour
         renderEnabled.Value = !renderEnabled.Value;
         meshRenderer.enabled = renderEnabled.Value;
         
+        OnRenderToggled?.Invoke();
         if (renderToggledEvent) renderToggledEvent?.Raise();
         if (renderEnabled.Value) BuildMesh();
     }

@@ -1,14 +1,14 @@
 ﻿using System.Collections;
-using Core.Extensions;
+using Core.Patterns;
 using UnityEngine;
 
-public class CityGenerator : MonoBehaviour
+public class CityGenerator : MonoSingleton<CityGenerator>
 {
     public WorldRevealAnimator revealAnimator;
 
     public float settlerSearchRadius = 5f;
     
-    public GameObject housePrefab;
+    public CityRenderer cityRenderer;
 
     private WorldGrid _grid;
 
@@ -62,6 +62,8 @@ public class CityGenerator : MonoBehaviour
             _grid.debugRenderer.BuildMesh();
 
         yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
+
+        cityRenderer.BakeBatches();
 
         _grid.NotifyGenerationComplete();
     }
@@ -126,17 +128,19 @@ public class CityGenerator : MonoBehaviour
     {
         var count = 0;
         
-        for (var x = -10; x <= 10; x++)
+        const int RADIUS = 32;
+        for (var x = -RADIUS; x <= RADIUS; x++)
         {
-            for (var y = -10; y <= 10; y++)
+            for (var y = -RADIUS; y <= RADIUS; y++)
             {
                 var point = new Vector2Int(_cityCell.Position.x + x, _cityCell.Position.y + y);
                 var cell  = _grid.GetCell(point);
 
                 if (cell?.Type != WorldGrid.CellType.PLAIN) continue;
                 var worldPos = _grid.CellToWorld(point);
-                Instantiate(housePrefab, worldPos, housePrefab.transform.rotation.WithYRotation(Random.Range(0,360)), transform);
-
+                // Instantiate(housePrefab, worldPos, housePrefab.transform.rotation.WithYRotation(Random.Range(0,360)), transform);
+                cityRenderer.AddHouse(worldPos);
+                
                 count++;
                 
                 if (count % 20 == 0)

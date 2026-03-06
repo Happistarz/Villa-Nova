@@ -1,0 +1,25 @@
+﻿TODO:
+OBJECT POOL POUR LES HOUSES
+- Faire plusieurs pool pour chaque type de house
+
+HOUSE DATA
+- Faire un scriptable object pour les data de chaque house
+
+FICHIER POUR LES CONSTANTES (EX TAILLE BLOCK)
+
+UNE BAR OU ANIMATION PENDANT LA GENERATION
+UNE COULEUR DE BIOME DIFFERENT SUR LA MAP AVEC COULEUR PREDEFINIE POUR LE SOL
+
+CHANGER UN PEU LA CAM POUR ETRE PLUS PRES ET SE DEPLACER PROCHE DES HOUSES ?
+
+FRUSTRUM CULLING POUR LES HOUSES
+
+C# JOBS POUR LA GENERATION AU LIEU DE LA COROUTINE ?
+
+RE TRAVAILLER LES LODS DES HOUSES AVEC LES DISTANCS CAM
+
+ALGOS POUR LA GENERATION
+- Faire des POI dans la ville avec calcul de score, de règles pour les placer
+- Faire les routes externes, placer les routes autour des POI et relier les POI entre eux, et ensuite faire les routes internes pour remplir les espaces entre les routes externes
+- Faire un algo de création de régions pour faire des quartiers
+- Fill les regions avec les maisons avec différents types de maisons pour faire des quartiers différents

@@ -13,3 +13,8 @@ Nearby city.
 - A minimum distance between them to avoid clustered roads.
 - A random distance in km where the city is, from the center of the city.
 - So 0 to 4 nearby cities, a random number determined at generation time, and a random distance for each city.
+
+C# JOBS -> PARALLELIZE THE GENERATION OF THE CITY
+- Use C# Jobs to parallelize the generation of the city, especially for tasks that can be done independently, such as generating the grid, placing buildings, and creating roads.
+- This can significantly reduce the time it takes to generate a city, especially for larger cities with more complex layouts.
+OTHERWISE -> Use coroutines to break down the generation process into smaller steps, allowing for better performance and responsiveness. This can be particularly useful for tasks that require waiting for certain conditions to be met, such as waiting for a building to be placed before generating the next one.

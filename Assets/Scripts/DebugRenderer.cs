@@ -32,7 +32,8 @@ public class DebugRenderer : AbstractRenderer
         var triangles = new List<int>();
         var colors    = new List<Color>();
 
-        const float HALF = 0.5f;
+        var cellSize = Constants.Instance.CellSize;
+        var half = cellSize * 0.5f;
 
         for (var x = 0; x < WorldGrid.Instance.size; x++)
             for (var y = 0; y < WorldGrid.Instance.size; y++)
@@ -47,15 +48,15 @@ public class DebugRenderer : AbstractRenderer
                     _                        => new Color(1f, 0f, 1f, 0.5f)
                 };
 
-                var cx = x + 0.5f;
-                var cz = y + 0.5f;
+                var cx = x + half;
+                var cz = y + half;
 
                 var vIndex = vertices.Count;
 
-                vertices.Add(new Vector3(cx - HALF, height, cz - HALF));
-                vertices.Add(new Vector3(cx + HALF, height, cz - HALF));
-                vertices.Add(new Vector3(cx - HALF, height, cz + HALF));
-                vertices.Add(new Vector3(cx + HALF, height, cz + HALF));
+                vertices.Add(new Vector3(cx - half, height, cz - half));
+                vertices.Add(new Vector3(cx + half, height, cz - half));
+                vertices.Add(new Vector3(cx - half, height, cz + half));
+                vertices.Add(new Vector3(cx + half, height, cz + half));
 
                 colors.Add(color);
                 colors.Add(color);

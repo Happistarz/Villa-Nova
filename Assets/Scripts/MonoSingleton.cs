@@ -36,7 +36,7 @@ namespace Core.Patterns
             if (!_instance)
             {
                 _instance = (T)this;
-                if (!transform.parent || dontDestroyOnLoad)
+                if (!transform.parent && dontDestroyOnLoad)
                     DontDestroyOnLoad(gameObject);
 
                 Initialize();
