@@ -76,6 +76,10 @@ namespace Core.Extensions
         public static Vector3 WithZ(this Vector3 v, float z) => new Vector3(v.x, v.y, z);
 
         public static Vector3 Flat(this Vector3 v) => new Vector3(v.x, 0, v.z);
+        
+        public static Quaternion WithXRotation(this Quaternion q, float x) => Quaternion.Euler(q.eulerAngles.WithX(x));
+        public static Quaternion WithYRotation(this Quaternion q, float y) => Quaternion.Euler(q.eulerAngles.WithY(y));
+        public static Quaternion WithZRotation(this Quaternion q, float z) => Quaternion.Euler(q.eulerAngles.WithZ(z));
 
         #endregion
     }

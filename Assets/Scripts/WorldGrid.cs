@@ -16,6 +16,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     public struct Cell
     {
         public CellType Type;
+        public Vector2Int Position;
         public float    Height;
     }
     
@@ -80,6 +81,12 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     public Cell? GetCell(Vector2Int _pos)
     {
         return IsInBounds(_pos) ? Cells[_pos.x, _pos.y] : null;
+    }
+    
+    public Vector3 CellToWorld(Vector2Int _pos)
+    {
+        var cell = GetCell(_pos);
+        return new Vector3(_pos.x + 0.5f, cell?.Height ?? 0, _pos.y + 0.5f);
     }
     
     public void UpdateCell(Vector2Int _pos, Cell _cell)
@@ -151,7 +158,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
                                               (y + elevationOffsetY) / elevationNoiseScale, terrainOctaves);
                 var height = MathHelper.Quantize(noiseVal * elevationScale, heightStep);
 
-                Cells[x, y] = new Cell { Type = CellType.PLAIN, Height = height };
+                Cells[x, y] = new Cell { Type = CellType.PLAIN, Position = new Vector2Int(x,y) ,Height = height };
             }
         }
 

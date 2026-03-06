@@ -1,14 +1,18 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using Core.Extensions;
+using UnityEngine;
 
 public class CityGenerator : MonoBehaviour
 {
     public WorldRevealAnimator revealAnimator;
 
     public float settlerSearchRadius = 5f;
+    
+    public GameObject housePrefab;
 
     private WorldGrid _grid;
 
-    void Start()
+    private void Start()
     {
         _grid = WorldGrid.Instance;
         
@@ -30,18 +34,24 @@ public class CityGenerator : MonoBehaviour
     private void OnMapGenerated()
     {
         if (!revealAnimator || !revealAnimator.isActiveAndEnabled)
-            GenerateCity();
+            StartCoroutine(GenerateCityCoroutine());
     }
 
-    void GenerateCity()
+    private void GenerateCity()
     {
-        var bestHomePoint = FindSettlePos();
+        StartCoroutine(GenerateCityCoroutine());
+    }
+
+    private IEnumerator GenerateCityCoroutine()
+    {
+        var bestHomePoint = Vector2Int.zero;
+        yield return StartCoroutine(FindSettlePosCoroutine(_result => bestHomePoint = _result));
 
         var cell = _grid.GetCell(bestHomePoint);
         if (cell == null)
         {
             _grid.NotifyGenerationComplete();
-            return;
+            yield break;
         }
         
         var tempCell = cell.Value;
@@ -51,10 +61,12 @@ public class CityGenerator : MonoBehaviour
         if (_grid.debugRenderer && _grid.debugRenderer.renderEnabled.Value)
             _grid.debugRenderer.BuildMesh();
 
+        yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
+
         _grid.NotifyGenerationComplete();
     }
 
-    Vector2Int FindSettlePos()
+    private IEnumerator FindSettlePosCoroutine(System.Action<Vector2Int> _onComplete)
     {
         var bestPoint = Vector2Int.zero;
         var bestScore = float.MinValue;
@@ -71,12 +83,15 @@ public class CityGenerator : MonoBehaviour
                 bestScore = score;
                 bestPoint = point;
             }
+            
+            if (x % 10 == 0)
+                yield return null;
         }
 
-        return bestPoint;
+        _onComplete?.Invoke(bestPoint);
     }
 
-    float EvaluateSettlePoint(Vector2Int _point)
+    private float EvaluateSettlePoint(Vector2Int _point)
     {
         var score = 0f;
         var cell  = _grid.GetCell(_point);
@@ -105,5 +120,28 @@ public class CityGenerator : MonoBehaviour
         }
 
         return score;
+    }
+    
+    private IEnumerator PlaceHousesCoroutine(WorldGrid.Cell _cityCell)
+    {
+        var count = 0;
+        
+        for (var x = -10; x <= 10; x++)
+        {
+            for (var y = -10; y <= 10; y++)
+            {
+                var point = new Vector2Int(_cityCell.Position.x + x, _cityCell.Position.y + y);
+                var cell  = _grid.GetCell(point);
+
+                if (cell?.Type != WorldGrid.CellType.PLAIN) continue;
+                var worldPos = _grid.CellToWorld(point);
+                Instantiate(housePrefab, worldPos, housePrefab.transform.rotation.WithYRotation(Random.Range(0,360)), transform);
+
+                count++;
+                
+                if (count % 20 == 0)
+                    yield return null;
+            }
+        }
     }
 }

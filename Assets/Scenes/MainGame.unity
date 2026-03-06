@@ -1429,6 +1429,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CityGenerator
   revealAnimator: {fileID: 163266148}
   settlerSearchRadius: 5
+  housePrefab: {fileID: 1178645937518533245, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0
