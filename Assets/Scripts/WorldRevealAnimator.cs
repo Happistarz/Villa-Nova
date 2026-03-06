@@ -43,7 +43,7 @@ public class WorldRevealAnimator : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (WorldGrid.Instance)
+        if (WorldGrid.HasInstance)
             WorldGrid.Instance.OnMapGenerated -= OnMapGenerated;
     }
 
@@ -71,7 +71,7 @@ public class WorldRevealAnimator : MonoBehaviour
         _propBlock.SetFloat(_BOUNCE_STRENGTH_ID, bounceStrength);
         _propBlock.SetFloat(_COLOR_DARKNESS_ID, colorDarkness);
 
-        if (!terrainRenderer.enabledRender)
+        if (!terrainRenderer.renderEnabled.Value)
         {
             SetRevealRadius(_maxRadius + 100f);
 

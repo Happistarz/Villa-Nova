@@ -1,4 +1,5 @@
 ﻿using Core.Extensions;
+using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -8,18 +9,13 @@ public class CameraController : MonoBehaviour
     public InputActionReference scrollAction;
     public InputActionReference rotateDelta;
     public InputActionReference rotateButton;
-    public InputActionReference heightUpAction;
-    public InputActionReference heightDownAction;
 
     [Header("Zoom")]
     public float zoomSpeed  = 1300f;
     public float minRadius  = 45f;
     public float maxRadius  = 200f;
     public Vector2 xRotationBounds = new(12.5f, -15f);
-
-    [Header("Height")]
-    public float heightSpeed = 100f;
-    public float minHeight   = 10f;
+    public FloatVariable zoomLevel;
 
     [Header("Rotation")]
     public Transform rotationPivot;
@@ -28,12 +24,12 @@ public class CameraController : MonoBehaviour
 
     [Header("Smoothing")]
     public float smoothTime = 0.08f;
+    
 
     private float _orbitRadius;
     private float _targetOrbitRadius;
     private float _orbitRadiusVelocity;
 
-    private float _maxHeight   = 100f;
     private float _orbitHeight;
     private float _targetOrbitHeight;
     private float _orbitHeightVelocity;
@@ -57,7 +53,6 @@ public class CameraController : MonoBehaviour
         _orbitRadius       = flatOffset.magnitude;
         _targetOrbitRadius = _orbitRadius;
 
-        _maxHeight         = transform.position.y;
         _orbitHeight       = toCamera.y;
         _targetOrbitHeight = _orbitHeight;
 
@@ -67,7 +62,6 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         HandleZoom();
-        HandleHeight();
         HandleRotation();
         ApplyTransform();
     }
@@ -82,20 +76,6 @@ public class CameraController : MonoBehaviour
         _targetOrbitRadius =  Mathf.Clamp(_targetOrbitRadius, minRadius, maxRadius);
     }
 
-    private void HandleHeight()
-    {
-        var delta = 0f;
-
-        if (heightUpAction?.action != null && heightUpAction.action.IsPressed())
-            delta += 1f;
-        if (heightDownAction?.action != null && heightDownAction.action.IsPressed())
-            delta -= 1f;
-
-        if (delta == 0f) return;
-
-        _targetOrbitHeight += delta * heightSpeed * Time.deltaTime;
-        _targetOrbitHeight =  Mathf.Clamp(_targetOrbitHeight, minHeight, _maxHeight);
-    }
 
     private void HandleRotation()
     {
@@ -115,6 +95,9 @@ public class CameraController : MonoBehaviour
         _yaw         = Mathf.SmoothDampAngle(_yaw, _targetYaw, ref _yawVelocity, smoothTime);
         _orbitRadius = Mathf.SmoothDamp(_orbitRadius, _targetOrbitRadius, ref _orbitRadiusVelocity, smoothTime);
         _orbitHeight = Mathf.SmoothDamp(_orbitHeight, _targetOrbitHeight, ref _orbitHeightVelocity, smoothTime);
+
+        if (zoomLevel)
+            zoomLevel.value = Mathf.InverseLerp(minRadius, maxRadius, _orbitRadius);
 
         var zoomT = Mathf.Clamp01((_orbitRadius - minRadius) / (maxRadius - minRadius));
         _pitch = Mathf.Lerp(xRotationBounds.x, xRotationBounds.y, zoomT);
@@ -166,8 +149,6 @@ public class CameraController : MonoBehaviour
         scrollAction?.action?.Enable();
         rotateDelta?.action?.Enable();
         rotateButton?.action?.Enable();
-        heightUpAction?.action?.Enable();
-        heightDownAction?.action?.Enable();
     }
 
     private void OnEnable() => EnableActions();
@@ -177,7 +158,5 @@ public class CameraController : MonoBehaviour
         scrollAction?.action?.Disable();
         rotateDelta?.action?.Disable();
         rotateButton?.action?.Disable();
-        heightUpAction?.action?.Disable();
-        heightDownAction?.action?.Disable();
     }
 }

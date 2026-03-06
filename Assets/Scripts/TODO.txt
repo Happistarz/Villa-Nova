@@ -1,0 +1,4 @@
+﻿ICONES EN HAUT A GAUCHE:
+- Icone Terrain renderer actif (OFF = OPACITY 0.5, ON = OPACITY 1)
+- Icone Debug renderer actif (OFF = OPACITY 0.5, ON = OPACITY 1)
+- Image d'une line qui représente le zoom de la cam (FILL AMOUNT)

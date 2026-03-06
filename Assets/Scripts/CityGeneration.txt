@@ -1,0 +1,15 @@
+﻿Scriptable Object for a building type.
+Add a nullable field for the POI type
+HOW TO STORE OCCUPIED GRID CELLS AREA:
+- Store the occupied grid cells area as a list of Vector2Int.
+  -> Use a custom editor to visualize the occupied area in the inspector.
+  
+Scriptable Object for a POI type.
+A list of rules for generating a POI of this type.
+- Must be close to a water or river
+
+Nearby city.
+- Only one for each map border.
+- A minimum distance between them to avoid clustered roads.
+- A random distance in km where the city is, from the center of the city.
+- So 0 to 4 nearby cities, a random number determined at generation time, and a random distance for each city.

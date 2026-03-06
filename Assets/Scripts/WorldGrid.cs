@@ -20,6 +20,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     }
     
     public event System.Action OnMapGenerated;
+    public event System.Action OnGenerationFullyComplete;
+    
+    public static bool IsGenerating { get; set; }
 
     public  TerrainRenderer terrainRenderer;
     public  DebugRenderer   debugRenderer;
@@ -124,6 +127,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 
     public void GenerateMap()
     {
+        if (IsGenerating) return;
+        IsGenerating = true;
+
         if (useRandomSeed)
             seed = System.DateTime.Now.Millisecond;
 
@@ -158,6 +164,12 @@ public class WorldGrid : MonoSingleton<WorldGrid>
             GenerateRiver();
 
         OnMapGenerated?.Invoke();
+    }
+
+    public void NotifyGenerationComplete()
+    {
+        IsGenerating = false;
+        OnGenerationFullyComplete?.Invoke();
     }
 
     private void GenerateCoasts()

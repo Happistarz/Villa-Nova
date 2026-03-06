@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class CityGenerator : MonoBehaviour
 {
@@ -19,17 +18,19 @@ public class CityGenerator : MonoBehaviour
         _grid.OnMapGenerated += OnMapGenerated;
     }
 
+    private void OnDestroy()
+    {
+        if (revealAnimator)
+            revealAnimator.OnRevealComplete -= GenerateCity;
+
+        if (WorldGrid.HasInstance)
+            WorldGrid.Instance.OnMapGenerated -= OnMapGenerated;
+    }
+
     private void OnMapGenerated()
     {
         if (!revealAnimator || !revealAnimator.isActiveAndEnabled)
             GenerateCity();
-    }
-
-    public void Update()
-    {
-        if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
-
-        _grid.GenerateMap();
     }
 
     void GenerateCity()
@@ -37,13 +38,20 @@ public class CityGenerator : MonoBehaviour
         var bestHomePoint = FindSettlePos();
 
         var cell = _grid.GetCell(bestHomePoint);
-        if (cell == null) return;
+        if (cell == null)
+        {
+            _grid.NotifyGenerationComplete();
+            return;
+        }
+        
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
 
-        if (_grid.debugRenderer && _grid.debugRenderer.enabledRender)
+        if (_grid.debugRenderer && _grid.debugRenderer.renderEnabled.Value)
             _grid.debugRenderer.BuildMesh();
+
+        _grid.NotifyGenerationComplete();
     }
 
     Vector2Int FindSettlePos()
