@@ -39,14 +39,19 @@ public class DebugRenderer : AbstractRenderer
             for (var y = 0; y < WorldGrid.Instance.size; y++)
             {
                 var cell = WorldGrid.Instance.Cells[x, y];
-                var color = cell.Type switch
-                {
-                    WorldGrid.CellType.PLAIN => plainColor,
-                    WorldGrid.CellType.WATER => waterColor,
-                    WorldGrid.CellType.RIVER => riverColor,
-                    WorldGrid.CellType.CITY  => cityColor,
-                    _                        => new Color(1f, 0f, 1f, 0.5f)
-                };
+                
+                Color color;
+                if (cell.POI)
+                    color = cell.POI.DebugColor;
+                else
+                    color = cell.Type switch
+                    {
+                        WorldGrid.CellType.PLAIN => plainColor,
+                        WorldGrid.CellType.WATER => waterColor,
+                        WorldGrid.CellType.RIVER => riverColor,
+                        WorldGrid.CellType.CITY  => cityColor,
+                        _                        => new Color(1f, 0f, 1f, 0.5f)
+                    };
 
                 var cx = x + half;
                 var cz = y + half;

@@ -290,6 +290,7 @@ MonoBehaviour:
   generateDefaultText: GENERATE
   generatingBaseText: GENERATING
   ellipsisSpeed: 0.4
+  generateMapAction: {fileID: -6053485627299623346, guid: 052faaac586de48259a63d0c4782560b, type: 3}
 --- !u!114 &35822809
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1399,71 +1400,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1001 &1314300435
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 1178645937518533245, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_Name
-      value: House1x1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212189041117278459, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_MeshLodSelectionBias
-      value: -3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1212189041117278459, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: 'm_Materials.Array.data[0]'
-      value: 
-      objectReference: {fileID: 2100000, guid: f28f57eb6a2ed2b4f94ed9a2759d326c, type: 2}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 128
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9155030732082779473, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: a2e99a46020f5c341b1637f44444fba9, type: 3}
 --- !u!1 &1327768805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1498,6 +1434,11 @@ MonoBehaviour:
   revealAnimator: {fileID: 163266148}
   settlerSearchRadius: 5
   cityRenderer: {fileID: 1327768808}
+  poiDataList:
+  - {fileID: 11400000, guid: cb1fcc6fdda06424984b3b94b1bc29b4, type: 2}
+  - {fileID: 11400000, guid: b7b93512352429849a0901a36853b708, type: 2}
+  - {fileID: 11400000, guid: 9560c40e36e84f947a013e56078a4c7d, type: 2}
+  - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0
@@ -1905,4 +1846,3 @@ SceneRoots:
   - {fileID: 1327768807}
   - {fileID: 35822807}
   - {fileID: 1173853755}
-  - {fileID: 1314300435}

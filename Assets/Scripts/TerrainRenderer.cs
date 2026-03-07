@@ -18,6 +18,8 @@ public class TerrainRenderer : AbstractRenderer
         {
             CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
         };
+        
+        CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
     }
 
     public override void BuildMesh()

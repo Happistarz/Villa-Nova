@@ -15,9 +15,10 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 
     public struct Cell
     {
-        public CellType Type;
-        public Vector2Int Position;
-        public float    Height;
+        public CellType    Type;
+        public Vector2Int  Position;
+        public float       Height;
+        public POIData     POI;
     }
     
     public event System.Action OnMapGenerated;
@@ -70,6 +71,12 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     private Vector3         BedrockScale => new(size / 10f, 1, size / 10f);
     
     public Cell[,] Cells;
+
+    private static Cell[] _TileBuffer = new Cell[256];
+
+    public static int    TileBufferCount { get; private set; }
+
+    public static Cell[] TileBuffer      => _TileBuffer;
     
     private void Start()
     {
@@ -98,22 +105,35 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     
     public Cell[] GetTilesInRadius(Vector2Int _center, float _radius)
     {
-        var tiles = new System.Collections.Generic.List<Cell>();
+        FillTileBuffer(_center, _radius);
+        
+        var result = new Cell[TileBufferCount];
+        System.Array.Copy(_TileBuffer, result, TileBufferCount);
+        return result;
+    }
 
+    public void FillTileBuffer(Vector2Int _center, float _radius)
+    {
+        TileBufferCount = 0;
+        var radiusSq   = _radius * _radius;
         var radiusCeil = Mathf.CeilToInt(_radius);
+
         for (var dx = -radiusCeil; dx <= radiusCeil; dx++)
         {
             for (var dy = -radiusCeil; dy <= radiusCeil; dy++)
             {
-                var pos = new Vector2Int(_center.x + dx, _center.y + dy);
-                if (!IsInBounds(pos)) continue;
+                var px = _center.x + dx;
+                var py = _center.y + dy;
 
-                if (Vector2Int.Distance(_center, pos) <= _radius)
-                    tiles.Add(Cells[pos.x, pos.y]);
+                if (px < 0 || px >= size || py < 0 || py >= size) continue;
+                if (dx * dx + dy * dy > radiusSq) continue;
+
+                if (TileBufferCount >= _TileBuffer.Length)
+                    System.Array.Resize(ref _TileBuffer, _TileBuffer.Length * 2);
+
+                _TileBuffer[TileBufferCount++] = Cells[px, py];
             }
         }
-
-        return tiles.ToArray();
     }
 
     public bool IsInBounds(Vector2Int _pos)

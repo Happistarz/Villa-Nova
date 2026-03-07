@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using Core.Patterns;
 using UnityEngine;
 
@@ -7,23 +8,28 @@ public class CityGenerator : MonoSingleton<CityGenerator>
     public WorldRevealAnimator revealAnimator;
 
     public float settlerSearchRadius = 5f;
-    
+
     public CityRenderer cityRenderer;
+
+    [Header("POI")]
+    public POIData[] poiDataList;
 
     private WorldGrid _grid;
 
     private void Start()
     {
         _grid = WorldGrid.Instance;
-        
+
         if (revealAnimator)
             revealAnimator.OnRevealComplete += GenerateCity;
 
         _grid.OnMapGenerated += OnMapGenerated;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        base.OnDestroy();
+
         if (revealAnimator)
             revealAnimator.OnRevealComplete -= GenerateCity;
 
@@ -39,6 +45,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
     private void GenerateCity()
     {
+        cityRenderer.ClearHouses();
+
         StartCoroutine(GenerateCityCoroutine());
     }
 
@@ -53,10 +61,12 @@ public class CityGenerator : MonoSingleton<CityGenerator>
             _grid.NotifyGenerationComplete();
             yield break;
         }
-        
+
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
+
+        yield return StartCoroutine(PlacePOIsCoroutine());
 
         if (_grid.debugRenderer && _grid.debugRenderer.renderEnabled.Value)
             _grid.debugRenderer.BuildMesh();
@@ -85,7 +95,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                 bestScore = score;
                 bestPoint = point;
             }
-            
+
             if (x % 10 == 0)
                 yield return null;
         }
@@ -123,11 +133,11 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
         return score;
     }
-    
+
     private IEnumerator PlaceHousesCoroutine(WorldGrid.Cell _cityCell)
     {
         var count = 0;
-        
+
         const int RADIUS = 32;
         for (var x = -RADIUS; x <= RADIUS; x++)
         {
@@ -138,13 +148,60 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
                 if (cell?.Type != WorldGrid.CellType.PLAIN) continue;
                 var worldPos = _grid.CellToWorld(point);
-                // Instantiate(housePrefab, worldPos, housePrefab.transform.rotation.WithYRotation(Random.Range(0,360)), transform);
                 cityRenderer.AddHouse(worldPos);
-                
+
                 count++;
-                
+
                 if (count % 20 == 0)
                     yield return null;
+            }
+        }
+    }
+
+    private IEnumerator PlacePOIsCoroutine()
+    {
+        var allPlacedPOIs = new List<Vector2Int>();
+
+        foreach (var poiData in poiDataList)
+        {
+            if (!poiData) continue;
+
+            var poiSpawnCount = Random.Range(1, poiData.SpawnCount + 1);
+            for (var i = 0; i < poiSpawnCount; i++)
+            {
+                var bestPos   = Vector2Int.zero;
+                var bestScore = float.MinValue;
+                var found     = false;
+
+                for (var x = 0; x < _grid.size; x++)
+                {
+                    for (var y = 0; y < _grid.size; y++)
+                    {
+                        var pos = new Vector2Int(x, y);
+
+                        if (!POIRulesValidator.IsValid(poiData, pos, _grid, allPlacedPOIs))
+                            continue;
+
+                        var score = POIRulesValidator.Score(poiData, pos, _grid, allPlacedPOIs);
+                        if (!(score > bestScore)) continue;
+
+                        bestScore = score;
+                        bestPos   = pos;
+                        found     = true;
+                    }
+
+                    if (x % 10 == 0)
+                        yield return null;
+                }
+
+                if (!found) continue;
+
+                var cell = _grid.Cells[bestPos.x, bestPos.y];
+                cell.POI = poiData;
+                _grid.UpdateCell(bestPos, cell);
+                allPlacedPOIs.Add(bestPos);
+
+                Debug.Log($"Placed {poiData.Type} ({i + 1}/{poiData.SpawnCount}) at {bestPos}");
             }
         }
     }
