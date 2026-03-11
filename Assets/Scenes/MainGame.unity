@@ -1224,6 +1224,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1060733103}
   - component: {fileID: 1060733104}
+  - component: {fileID: 1060733105}
   m_Layer: 0
   m_Name: MAP GEN
   m_TagString: Untagged
@@ -1263,14 +1264,25 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldGrid
   dontDestroyOnLoad: 0
-  terrainRenderer: {fileID: 163266147}
-  debugRenderer: {fileID: 1431205998}
   size: 256
-  seed: 214
-  useRandomSeed: 1
   centerMarker: {fileID: 1124133846}
   bedrockTransform: {fileID: 1515198190}
-  noiseScale: 1
+--- !u!114 &1060733105
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1060733102}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb8cc970b3164c7ba5f7332cb34a0c50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
+  dontDestroyOnLoad: 0
+  seed: 0
+  useRandomSeed: 1
+  noiseScale: 20
   elevationNoiseScale: 40
   elevationScale: 1
   heightStep: 0.5
@@ -1434,11 +1446,13 @@ MonoBehaviour:
   revealAnimator: {fileID: 163266148}
   settlerSearchRadius: 5
   cityRenderer: {fileID: 1327768808}
+  debugRenderer: {fileID: 1431205998}
   poiDataList:
   - {fileID: 11400000, guid: cb1fcc6fdda06424984b3b94b1bc29b4, type: 2}
   - {fileID: 11400000, guid: b7b93512352429849a0901a36853b708, type: 2}
   - {fileID: 11400000, guid: 9560c40e36e84f947a013e56078a4c7d, type: 2}
   - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
+  houseData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0

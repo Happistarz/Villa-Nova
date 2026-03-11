@@ -27,9 +27,11 @@ public class POIData : ScriptableObject
         public float   scoreWeight;
     }
 
-    public POIType Type;
-    public Color   DebugColor = Color.magenta;
-    public int     SpawnCount = 1;
+    public POIType    Type;
+    public Color      DebugColor = Color.magenta;
+    public Vector2Int SpawnRange = new(1,1);
 
     public POIRuleData[] Rules;
+
+    public BuildingData BuildingData;
 }

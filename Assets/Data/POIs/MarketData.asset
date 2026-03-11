@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::POIData
   Type: 1
   DebugColor: {r: 0.7803922, g: 0.08235294, b: 0.5215687, a: 1}
-  SpawnCount: 2
+  SpawnRange: {x: 1, y: 1}
   Rules:
   - rule: 0
     value: 6
@@ -23,5 +23,6 @@ MonoBehaviour:
     value: 6
     scoreWeight: 1
   - rule: 2
-    value: 5
+    value: 20
     scoreWeight: 1
+  BuildingData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}

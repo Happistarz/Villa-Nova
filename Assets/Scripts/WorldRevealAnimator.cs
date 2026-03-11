@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿﻿using UnityEngine;
 
 public class WorldRevealAnimator : MonoBehaviour
 {
@@ -36,15 +36,15 @@ public class WorldRevealAnimator : MonoBehaviour
     private void Start()
     {
         _propBlock = new MaterialPropertyBlock();
-        WorldGrid.Instance.OnMapGenerated += OnMapGenerated;
+        MapGenerator.Instance.OnMapGenerated += OnMapGenerated;
 
         SetRevealRadius(-10f);
     }
 
     private void OnDestroy()
     {
-        if (WorldGrid.HasInstance)
-            WorldGrid.Instance.OnMapGenerated -= OnMapGenerated;
+        if (MapGenerator.HasInstance)
+            MapGenerator.Instance.OnMapGenerated -= OnMapGenerated;
     }
 
     private void OnMapGenerated()

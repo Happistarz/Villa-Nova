@@ -22,14 +22,14 @@ public abstract class AbstractRenderer : MonoBehaviour
         if (meshRenderer) meshRenderer.enabled = renderEnabled.Value;
         if (renderToggledEvent) renderToggledEvent?.Raise();
 
-        WorldGrid.Instance.OnMapGenerated += BuildMesh;
+        MapGenerator.Instance.OnMapGenerated += BuildMesh;
     }
 
     protected void Update()
     {
         if (toggleAction?.action == null) return;
         if (!toggleAction.action.WasPressedThisFrame()) return;
-        if (WorldGrid.IsGenerating) return;
+        if (MapGenerator.IsGenerating) return;
 
         renderEnabled.Value = !renderEnabled.Value;
         meshRenderer.enabled = renderEnabled.Value;
@@ -53,7 +53,7 @@ public abstract class AbstractRenderer : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (WorldGrid.HasInstance)
-            WorldGrid.Instance.OnMapGenerated -= BuildMesh;
+        if (MapGenerator.HasInstance)
+            MapGenerator.Instance.OnMapGenerated -= BuildMesh;
     }
 }

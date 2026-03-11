@@ -10,9 +10,13 @@ public class CityGenerator : MonoSingleton<CityGenerator>
     public float settlerSearchRadius = 5f;
 
     public CityRenderer cityRenderer;
+    public DebugRenderer debugRenderer;
 
     [Header("POI")]
     public POIData[] poiDataList;
+
+    [Header("Houses")]
+    public BuildingData houseData;
 
     private WorldGrid _grid;
 
@@ -23,7 +27,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         if (revealAnimator)
             revealAnimator.OnRevealComplete += GenerateCity;
 
-        _grid.OnMapGenerated += OnMapGenerated;
+        MapGenerator.Instance.OnMapGenerated += OnMapGenerated;
     }
 
     protected override void OnDestroy()
@@ -33,8 +37,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         if (revealAnimator)
             revealAnimator.OnRevealComplete -= GenerateCity;
 
-        if (WorldGrid.HasInstance)
-            WorldGrid.Instance.OnMapGenerated -= OnMapGenerated;
+        if (MapGenerator.HasInstance)
+            MapGenerator.Instance.OnMapGenerated -= OnMapGenerated;
     }
 
     private void OnMapGenerated()
@@ -58,7 +62,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         var cell = _grid.GetCell(bestHomePoint);
         if (cell == null)
         {
-            _grid.NotifyGenerationComplete();
+            MapGenerator.Instance.NotifyGenerationComplete();
             yield break;
         }
 
@@ -66,16 +70,16 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
 
-        yield return StartCoroutine(PlacePOIsCoroutine());
+        yield return StartCoroutine(PlacePOIsCoroutine(bestHomePoint));
 
-        if (_grid.debugRenderer && _grid.debugRenderer.renderEnabled.Value)
-            _grid.debugRenderer.BuildMesh();
+        if (debugRenderer && debugRenderer.renderEnabled.Value)
+            debugRenderer.BuildMesh();
 
-        yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
+        // yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
 
         cityRenderer.BakeBatches();
 
-        _grid.NotifyGenerationComplete();
+        MapGenerator.Instance.NotifyGenerationComplete();
     }
 
     private IEnumerator FindSettlePosCoroutine(System.Action<Vector2Int> _onComplete)
@@ -143,10 +147,31 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         {
             for (var y = -RADIUS; y <= RADIUS; y++)
             {
+                if (!_cityCell.POI) continue; // TEMP
+                
                 var point = new Vector2Int(_cityCell.Position.x + x, _cityCell.Position.y + y);
                 var cell  = _grid.GetCell(point);
 
                 if (cell?.Type != WorldGrid.CellType.PLAIN) continue;
+
+                if (houseData && houseData.buildingArea is { Count: > 0 })
+                {
+                    int rotation;
+                    if (houseData.randomizeRotation)
+                    {
+                        rotation = Random.Range(0, 4);
+                        if (!BuildingAreaHelper.CanPlace(houseData, point, rotation, _grid))
+                            continue;
+                    }
+                    else
+                    {
+                        rotation = BuildingAreaHelper.FindBestRotation(houseData, point, _grid);
+                        if (rotation < 0) continue;
+                    }
+
+                    BuildingAreaHelper.MarkCellAsOccupied(houseData, point, rotation, _grid);
+                }
+
                 var worldPos = _grid.CellToWorld(point);
                 cityRenderer.AddHouse(worldPos);
 
@@ -158,7 +183,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         }
     }
 
-    private IEnumerator PlacePOIsCoroutine()
+    private IEnumerator PlacePOIsCoroutine(Vector2Int _cityCenter)
     {
         var allPlacedPOIs = new List<Vector2Int>();
 
@@ -166,12 +191,15 @@ public class CityGenerator : MonoSingleton<CityGenerator>
         {
             if (!poiData) continue;
 
-            var poiSpawnCount = Random.Range(1, poiData.SpawnCount + 1);
+            var buildingData = poiData.BuildingData;
+
+            var poiSpawnCount = Random.Range(poiData.SpawnRange.x, poiData.SpawnRange.y + 1);
             for (var i = 0; i < poiSpawnCount; i++)
             {
-                var bestPos   = Vector2Int.zero;
-                var bestScore = float.MinValue;
-                var found     = false;
+                var bestPos      = Vector2Int.zero;
+                var bestScore    = float.MinValue;
+                var bestRotation = 0;
+                var found = false;
 
                 for (var x = 0; x < _grid.size; x++)
                 {
@@ -182,12 +210,20 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                         if (!POIRulesValidator.IsValid(poiData, pos, _grid, allPlacedPOIs))
                             continue;
 
-                        var score = POIRulesValidator.Score(poiData, pos, _grid, allPlacedPOIs);
+                        var rotation = 0;
+                        if (buildingData && buildingData.buildingArea is { Count: > 0 })
+                        {
+                            rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
+                            if (rotation < 0) continue;
+                        }
+
+                        var score = POIRulesValidator.Score(poiData, pos, _grid, allPlacedPOIs, _cityCenter);
                         if (!(score > bestScore)) continue;
 
                         bestScore = score;
-                        bestPos   = pos;
-                        found     = true;
+                        bestPos = pos;
+                        bestRotation = rotation;
+                        found = true;
                     }
 
                     if (x % 10 == 0)
@@ -196,12 +232,15 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
                 if (!found) continue;
 
+                if (buildingData && buildingData.buildingArea is { Count: > 0 })
+                    BuildingAreaHelper.MarkCellAsOccupied(buildingData, bestPos, bestRotation, _grid);
+
                 var cell = _grid.Cells[bestPos.x, bestPos.y];
                 cell.POI = poiData;
                 _grid.UpdateCell(bestPos, cell);
                 allPlacedPOIs.Add(bestPos);
 
-                Debug.Log($"Placed {poiData.Type} ({i + 1}/{poiData.SpawnCount}) at {bestPos}");
+                Debug.Log($"[POI] Placed {poiData.Type} ({i + 1}/{poiSpawnCount}) at {bestPos} with score {bestScore}");
             }
         }
     }

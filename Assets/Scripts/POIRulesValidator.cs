@@ -10,6 +10,8 @@ public static class POIRulesValidator
         var cell = _grid.GetCell(_position);
         if (cell == null || cell.Value.POI) return false;
 
+        if (cell.Value.IsOccupied) return false;
+
         if (cell.Value.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
             return false;
 
@@ -40,7 +42,7 @@ public static class POIRulesValidator
     }
 
     public static float Score(POIData _poiData, Vector2Int _position, WorldGrid _grid,
-                              List<Vector2Int> _placedPOIs)
+                              List<Vector2Int> _placedPOIs, Vector2Int _cityCenter)
     {
         var score = 0f;
 
@@ -57,8 +59,7 @@ public static class POIRulesValidator
             score += ruleScore * rule.scoreWeight;
         }
 
-        var center = new Vector2Int(_grid.size / 2, _grid.size / 2);
-        var distToCenter = Vector2Int.Distance(_position, center);
+        var distToCenter = Vector2Int.Distance(_position, _cityCenter);
         score -= distToCenter * 0.3f;
 
         return score;

@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::POIData
   Type: 3
   DebugColor: {r: 0.2352941, g: 0.7019608, b: 0.4431373, a: 1}
-  SpawnCount: 5
+  SpawnRange: {x: 1, y: 1}
   Rules:
   - rule: 0
     value: 30
     scoreWeight: 0.5
   - rule: 2
-    value: 12
+    value: 15
     scoreWeight: 5
+  BuildingData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e509e33cc964792b42868a060d3cf5a, type: 3}
+  m_Name: House1x1Data
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  buildingSize: 1
+  buildingArea:
+  - {x: 0, y: 0}
+  randomizeRotation: 0
+  rotation: 0
+  flatTolerance: 0.1
+  material: {fileID: 2100000, guid: f28f57eb6a2ed2b4f94ed9a2759d326c, type: 2}
+  lods:
+  - mesh: {fileID: 5330227900271839391, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
+    distanceThreshold: 1
+  debugColor: {r: 1, g: 0, b: 0, a: 1}

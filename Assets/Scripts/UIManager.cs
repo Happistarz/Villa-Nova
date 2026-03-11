@@ -1,4 +1,4 @@
-﻿using Core.Variables;
+﻿﻿using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -49,7 +49,7 @@ public class UIManager : MonoBehaviour
         generateMapAction.action.Enable();
         generateMapAction.action.performed += OnGeneratePerformed;
 
-        WorldGrid.Instance.OnGenerationFullyComplete += OnGenerationComplete;
+        MapGenerator.Instance.OnGenerationFullyComplete += OnGenerationComplete;
     }
 
     private void OnGeneratePerformed(InputAction.CallbackContext _)
@@ -61,8 +61,8 @@ public class UIManager : MonoBehaviour
     {
         generateMapAction.action.performed -= OnGeneratePerformed;
         
-        if (WorldGrid.HasInstance)
-            WorldGrid.Instance.OnGenerationFullyComplete -= OnGenerationComplete;
+        if (MapGenerator.HasInstance)
+            MapGenerator.Instance.OnGenerationFullyComplete -= OnGenerationComplete;
     }
 
     public void OnTerrainRenderToggle()
@@ -104,14 +104,14 @@ public class UIManager : MonoBehaviour
 
     public void OnGenerateMapButtonPressed()
     {
-        if (WorldGrid.IsGenerating) return;
+        if (MapGenerator.IsGenerating) return;
 
         if (generateButton) generateButton.interactable = false;
 
         _ellipsisTimer = 0f;
         _ellipsisDots  = 0;
 
-        WorldGrid.Instance.GenerateMap();
+        MapGenerator.Instance.GenerateMap();
     }
 
     private void OnGenerationComplete()
@@ -124,7 +124,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateGeneratingEllipsis()
     {
-        if (!WorldGrid.IsGenerating || !generateButtonText) return;
+        if (!MapGenerator.IsGenerating || !generateButtonText) return;
 
         _ellipsisTimer += Time.deltaTime;
 
