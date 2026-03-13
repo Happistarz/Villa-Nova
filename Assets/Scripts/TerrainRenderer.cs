@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
+using Color = UnityEngine.Color;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class TerrainRenderer : AbstractRenderer
@@ -9,16 +10,14 @@ public class TerrainRenderer : AbstractRenderer
     public Color waterColor = new(0.2f, 0.4f, 0.8f);
     public Color riverColor = new(0.1f, 0.3f, 0.7f);
     public Color wallColor  = new(0.45f, 0.3f, 0.1f);
+    public Color roadColor  = new(0.5f, 0.5f, 0.5f);
 
     private Mesh _mesh;
-    
+
     private void Awake()
     {
-        OnRenderToggled += () =>
-        {
-            CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
-        };
-        
+        OnRenderToggled += () => { CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value; };
+
         CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
     }
 
@@ -27,7 +26,7 @@ public class TerrainRenderer : AbstractRenderer
         if (!_mesh)
         {
             _mesh = new Mesh { name = "WorldGridMesh", indexFormat = IndexFormat.UInt32 };
-            
+
             meshFilter.mesh = _mesh;
         }
 
@@ -49,18 +48,19 @@ public class TerrainRenderer : AbstractRenderer
                     WorldGrid.CellType.PLAIN => plainColor,
                     WorldGrid.CellType.WATER => waterColor,
                     WorldGrid.CellType.RIVER => riverColor,
+                    WorldGrid.CellType.CITY  => plainColor,
+                    WorldGrid.CellType.ROAD  => roadColor,
                     _                        => Color.magenta
                 };
 
                 var cellHeight = cell.Height;
-                var cellSize = Constants.Instance.CellSize;
 
                 var vIndex = vertices.Count;
 
-                vertices.Add(new Vector3(x,            cellHeight, y));
-                vertices.Add(new Vector3(x + cellSize, cellHeight, y));
-                vertices.Add(new Vector3(x,            cellHeight, y + cellSize));
-                vertices.Add(new Vector3(x + cellSize, cellHeight, y + cellSize));
+                vertices.Add(new Vector3(x,                       cellHeight, y));
+                vertices.Add(new Vector3(x + Constants.CELL_SIZE, cellHeight, y));
+                vertices.Add(new Vector3(x,                       cellHeight, y + Constants.CELL_SIZE));
+                vertices.Add(new Vector3(x + Constants.CELL_SIZE, cellHeight, y + Constants.CELL_SIZE));
 
                 colors.Add(color);
                 colors.Add(color);
@@ -95,7 +95,7 @@ public class TerrainRenderer : AbstractRenderer
         _mesh.bounds = bounds;
     }
 
-    private void BuildCellBorders(int _x, int _y, List<Vector3> _vertices, List<int> _triangles,
+    private void BuildCellBorders(int         _x,      int           _y, List<Vector3> _vertices, List<int> _triangles,
                                   List<Color> _colors, List<Vector3> _normals)
     {
         var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
@@ -120,36 +120,42 @@ public class TerrainRenderer : AbstractRenderer
             var vIndex = _vertices.Count;
             var normal = new Vector3(dir.x, 0, dir.y);
 
+            var color = cell.Type switch
+            {
+                WorldGrid.CellType.PLAIN => wallColor,
+                WorldGrid.CellType.ROAD  => roadColor,
+                _                        => wallColor
+            };
+
             var bottomY = neighborHeight;
-            var cellSize = Constants.Instance.CellSize;
 
             if (dir == Vector2Int.right) // X+1
             {
-                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y));
-                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y));
-                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y + cellSize));
-                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y + cellSize));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, currentHeight, _y));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, bottomY,       _y + Constants.CELL_SIZE));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, currentHeight, _y + Constants.CELL_SIZE));
             }
             else if (dir == Vector2Int.left) // X-1
             {
-                _vertices.Add(new Vector3(_x, bottomY,       _y + cellSize));
-                _vertices.Add(new Vector3(_x, currentHeight, _y + cellSize));
+                _vertices.Add(new Vector3(_x, bottomY,       _y + Constants.CELL_SIZE));
+                _vertices.Add(new Vector3(_x, currentHeight, _y + Constants.CELL_SIZE));
                 _vertices.Add(new Vector3(_x, bottomY,       _y));
                 _vertices.Add(new Vector3(_x, currentHeight, _y));
             }
             else if (dir == Vector2Int.up) // Y+1
             {
-                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y + cellSize));
-                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y + cellSize));
-                _vertices.Add(new Vector3(_x,            bottomY,       _y + cellSize));
-                _vertices.Add(new Vector3(_x,            currentHeight, _y + cellSize));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, bottomY,       _y + Constants.CELL_SIZE));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, currentHeight, _y + Constants.CELL_SIZE));
+                _vertices.Add(new Vector3(_x,                       bottomY,       _y + Constants.CELL_SIZE));
+                _vertices.Add(new Vector3(_x,                       currentHeight, _y + Constants.CELL_SIZE));
             }
             else // Y-1
             {
-                _vertices.Add(new Vector3(_x,            bottomY,       _y));
-                _vertices.Add(new Vector3(_x,            currentHeight, _y));
-                _vertices.Add(new Vector3(_x + cellSize, bottomY,       _y));
-                _vertices.Add(new Vector3(_x + cellSize, currentHeight, _y));
+                _vertices.Add(new Vector3(_x,                       bottomY,       _y));
+                _vertices.Add(new Vector3(_x,                       currentHeight, _y));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, bottomY,       _y));
+                _vertices.Add(new Vector3(_x + Constants.CELL_SIZE, currentHeight, _y));
             }
 
             _normals.Add(normal);
@@ -157,10 +163,10 @@ public class TerrainRenderer : AbstractRenderer
             _normals.Add(normal);
             _normals.Add(normal);
 
-            _colors.Add(wallColor);
-            _colors.Add(wallColor);
-            _colors.Add(wallColor);
-            _colors.Add(wallColor);
+            _colors.Add(color);
+            _colors.Add(color);
+            _colors.Add(color);
+            _colors.Add(color);
 
             _triangles.Add(vIndex);
             _triangles.Add(vIndex + 1);

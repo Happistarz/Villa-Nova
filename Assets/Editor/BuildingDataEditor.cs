@@ -82,15 +82,14 @@ public class BuildingDataEditor : Editor
                 var isOccupied = data.buildingArea.Contains(offset);
 
                 EditorGUI.DrawRect(cellRect, isOccupied ? data.debugColor : new Color(0, 0, 0, 0.1f));
-                if (GUI.Button(cellRect, GUIContent.none))
-                {
-                    if (isOccupied)
-                        data.buildingArea.Remove(offset);
-                    else
-                        data.buildingArea.Add(offset);
+                if (!GUI.Button(cellRect, GUIContent.none)) continue;
+                
+                if (isOccupied)
+                    data.buildingArea.Remove(offset);
+                else
+                    data.buildingArea.Add(offset);
 
-                    EditorUtility.SetDirty(data);
-                }
+                EditorUtility.SetDirty(data);
             }
         }
 

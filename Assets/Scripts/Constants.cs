@@ -1,7 +1,5 @@
-﻿using Core;
-using UnityEngine;
-
-public class Constants : Singleton<Constants>
+﻿public static class Constants
 {
-    public float CellSize = 1f;
+    public const float CELL_SIZE      = 1f;
+    public const float CELL_TO_METER = 15f;
 }

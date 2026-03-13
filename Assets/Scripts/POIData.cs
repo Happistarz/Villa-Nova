@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "POI Data", menuName = "POI Data", order = 0)]
 public class POIData : ScriptableObject
@@ -16,6 +15,7 @@ public class POIData : ScriptableObject
     {
         NEAR_CITY,
         NEAR_WATER,
+        NEAR_ROAD,
         POI_DISTANCE,
     }
 

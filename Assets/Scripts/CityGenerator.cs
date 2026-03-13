@@ -9,7 +9,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
     public float settlerSearchRadius = 5f;
 
-    public CityRenderer cityRenderer;
+    public CityRenderer  cityRenderer;
     public DebugRenderer debugRenderer;
 
     [Header("POI")]
@@ -17,6 +17,9 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
     [Header("Houses")]
     public BuildingData houseData;
+
+    [Header("Near Cities")]
+    public NearbyCityPool nearbyCityPool;
 
     private WorldGrid _grid;
 
@@ -51,6 +54,9 @@ public class CityGenerator : MonoSingleton<CityGenerator>
     {
         cityRenderer.ClearHouses();
 
+        if (nearbyCityPool)
+            nearbyCityPool.ReleaseAll();
+
         StartCoroutine(GenerateCityCoroutine());
     }
 
@@ -58,6 +64,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
     {
         var bestHomePoint = Vector2Int.zero;
         yield return StartCoroutine(FindSettlePosCoroutine(_result => bestHomePoint = _result));
+        GenerateNearCitiesData();
 
         var cell = _grid.GetCell(bestHomePoint);
         if (cell == null)
@@ -76,6 +83,9 @@ public class CityGenerator : MonoSingleton<CityGenerator>
             debugRenderer.BuildMesh();
 
         // yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
+
+        CreateExternalRoads();
+        CreateInternalRoads();
 
         cityRenderer.BakeBatches();
 
@@ -148,7 +158,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
             for (var y = -RADIUS; y <= RADIUS; y++)
             {
                 if (!_cityCell.POI) continue; // TEMP
-                
+
                 var point = new Vector2Int(_cityCell.Position.x + x, _cityCell.Position.y + y);
                 var cell  = _grid.GetCell(point);
 
@@ -199,7 +209,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                 var bestPos      = Vector2Int.zero;
                 var bestScore    = float.MinValue;
                 var bestRotation = 0;
-                var found = false;
+                var found        = false;
 
                 for (var x = 0; x < _grid.size; x++)
                 {
@@ -220,10 +230,10 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                         var score = POIRulesValidator.Score(poiData, pos, _grid, allPlacedPOIs, _cityCenter);
                         if (!(score > bestScore)) continue;
 
-                        bestScore = score;
-                        bestPos = pos;
+                        bestScore    = score;
+                        bestPos      = pos;
                         bestRotation = rotation;
-                        found = true;
+                        found        = true;
                     }
 
                     if (x % 10 == 0)
@@ -243,5 +253,69 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                 Debug.Log($"[POI] Placed {poiData.Type} ({i + 1}/{poiSpawnCount}) at {bestPos} with score {bestScore}");
             }
         }
+    }
+
+    private void GenerateNearCitiesData()
+    {
+        const int MAX_NEAR_CITIES = 4;
+        var       cityCount       = Random.Range(0, MAX_NEAR_CITIES + 1);
+        var       nearCitiesData  = new List<WorldGrid.NearCityData>();
+
+        const int EDGE_OFFSET = 10;
+        for (var i = 0; i < cityCount; i++)
+        {
+            var edge = Random.Range(0, 4);
+            var pos = edge switch
+            {
+                0 => new Vector2Int(-EDGE_OFFSET,             Random.Range(0, _grid.size)), // left
+                1 => new Vector2Int(_grid.size + EDGE_OFFSET, Random.Range(0, _grid.size)), // right
+                2 => new Vector2Int(Random.Range(0, _grid.size), -EDGE_OFFSET), // bottom
+                3 => new Vector2Int(Random.Range(0, _grid.size), _grid.size + EDGE_OFFSET), // top
+                _ => Vector2Int.zero
+            };
+
+            var distanceToCenter = Vector2Int.Distance(pos, new Vector2Int(_grid.size / 2, _grid.size / 2));
+            var randomExtraDistance = Random.Range(0f, 20f);
+            nearCitiesData.Add(new WorldGrid.NearCityData
+            {
+                CityPos  = pos,
+                Distance = distanceToCenter / Constants.CELL_TO_METER + randomExtraDistance
+            });
+        }
+
+        nearCitiesData.Sort((_a, _b) => _a.Distance.CompareTo(_b.Distance));
+        WorldGrid.Instance.NearCities = nearCitiesData;
+
+        var names = GameManager.Instance.Config
+            ? GameManager.Instance.Config.GetRandomCityNames(nearCitiesData.Count)
+            : null;
+
+        for (var i = 0; i < nearCitiesData.Count; i++)
+        {
+            nearCitiesData[i].Name = names != null ? names[i] : $"City {i + 1}";
+        }
+
+        if (!nearbyCityPool) return;
+
+        nearbyCityPool.ReleaseAll();
+
+        foreach (var nearCity in nearCitiesData)
+        {
+            var display = nearbyCityPool.Get();
+            display.SetCityInfo(nearCity.Name, nearCity.Distance);
+
+            var worldPos = _grid.CellToWorld(nearCity.CityPos);
+            display.transform.position = worldPos;
+        }
+    }
+
+    private void CreateExternalRoads()
+    {
+        if (poiDataList == null || poiDataList.Length == 0 || WorldGrid.Instance.NearCities.Count == 0)
+            return;
+    }
+
+    private void CreateInternalRoads()
+    {
     }
 }

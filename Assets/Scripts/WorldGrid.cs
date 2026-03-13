@@ -1,6 +1,7 @@
 using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class WorldGrid : MonoSingleton<WorldGrid>
 {
@@ -10,6 +11,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         PLAIN,
         WATER,
         RIVER,
+        ROAD,
     }
 
     public struct Cell
@@ -21,12 +23,22 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         public bool       IsOccupied;
     }
 
+
     public int       size = 256;
     public Transform centerMarker;
     public Transform bedrockTransform;
 
     private Vector3 CenterPosition => new(size / 2f, 0, size / 2f);
     private Vector3 BedrockScale   => new(size / 10f, 1, size / 10f);
+
+    public class NearCityData
+    {
+        public string      Name;
+        public Vector2Int  CityPos;
+        public float       Distance;
+    }
+
+    public List<NearCityData> NearCities = new();
 
     public Cell[,] Cells;
 

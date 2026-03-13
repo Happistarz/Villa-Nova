@@ -593,6 +593,7 @@ MonoBehaviour:
   waterColor: {r: 0.013127446, g: 0.33205366, b: 0.5566038, a: 1}
   riverColor: {r: 0.03551085, g: 0.2292284, b: 0.3962264, a: 1}
   wallColor: {r: 0.45, g: 0.3, b: 0.1, a: 1}
+  roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
 --- !u!114 &163266148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1302,6 +1303,52 @@ MonoBehaviour:
   riverMinWidth: 1
   riverMaxWidth: 3
   riverOctaves: 3
+--- !u!1 &1101395097
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1101395098}
+  - component: {fileID: 1101395099}
+  m_Layer: 0
+  m_Name: NearCityObjectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1101395098
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101395097}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 893.3504, y: 564.23627, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1101395099
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1101395097}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280901a9f8bd465283d2aa3ea8040199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NearbyCityPool
+  prefab: {fileID: 8194343878171780398, guid: 9d7537ed7c1993c498b410c39e33d814, type: 3}
+  preloadCount: 4
 --- !u!1 &1124133845
 GameObject:
   m_ObjectHideFlags: 0
@@ -1453,6 +1500,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9560c40e36e84f947a013e56078a4c7d, type: 2}
   - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
   houseData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
+  nearbyCityPool: {fileID: 1101395099}
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0
@@ -1619,6 +1667,7 @@ MonoBehaviour:
   meshFilter: {fileID: 1431206000}
   height: 2
   plainColor: {r: 0.3, g: 0.8, b: 0.3, a: 0.7529412}
+  roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   waterColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.7529412}
   riverColor: {r: 0.1, g: 0.3, b: 0.7, a: 0.7529412}
   cityColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -1679,6 +1728,52 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1431205996}
   m_Mesh: {fileID: 0}
+--- !u!1 &1463271906
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1463271908}
+  - component: {fileID: 1463271907}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1463271907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463271906}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8ec566689f44af295d0c02b052ec8ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameManager
+  dontDestroyOnLoad: 1
+  config: {fileID: 11400000, guid: cb1acac4b0227af4c807d7deacee3293, type: 2}
+--- !u!4 &1463271908
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463271906}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 958.87115, y: 545.9631, z: 3.72851}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1515198189
 GameObject:
   m_ObjectHideFlags: 0
@@ -1858,5 +1953,7 @@ SceneRoots:
   - {fileID: 832575519}
   - {fileID: 1060733103}
   - {fileID: 1327768807}
+  - {fileID: 1101395098}
   - {fileID: 35822807}
   - {fileID: 1173853755}
+  - {fileID: 1463271908}

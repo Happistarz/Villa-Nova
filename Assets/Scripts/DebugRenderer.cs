@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using Color = UnityEngine.Color;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class DebugRenderer : AbstractRenderer
@@ -8,7 +9,7 @@ public class DebugRenderer : AbstractRenderer
 
     [Header("Colors")]
     public Color plainColor = new(0.3f, 0.8f, 0.3f, 0.5f);
-
+    public Color roadColor  = new(0.5f, 0.5f, 0.5f, 0.5f);
     public Color waterColor = new(0.2f, 0.4f, 0.8f, 0.5f);
     public Color riverColor = new(0.1f, 0.3f, 0.7f, 0.5f);
     public Color cityColor  = Color.yellow;
@@ -32,8 +33,7 @@ public class DebugRenderer : AbstractRenderer
         var triangles = new List<int>();
         var colors    = new List<Color>();
 
-        var cellSize = Constants.Instance.CellSize;
-        var half = cellSize * 0.5f;
+        const float HALF = Constants.CELL_SIZE * 0.5f;
 
         for (var x = 0; x < WorldGrid.Instance.size; x++)
             for (var y = 0; y < WorldGrid.Instance.size; y++)
@@ -50,18 +50,19 @@ public class DebugRenderer : AbstractRenderer
                         WorldGrid.CellType.WATER => waterColor,
                         WorldGrid.CellType.RIVER => riverColor,
                         WorldGrid.CellType.CITY  => cityColor,
+                        WorldGrid.CellType.ROAD  => roadColor,
                         _                        => new Color(1f, 0f, 1f, 0.5f)
                     };
 
-                var cx = x + half;
-                var cz = y + half;
+                var cx = x + HALF;
+                var cz = y + HALF;
 
                 var vIndex = vertices.Count;
 
-                vertices.Add(new Vector3(cx - half, height, cz - half));
-                vertices.Add(new Vector3(cx + half, height, cz - half));
-                vertices.Add(new Vector3(cx - half, height, cz + half));
-                vertices.Add(new Vector3(cx + half, height, cz + half));
+                vertices.Add(new Vector3(cx - HALF, height, cz - HALF));
+                vertices.Add(new Vector3(cx + HALF, height, cz - HALF));
+                vertices.Add(new Vector3(cx - HALF, height, cz + HALF));
+                vertices.Add(new Vector3(cx + HALF, height, cz + HALF));
 
                 colors.Add(color);
                 colors.Add(color);

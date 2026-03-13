@@ -33,6 +33,10 @@ public static class POIRulesValidator
                     if (!IsMinDistanceFromPOIs(_position, _placedPOIs, rule.value))
                         return false;
                     break;
+                case POIData.POIRule.NEAR_ROAD:
+                    if (!HasTypeInRadius(_position, _grid, WorldGrid.CellType.ROAD, rule.value))
+                        return false;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
