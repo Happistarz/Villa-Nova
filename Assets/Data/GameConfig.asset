@@ -12,6 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8e6a440a2384503a2eb1601ffdac148, type: 3}
   m_Name: GameConfig
   m_EditorClassIdentifier: Assembly-CSharp::GameConfig
+  biomeColors:
+  - {r: 0.3, g: 0.8, b: 0.3, a: 1}
+  - {r: 0.8, g: 0.8, b: 0.3, a: 1}
+  - {r: 0.3, g: 0.8, b: 0.8, a: 1}
+  - {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  - {r: 0.3, g: 0.5, b: 0.3, a: 1}
+  - {r: 0.6, g: 0.6, b: 0.6, a: 1}
+  - {r: 0.2, g: 0.7, b: 0.2, a: 1}
+  - {r: 0.8, g: 0.7, b: 0.3, a: 1}
+  - {r: 0.8980392, g: 0.8980392, b: 0.8980392, a: 1}
   cityNames:
   - POITIERS
   - NIORT

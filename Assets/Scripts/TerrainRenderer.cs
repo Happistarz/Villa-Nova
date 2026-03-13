@@ -36,6 +36,8 @@ public class TerrainRenderer : AbstractRenderer
         var triangles = new List<int>();
         var colors    = new List<Color>();
         var normals   = new List<Vector3>();
+        
+        var biomeColor = GameManager.Instance.Config.GetRandomBiomeColor();
 
         for (var x = 0; x < WorldGrid.Instance.size; x++)
         {
@@ -45,10 +47,10 @@ public class TerrainRenderer : AbstractRenderer
 
                 var color = cell.Type switch
                 {
-                    WorldGrid.CellType.PLAIN => plainColor,
+                    WorldGrid.CellType.PLAIN => biomeColor,
                     WorldGrid.CellType.WATER => waterColor,
                     WorldGrid.CellType.RIVER => riverColor,
-                    WorldGrid.CellType.CITY  => plainColor,
+                    WorldGrid.CellType.CITY  => biomeColor,
                     WorldGrid.CellType.ROAD  => roadColor,
                     _                        => Color.magenta
                 };

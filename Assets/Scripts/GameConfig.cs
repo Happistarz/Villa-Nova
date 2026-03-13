@@ -4,31 +4,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Config/Game Config", order = 0)]
 public class GameConfig : ScriptableObject
 {
-    [Header("Near Cities")]
-    [Tooltip("Liste de noms possibles pour les villes voisines.")]
-    public string[] cityNames =
+    [Header("Biomes")]
+    public Color[] biomeColors = new[]
     {
-        "Ashford",
-        "Brindlemark",
-        "Thornwall",
-        "Dunhollow",
-        "Foxmere",
-        "Glenhaven",
-        "Ironvale",
-        "Keldrath",
-        "Millreach",
-        "Oakhurst",
-        "Ravenspire",
-        "Stonebridge",
-        "Westmoor",
-        "Cinderfell",
-        "Elmsworth",
+        new Color(0.3f, 0.8f, 0.3f), // Plain
+        new Color(0.8f, 0.8f, 0.3f), // Desert
+        new Color(0.3f, 0.8f, 0.8f), // Swamp
+        new Color(0.5f, 0.5f, 0.5f), // Mountain
+        new Color(0.3f, 0.5f, 0.3f), // Taiga
+        new Color(0.6f, 0.6f, 0.6f), // Tundra
+        new Color(0.2f, 0.7f, 0.2f), // Jungle
+        new Color(0.8f, 0.7f, 0.3f), // Savanna
+        new Color(0.9f, 0.9f, 0.9f)  // Snow
     };
+    
+    [Header("Near Cities")]
+    public string[] cityNames;
 
-    /// <summary>
-    /// Pioche <paramref name="_count"/> noms uniques au hasard dans la liste.
-    /// Si on demande plus de noms qu'il n'y en a, retourne tous les noms mélangés.
-    /// </summary>
     public List<string> GetRandomCityNames(int _count)
     {
         var pool = new List<string>(cityNames);
@@ -43,6 +35,11 @@ public class GameConfig : ScriptableObject
         }
 
         return result;
+    }
+    
+    public Color GetRandomBiomeColor()
+    {
+        return biomeColors[Random.Range(0, biomeColors.Length)];
     }
 }
 
