@@ -44,29 +44,17 @@ public static class MathHelper
     public static IEnumerable<Vector2Int> GetPointsInCircle(Vector2Int _center, int _radius)
     {
         for (var dx = -_radius; dx <= _radius; dx++)
-        {
             for (var dy = -_radius; dy <= _radius; dy++)
-            {
                 if (dx * dx + dy * dy <= _radius * _radius)
-                {
                     yield return new Vector2Int(_center.x + dx, _center.y + dy);
-                }
-            }
-        }
     }
 
     public static IEnumerable<Vector2Int> GetPointsInEllipse(Vector2Int _center, int _rx, int _ry)
     {
         for (var dx = -_rx; dx <= _rx; dx++)
-        {
             for (var dy = -_ry; dy <= _ry; dy++)
-            {
-                if ((dx * dx) / (float)(_rx * _rx) + (dy * dy) / (float)(_ry * _ry) <= 1f)
-                {
+                if (GetEllipseNormalizedDistance(dx, dy, _rx, _ry) <= 1f)
                     yield return new Vector2Int(_center.x + dx, _center.y + dy);
-                }
-            }
-        }
     }
 
     public static IEnumerable<Vector2Int> BresenhamLine(Vector2Int _from, Vector2Int _to)
@@ -104,6 +92,35 @@ public static class MathHelper
 
     public static float GetEllipseNormalizedDistance(float _dx, float _dy, float _rx, float _ry)
     {
-        return Mathf.Sqrt((_dx * _dx) / (_rx * _rx) + (_dy * _dy) / (_ry * _ry));
+        if (_rx == 0 || _ry == 0) return float.MaxValue;
+        if (_dx == 0 && _dy == 0) return 0f;
+        
+        return Mathf.Sqrt(_dx * _dx / (_rx * _rx) + _dy * _dy / (_ry * _ry));
+    }
+
+    public static List<Vector2Int> SmoothPath(List<Vector2Int> _path)
+    {
+        if (_path == null || _path.Count < 2) return _path;
+
+        var smooth = new List<Vector2Int>(_path.Count * 2) { _path[0] };
+
+        for (var i = 1; i < _path.Count; i++)
+        {
+            var prev = _path[i - 1];
+            var curr = _path[i];
+            var dx   = curr.x - prev.x;
+            var dy   = curr.y - prev.y;
+
+            if (Mathf.Abs(dx) == 1 && Mathf.Abs(dy) == 1)
+            {
+                smooth.Add((i & 1) == 0
+                               ? new Vector2Int(prev.x + dx, prev.y)
+                               : new Vector2Int(prev.x,      prev.y + dy));
+            }
+
+            smooth.Add(curr);
+        }
+
+        return smooth;
     }
 }

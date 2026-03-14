@@ -7,13 +7,6 @@ public class DebugRenderer : AbstractRenderer
 {
     public float height = 2f;
 
-    [Header("Colors")]
-    public Color plainColor = new(0.3f, 0.8f, 0.3f, 0.5f);
-    public Color roadColor  = new(0.5f, 0.5f, 0.5f, 0.5f);
-    public Color waterColor = new(0.2f, 0.4f, 0.8f, 0.5f);
-    public Color riverColor = new(0.1f, 0.3f, 0.7f, 0.5f);
-    public Color cityColor  = Color.yellow;
-
     private Mesh _mesh;
 
     public override void BuildMesh()
@@ -21,13 +14,15 @@ public class DebugRenderer : AbstractRenderer
         if (!_mesh)
         {
             _mesh = new Mesh { name = "DebugMesh", indexFormat = UnityEngine.Rendering.IndexFormat.UInt32 };
-            
+
             meshFilter.mesh = _mesh;
         }
 
         if (!ToggleRenderer()) return;
 
         _mesh.Clear();
+
+        var p = GameManager.Instance.ActiveColorConfig;
 
         var vertices  = new List<Vector3>();
         var triangles = new List<int>();
@@ -39,19 +34,20 @@ public class DebugRenderer : AbstractRenderer
             for (var y = 0; y < WorldGrid.Instance.size; y++)
             {
                 var cell = WorldGrid.Instance.Cells[x, y];
-                
+
                 Color color;
                 if (cell.POI)
                     color = cell.POI.DebugColor;
                 else
                     color = cell.Type switch
                     {
-                        WorldGrid.CellType.PLAIN => plainColor,
-                        WorldGrid.CellType.WATER => waterColor,
-                        WorldGrid.CellType.RIVER => riverColor,
-                        WorldGrid.CellType.CITY  => cityColor,
-                        WorldGrid.CellType.ROAD  => roadColor,
-                        _                        => new Color(1f, 0f, 1f, 0.5f)
+                        WorldGrid.CellType.PLAIN  => p.debugPlainColor,
+                        WorldGrid.CellType.WATER  => p.debugWaterColor,
+                        WorldGrid.CellType.RIVER  => p.debugRiverColor,
+                        WorldGrid.CellType.CITY   => p.debugCityColor,
+                        WorldGrid.CellType.ROAD   => p.debugRoadColor,
+                        WorldGrid.CellType.BRIDGE => p.debugBridgeColor,
+                        _                         => new Color(1f, 0f, 1f, 0.5f)
                     };
 
                 var cx = x + HALF;

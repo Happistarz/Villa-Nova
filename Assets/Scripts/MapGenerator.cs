@@ -212,8 +212,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>
         {
             if (_count >= _max) return;
 
-            if (!_grid.IsInBounds(p) || _grid.Cells[p.x, p.y].Type == WorldGrid.CellType.RIVER ||
-                _grid.Cells[p.x, p.y].Type == WorldGrid.CellType.WATER) continue;
+            if (!_grid.IsInBounds(p) || _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.RIVER) ||
+                _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.WATER)) continue;
 
             _grid.Cells[p.x, p.y].Type   = WorldGrid.CellType.RIVER;
             _grid.Cells[p.x, p.y].Height = -0.5f;

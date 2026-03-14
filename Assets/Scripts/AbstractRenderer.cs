@@ -23,6 +23,9 @@ public abstract class AbstractRenderer : MonoBehaviour
         if (renderToggledEvent) renderToggledEvent?.Raise();
 
         MapGenerator.Instance.OnMapGenerated += BuildMesh;
+
+        if (CityGenerator.HasInstance)
+            CityGenerator.Instance.OnRoadsGenerated += BuildMesh;
     }
 
     protected void Update()
@@ -55,5 +58,8 @@ public abstract class AbstractRenderer : MonoBehaviour
     {
         if (MapGenerator.HasInstance)
             MapGenerator.Instance.OnMapGenerated -= BuildMesh;
+
+        if (CityGenerator.HasInstance)
+            CityGenerator.Instance.OnRoadsGenerated -= BuildMesh;
     }
 }

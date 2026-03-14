@@ -6,19 +6,23 @@ using Color = UnityEngine.Color;
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class TerrainRenderer : AbstractRenderer
 {
-    public Color plainColor = new(0.3f, 0.8f, 0.3f);
-    public Color waterColor = new(0.2f, 0.4f, 0.8f);
-    public Color riverColor = new(0.1f, 0.3f, 0.7f);
-    public Color wallColor  = new(0.45f, 0.3f, 0.1f);
-    public Color roadColor  = new(0.5f, 0.5f, 0.5f);
-
-    private Mesh _mesh;
+    private Mesh                        _mesh;
+    private GameConfig.BiomeColorConfig _colorConfig;
 
     private void Awake()
     {
         OnRenderToggled += () => { CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value; };
 
         CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
+
+        MapGenerator.Instance.OnMapGenerated += () =>
+        {
+            _colorConfig = GameManager.Instance.Config
+                ? GameManager.Instance.Config.GetRandomPalette()
+                : GameConfig.BiomeColorConfig.Default;
+
+            GameManager.Instance.ActiveColorConfig = _colorConfig;
+        };
     }
 
     public override void BuildMesh()
@@ -32,12 +36,11 @@ public class TerrainRenderer : AbstractRenderer
 
         if (!ToggleRenderer()) return;
 
+
         var vertices  = new List<Vector3>();
         var triangles = new List<int>();
         var colors    = new List<Color>();
         var normals   = new List<Vector3>();
-        
-        var biomeColor = GameManager.Instance.Config.GetRandomBiomeColor();
 
         for (var x = 0; x < WorldGrid.Instance.size; x++)
         {
@@ -47,12 +50,13 @@ public class TerrainRenderer : AbstractRenderer
 
                 var color = cell.Type switch
                 {
-                    WorldGrid.CellType.PLAIN => biomeColor,
-                    WorldGrid.CellType.WATER => waterColor,
-                    WorldGrid.CellType.RIVER => riverColor,
-                    WorldGrid.CellType.CITY  => biomeColor,
-                    WorldGrid.CellType.ROAD  => roadColor,
-                    _                        => Color.magenta
+                    WorldGrid.CellType.PLAIN  => _colorConfig.plainColor,
+                    WorldGrid.CellType.WATER  => _colorConfig.waterColor,
+                    WorldGrid.CellType.RIVER  => _colorConfig.riverColor,
+                    WorldGrid.CellType.CITY   => _colorConfig.cityColor,
+                    WorldGrid.CellType.ROAD   => _colorConfig.roadColor,
+                    WorldGrid.CellType.BRIDGE => _colorConfig.bridgeColor,
+                    _                         => Color.magenta
                 };
 
                 var cellHeight = cell.Height;
@@ -81,7 +85,7 @@ public class TerrainRenderer : AbstractRenderer
                 triangles.Add(vIndex + 3);
                 triangles.Add(vIndex + 1);
 
-                BuildCellBorders(x, y, vertices, triangles, colors, normals);
+                BuildCellBorders(x, y, _colorConfig, vertices, triangles, colors, normals);
             }
         }
 
@@ -97,8 +101,9 @@ public class TerrainRenderer : AbstractRenderer
         _mesh.bounds = bounds;
     }
 
-    private void BuildCellBorders(int         _x,      int           _y, List<Vector3> _vertices, List<int> _triangles,
-                                  List<Color> _colors, List<Vector3> _normals)
+    private void BuildCellBorders(int           _x,        int           _y, GameConfig.BiomeColorConfig _p,
+                                  List<Vector3> _vertices, List<int>     _triangles,
+                                  List<Color>   _colors,   List<Vector3> _normals)
     {
         var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
 
@@ -124,9 +129,9 @@ public class TerrainRenderer : AbstractRenderer
 
             var color = cell.Type switch
             {
-                WorldGrid.CellType.PLAIN => wallColor,
-                WorldGrid.CellType.ROAD  => roadColor,
-                _                        => wallColor
+                WorldGrid.CellType.ROAD   => _p.roadColor,
+                WorldGrid.CellType.BRIDGE => _p.bridgeColor,
+                _                         => _p.wallColor
             };
 
             var bottomY = neighborHeight;

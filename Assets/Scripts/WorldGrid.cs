@@ -12,6 +12,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         WATER,
         RIVER,
         ROAD,
+        BRIDGE,
     }
 
     public struct Cell
@@ -21,8 +22,16 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         public float      Height;
         public POIData    POI;
         public bool       IsOccupied;
-    }
 
+        public bool Is(params CellType[] _cellTypes)
+        {
+            foreach (var type in _cellTypes)
+                if (Type == type)
+                    return true;
+            
+            return false;
+        }
+    }
 
     public int       size = 256;
     public Transform centerMarker;
@@ -33,9 +42,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 
     public class NearCityData
     {
-        public string      Name;
-        public Vector2Int  CityPos;
-        public float       Distance;
+        public string     Name;
+        public Vector2Int CityPos;
+        public float      Distance;
     }
 
     public List<NearCityData> NearCities = new();
@@ -118,19 +127,41 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     {
         return _pos.x >= 0 && _pos.x < size && _pos.y >= 0 && _pos.y < size;
     }
-    
+
     public bool IsCellEmpty(Vector2Int _pos)
     {
         var cell = GetCell(_pos);
         return cell is { IsOccupied: false };
     }
-    
+
     public void SetCellOccupied(Vector2Int _pos)
     {
         if (!IsInBounds(_pos)) return;
 
         var cell = Cells[_pos.x, _pos.y];
-        cell.IsOccupied = true;
+        cell.IsOccupied       = true;
         Cells[_pos.x, _pos.y] = cell;
+    }
+
+    public Cell[] GetNeighbors(Vector2Int _pos)
+    {
+        var neighbors = new List<Cell>();
+
+        var directions = new[]
+        {
+            Vector2Int.up,
+            Vector2Int.down,
+            Vector2Int.left,
+            Vector2Int.right
+        };
+
+        foreach (var dir in directions)
+        {
+            var neighborPos = _pos + dir;
+            if (IsInBounds(neighborPos))
+                neighbors.Add(Cells[neighborPos.x, neighborPos.y]);
+        }
+
+        return neighbors.ToArray();
     }
 }

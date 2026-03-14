@@ -34,7 +34,8 @@ public static class POIRulesValidator
                         return false;
                     break;
                 case POIData.POIRule.NEAR_ROAD:
-                    if (!HasTypeInRadius(_position, _grid, WorldGrid.CellType.ROAD, rule.value))
+                    if (!HasTypeInRadius(_position, _grid, WorldGrid.CellType.ROAD, rule.value)
+                        && !HasTypeInRadius(_position, _grid, WorldGrid.CellType.BRIDGE, rule.value))
                         return false;
                     break;
                 default:
@@ -58,6 +59,8 @@ public static class POIRulesValidator
                     ScoreProximityToType(_position, _grid, WorldGrid.CellType.CITY, rule.value),
                 POIData.POIRule.NEAR_WATER   => ScoreProximityToWater(_position, _grid, rule.value),
                 POIData.POIRule.POI_DISTANCE => ScoreDistanceFromPOIs(_position, _placedPOIs, rule.value),
+                POIData.POIRule.NEAR_ROAD    => ScoreProximityToType(_position, _grid, WorldGrid.CellType.ROAD, rule.value) +
+                                                 ScoreProximityToType(_position, _grid, WorldGrid.CellType.BRIDGE, rule.value),
                 _                            => throw new ArgumentOutOfRangeException()
             };
             score += ruleScore * rule.scoreWeight;
@@ -75,7 +78,7 @@ public static class POIRulesValidator
         _grid.FillTileBuffer(_pos, _radius);
         
         for (var i = 0; i < WorldGrid.TileBufferCount; i++)
-            if (WorldGrid.TileBuffer[i].Type == _type)
+            if (WorldGrid.TileBuffer[i].Is(_type))
                 return true;
         
         return false;
@@ -109,7 +112,7 @@ public static class POIRulesValidator
         var count = 0;
         _grid.FillTileBuffer(_pos, _radius);
         for (var i = 0; i < WorldGrid.TileBufferCount; i++)
-            if (WorldGrid.TileBuffer[i].Type == _type)
+            if (WorldGrid.TileBuffer[i].Is(_type))
                 count++;
 
         return count * 2f;

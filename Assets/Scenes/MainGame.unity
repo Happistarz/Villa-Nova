@@ -594,6 +594,7 @@ MonoBehaviour:
   riverColor: {r: 0.03551085, g: 0.2292284, b: 0.3962264, a: 1}
   wallColor: {r: 0.45, g: 0.3, b: 0.1, a: 1}
   roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  bridgeColor: {r: 0.6, g: 0.45, b: 0.25, a: 1}
 --- !u!114 &163266148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1501,6 +1502,21 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
   houseData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
   nearbyCityPool: {fileID: 1101395099}
+  roadSettings:
+    noiseStrength: 11
+    noiseScale: 0.1
+    noiseOffsetX: 0
+    noiseOffsetY: 0
+    waterPenalty: 15
+    elevationMultiplier: 2
+    occupiedPenalty: 50
+    roadBonus: 3
+    roadProximityBonus: 3
+    roadProximityRadius: 3
+    bridgePenalty: 8
+    maxBridgeLength: 10
+    roadWidth: 1
+    allowOutOfBounds: 1
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0
@@ -1668,6 +1684,7 @@ MonoBehaviour:
   height: 2
   plainColor: {r: 0.3, g: 0.8, b: 0.3, a: 0.7529412}
   roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
+  bridgeColor: {r: 0.6, g: 0.45, b: 0.25, a: 0.5}
   waterColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.7529412}
   riverColor: {r: 0.1, g: 0.3, b: 0.7, a: 0.7529412}
   cityColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}

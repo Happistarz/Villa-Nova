@@ -21,7 +21,13 @@ public class CityGenerator : MonoSingleton<CityGenerator>
     [Header("Near Cities")]
     public NearbyCityPool nearbyCityPool;
 
-    private WorldGrid _grid;
+    [Header("Roads")]
+    public RoadSettings roadSettings = RoadSettings.Default;
+
+    public event System.Action OnRoadsGenerated;
+
+    private          WorldGrid        _grid;
+    private readonly List<Vector2Int> _placedPOIPositions = new();
 
     private void Start()
     {
@@ -84,12 +90,18 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
         // yield return StartCoroutine(PlaceHousesCoroutine(cell.Value));
 
-        CreateExternalRoads();
-        CreateInternalRoads();
+        BuildRoads(bestHomePoint);
 
         cityRenderer.BakeBatches();
 
         MapGenerator.Instance.NotifyGenerationComplete();
+    }
+
+    private void BuildRoads(Vector2Int _cityCenter)
+    {
+        var graph = RoadGraph.Build(_grid, _cityCenter, _placedPOIPositions, WorldGrid.Instance.NearCities);
+        RoadBuilder.BuildFromGraph(_grid, graph, roadSettings);
+        OnRoadsGenerated?.Invoke();
     }
 
     private IEnumerator FindSettlePosCoroutine(System.Action<Vector2Int> _onComplete)
@@ -162,7 +174,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>
                 var point = new Vector2Int(_cityCell.Position.x + x, _cityCell.Position.y + y);
                 var cell  = _grid.GetCell(point);
 
-                if (cell?.Type != WorldGrid.CellType.PLAIN) continue;
+                if (cell != null && !cell.Value.Is(WorldGrid.CellType.PLAIN)) continue;
 
                 if (houseData && houseData.buildingArea is { Count: > 0 })
                 {
@@ -195,7 +207,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>
 
     private IEnumerator PlacePOIsCoroutine(Vector2Int _cityCenter)
     {
-        var allPlacedPOIs = new List<Vector2Int>();
+        _placedPOIPositions.Clear();
+        var allPlacedPOIs = _placedPOIPositions;
 
         foreach (var poiData in poiDataList)
         {
@@ -307,15 +320,5 @@ public class CityGenerator : MonoSingleton<CityGenerator>
             var worldPos = _grid.CellToWorld(nearCity.CityPos);
             display.transform.position = worldPos;
         }
-    }
-
-    private void CreateExternalRoads()
-    {
-        if (poiDataList == null || poiDataList.Length == 0 || WorldGrid.Instance.NearCities.Count == 0)
-            return;
-    }
-
-    private void CreateInternalRoads()
-    {
     }
 }
