@@ -57,6 +57,11 @@ public class CityRenderer : MonoBehaviour
         _baked = true;
         RebakeLodBatches();
     }
+    
+    public void ClearCity()
+    {
+        ClearHouses();
+    }
 
     public void ClearHouses()
     {

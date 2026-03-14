@@ -10,11 +10,11 @@ public class PrefabPool
 
     public GameObject Prefab { get; }
 
-    public PrefabPool(GameObject prefab, int min = 0, int max = 50)
+    public PrefabPool(GameObject _prefab, int _min = 0, int _max = 50)
     {
-        _availableObjects = new List<GameObject>(min);
-        _usedObjects      = new List<GameObject>(max);
-        Prefab            = prefab;
+        _availableObjects = new List<GameObject>(_min);
+        _usedObjects      = new List<GameObject>(_max);
+        Prefab            = _prefab;
     }
 
     public GameObject Get()
@@ -39,12 +39,12 @@ public class PrefabPool
         return gameObject.GetComponent<T>();
     }
 
-    public void Release(GameObject gameObject)
+    public void Release(GameObject _gameObject)
     {
-        _availableObjects.Add(gameObject);
-        _usedObjects.Remove(gameObject);
+        _availableObjects.Add(_gameObject);
+        _usedObjects.Remove(_gameObject);
 
-        gameObject.SetActive(false);
+        _gameObject.SetActive(false);
     }
 }
 
@@ -56,15 +56,15 @@ public class PrefabPool<T> where T : MonoBehaviour
     public T Prefab { get; }
     private readonly GameObject _instanceRoot;
 
-    public PrefabPool(GameObject instanceRoot, T prefab, int minInstanceCount = 0)
+    public PrefabPool(GameObject _instanceRoot, T _prefab, int _minInstanceCount = 0)
     {
         _availableObjects = new List<T>();
         _usedObjects      = new List<T>();
 
-        Prefab       = prefab;
-        _instanceRoot = instanceRoot;
+        Prefab             = _prefab;
+        this._instanceRoot = _instanceRoot;
 
-        for (var i = 0; i < minInstanceCount; i++)
+        for (var i = 0; i < _minInstanceCount; i++)
             CreateInstance();
     }
 
@@ -88,11 +88,11 @@ public class PrefabPool<T> where T : MonoBehaviour
         _availableObjects.Add(newInstance);
     }
 
-    public void Release(T instance)
+    public void Release(T _instance)
     {
-        _availableObjects.Add(instance);
-        _usedObjects.Remove(instance);
+        _availableObjects.Add(_instance);
+        _usedObjects.Remove(_instance);
 
-        instance.gameObject.SetActive(false);
+        _instance.gameObject.SetActive(false);
     }
 }

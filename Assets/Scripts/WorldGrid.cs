@@ -28,7 +28,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
             foreach (var type in _cellTypes)
                 if (Type == type)
                     return true;
-            
+
             return false;
         }
     }
@@ -37,7 +37,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     public Transform centerMarker;
     public Transform bedrockTransform;
 
-    private Vector3 CenterPosition => new(size / 2f, 0, size / 2f);
+    private Vector3 CenterPosition => new(size / 2f, 0, size  / 2f);
     private Vector3 BedrockScale   => new(size / 10f, 1, size / 10f);
 
     public class NearCityData

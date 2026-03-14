@@ -5,10 +5,11 @@ public class NearbyCityPool : MonoBehaviour
 {
     [Header("Pool Settings")]
     public NearbyCityDisplay prefab;
+
     public int preloadCount = 4;
 
-    private PrefabPool<NearbyCityDisplay> _pool;
-    private readonly List<NearbyCityDisplay> _active = new();
+    private          PrefabPool<NearbyCityDisplay> _pool;
+    private readonly List<NearbyCityDisplay>       _active = new();
 
     private void Awake()
     {
@@ -31,10 +32,8 @@ public class NearbyCityPool : MonoBehaviour
     public void ReleaseAll()
     {
         for (var i = _active.Count - 1; i >= 0; i--)
-            _pool.Release(_active[i]);
+            _active[i].Hide(_pool);
 
         _active.Clear();
     }
 }
-
-
