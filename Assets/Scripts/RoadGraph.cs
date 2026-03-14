@@ -37,7 +37,7 @@ public static class RoadGraph
     }
 
     public static Graph Build(WorldGrid                    _grid, Vector2Int _cityCenter,
-                              List<Vector2Int>             _poiPositions,
+                              IReadOnlyList<Vector2Int>    _poiPositions,
                               List<WorldGrid.NearCityData> _nearCities)
     {
         var graph = new Graph

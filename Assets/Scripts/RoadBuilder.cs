@@ -3,7 +3,6 @@ using UnityEngine;
 
 public static class RoadBuilder
 {
-
     public static void BuildFromGraph(WorldGrid _grid, RoadGraph.Graph _graph, RoadSettings _settings)
     {
         foreach (var edge in _graph.Edges)
@@ -161,7 +160,7 @@ public static class RoadBuilder
 
         _waterRun.Clear();
     }
-    
+
     public static bool CanPlaceRoad(Vector2Int _pos, WorldGrid _grid)
     {
         if (!_grid.IsInBounds(_pos)) return false;
@@ -172,7 +171,7 @@ public static class RoadBuilder
         if (cell.IsOccupied) return false;
         return !cell.POI;
     }
-    
+
     public static Vector2Int ClampToGrid(Vector2Int _pos, WorldGrid _grid)
     {
         return new Vector2Int(

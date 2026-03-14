@@ -1,16 +1,22 @@
-﻿using Core.Patterns;
+﻿using System;
+using System.Collections;
+using Core.Patterns;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class MapGenerator : MonoSingleton<MapGenerator>
+public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 {
-    public event System.Action OnMapGenerated;
-    public event System.Action OnGenerationFullyComplete;
+    public string Name => "Map";
 
     public static bool IsGenerating { get; set; }
 
+    bool IGenerator.IsGenerating => IsGenerating;
+
+    public event Action OnGenerationComplete;
+
     [Header("General")]
-    public int  seed;
+    public int seed;
+
     public bool useRandomSeed = true;
 
     [Header("Terrain")]
@@ -53,13 +59,13 @@ public class MapGenerator : MonoSingleton<MapGenerator>
         _grid = WorldGrid.Instance;
     }
 
-    public void GenerateMap()
+    public IEnumerator Generate(WorldGrid _generationGrid)
     {
-        if (IsGenerating) return;
+        _grid        = _generationGrid;
         IsGenerating = true;
 
         if (useRandomSeed)
-            seed = System.DateTime.Now.Millisecond;
+            seed = DateTime.Now.Millisecond;
 
         Random.InitState(seed);
 
@@ -73,13 +79,9 @@ public class MapGenerator : MonoSingleton<MapGenerator>
         for (var r = 0; r < riverCount; r++)
             GenerateRiver();
 
-        OnMapGenerated?.Invoke();
-    }
-
-    public void NotifyGenerationComplete()
-    {
         IsGenerating = false;
-        OnGenerationFullyComplete?.Invoke();
+        OnGenerationComplete?.Invoke();
+        yield break;
     }
 
     private void GenerateTerrain()
@@ -147,7 +149,7 @@ public class MapGenerator : MonoSingleton<MapGenerator>
                             y = start + along;
                             break;
                         case 1:
-                            x = size - 1 - d;
+                            x = size  - 1 - d;
                             y = start + along;
                             break;
                         case 2:
@@ -156,7 +158,7 @@ public class MapGenerator : MonoSingleton<MapGenerator>
                             break;
                         default:
                             x = start + along;
-                            y = size - 1 - d;
+                            y = size  - 1 - d;
                             break;
                     }
 
@@ -236,7 +238,7 @@ public class MapGenerator : MonoSingleton<MapGenerator>
     private void GenerateRiver()
     {
         var size        = _grid.size;
-        var minDistance  = size / 2f;
+        var minDistance = size / 2f;
 
         Vector2Int startPos, endPos;
         var        safetyRetries = 0;
@@ -295,4 +297,3 @@ public class MapGenerator : MonoSingleton<MapGenerator>
         }
     }
 }
-

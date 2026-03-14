@@ -1,4 +1,4 @@
-﻿﻿using UnityEngine;
+﻿using UnityEngine;
 
 public class WorldRevealAnimator : MonoBehaviour
 {
@@ -6,24 +6,28 @@ public class WorldRevealAnimator : MonoBehaviour
     public TerrainRenderer terrainRenderer;
 
     [Header("Animation Settings")]
-    [Range(5f, 60f)]   public float revealSpeed    = 20f;
-    [Range(1f, 10f)]   public float revealWidth    = 4f;
-    [Range(-20f, -1f)] public float dropHeight     = -8f;
-    [Range(0f, 1f)]    public float bounceStrength = 0.3f;
-    [Range(0f, 1f)]    public float colorDarkness  = 0.15f;
-    [Range(0f, 1f)]    public float startDelay     = 0.05f;
+    [Range(5f, 60f)] public float revealSpeed = 60f;
+
+    [Range(1f,   10f)] public float revealWidth    = 3.5f;
+    [Range(-20f, -1f)] public float dropHeight     = -1f;
+    [Range(0f,   1f)]  public float bounceStrength = 0.1f;
+    [Range(0f,   1f)]  public float colorDarkness  = 1f;
+    [Range(0f,   1f)]  public float startDelay     = 0f;
 
     [Header("Easing")]
     public AnimationCurve easingCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
     public event System.Action OnRevealComplete;
 
+    public bool IsRevealing => _isRevealing;
+
     private MaterialPropertyBlock _propBlock;
-    private float _currentRadius;
-    private float _maxRadius;
-    private float _elapsedTime;
-    private float _totalDuration;
-    private bool  _isRevealing;
+
+    private float   _currentRadius;
+    private float   _maxRadius;
+    private float   _elapsedTime;
+    private float   _totalDuration;
+    private bool    _isRevealing;
     private Vector4 _center;
 
     private static readonly int _REVEAL_CENTER_ID   = Shader.PropertyToID("_RevealCenter");
@@ -35,8 +39,8 @@ public class WorldRevealAnimator : MonoBehaviour
 
     private void Start()
     {
-        _propBlock = new MaterialPropertyBlock();
-        MapGenerator.Instance.OnMapGenerated += OnMapGenerated;
+        _propBlock                                 =  new MaterialPropertyBlock();
+        MapGenerator.Instance.OnGenerationComplete += OnMapGenerated;
 
         SetRevealRadius(-10f);
     }
@@ -44,7 +48,7 @@ public class WorldRevealAnimator : MonoBehaviour
     private void OnDestroy()
     {
         if (MapGenerator.HasInstance)
-            MapGenerator.Instance.OnMapGenerated -= OnMapGenerated;
+            MapGenerator.Instance.OnGenerationComplete -= OnMapGenerated;
     }
 
     private void OnMapGenerated()
@@ -62,14 +66,14 @@ public class WorldRevealAnimator : MonoBehaviour
 
         var size = WorldGrid.Instance.size;
 
-        _center = new Vector4(size / 2f, 0f, size / 2f, 0f);
+        _center    = new Vector4(size / 2f, 0f, size / 2f, 0f);
         _maxRadius = size * 0.71f + revealWidth;
 
         _propBlock.SetVector(_REVEAL_CENTER_ID, _center);
-        _propBlock.SetFloat(_REVEAL_WIDTH_ID, revealWidth);
-        _propBlock.SetFloat(_DROP_HEIGHT_ID, dropHeight);
+        _propBlock.SetFloat(_REVEAL_WIDTH_ID,    revealWidth);
+        _propBlock.SetFloat(_DROP_HEIGHT_ID,     dropHeight);
         _propBlock.SetFloat(_BOUNCE_STRENGTH_ID, bounceStrength);
-        _propBlock.SetFloat(_COLOR_DARKNESS_ID, colorDarkness);
+        _propBlock.SetFloat(_COLOR_DARKNESS_ID,  colorDarkness);
 
         if (!terrainRenderer.renderEnabled.Value)
         {
@@ -106,14 +110,13 @@ public class WorldRevealAnimator : MonoBehaviour
         _currentRadius = Mathf.Lerp(-revealWidth, _maxRadius, easedTime);
         SetRevealRadius(_currentRadius);
 
-        if (normalizedTime >= 1f)
-        {
-            _isRevealing = false;
+        if (!(normalizedTime >= 1f)) return;
+        
+        _isRevealing = false;
 
-            SetRevealRadius(_maxRadius + 100f);
+        SetRevealRadius(_maxRadius + 100f);
 
-            OnRevealComplete?.Invoke();
-        }
+        OnRevealComplete?.Invoke();
     }
 
     private void SetRevealRadius(float _radius)
@@ -124,7 +127,3 @@ public class WorldRevealAnimator : MonoBehaviour
         terrainRenderer.meshRenderer.SetPropertyBlock(_propBlock);
     }
 }
-
-
-
-

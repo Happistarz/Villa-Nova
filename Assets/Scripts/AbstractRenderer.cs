@@ -7,12 +7,12 @@ using UnityEngine.InputSystem;
 public abstract class AbstractRenderer : MonoBehaviour
 {
     public InputActionReference toggleAction;
-    public EventData renderToggledEvent;
-    public BoolVariable renderEnabled;
+    public EventData            renderToggledEvent;
+    public BoolVariable         renderEnabled;
 
     public MeshRenderer meshRenderer;
     public MeshFilter   meshFilter;
-    
+
     protected event Action OnRenderToggled;
 
     protected void Start()
@@ -22,21 +22,21 @@ public abstract class AbstractRenderer : MonoBehaviour
         if (meshRenderer) meshRenderer.enabled = renderEnabled.Value;
         if (renderToggledEvent) renderToggledEvent?.Raise();
 
-        MapGenerator.Instance.OnMapGenerated += BuildMesh;
+        MapGenerator.Instance.OnGenerationComplete += BuildMesh;
 
-        if (CityGenerator.HasInstance)
-            CityGenerator.Instance.OnRoadsGenerated += BuildMesh;
+        if (GenerationPipeline.HasInstance)
+            GenerationPipeline.Instance.OnPipelineComplete += BuildMesh;
     }
 
     protected void Update()
     {
         if (toggleAction?.action == null) return;
         if (!toggleAction.action.WasPressedThisFrame()) return;
-        if (MapGenerator.IsGenerating) return;
+        if (GenerationPipeline.Instance.IsAnyGenerating) return;
 
-        renderEnabled.Value = !renderEnabled.Value;
+        renderEnabled.Value  = !renderEnabled.Value;
         meshRenderer.enabled = renderEnabled.Value;
-        
+
         OnRenderToggled?.Invoke();
         if (renderToggledEvent) renderToggledEvent?.Raise();
         if (renderEnabled.Value) BuildMesh();
@@ -57,9 +57,9 @@ public abstract class AbstractRenderer : MonoBehaviour
     private void OnDestroy()
     {
         if (MapGenerator.HasInstance)
-            MapGenerator.Instance.OnMapGenerated -= BuildMesh;
+            MapGenerator.Instance.OnGenerationComplete -= BuildMesh;
 
-        if (CityGenerator.HasInstance)
-            CityGenerator.Instance.OnRoadsGenerated -= BuildMesh;
+        if (GenerationPipeline.HasInstance)
+            GenerationPipeline.Instance.OnPipelineComplete -= BuildMesh;
     }
 }

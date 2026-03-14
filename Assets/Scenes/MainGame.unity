@@ -589,12 +589,6 @@ MonoBehaviour:
   renderEnabled: {fileID: 11400000, guid: d0f237bf68470e14fa6d4b8ff67c2dd1, type: 2}
   meshRenderer: {fileID: 163266145}
   meshFilter: {fileID: 163266146}
-  plainColor: {r: 0.18356177, g: 0.5188679, b: 0.18356177, a: 1}
-  waterColor: {r: 0.013127446, g: 0.33205366, b: 0.5566038, a: 1}
-  riverColor: {r: 0.03551085, g: 0.2292284, b: 0.3962264, a: 1}
-  wallColor: {r: 0.45, g: 0.3, b: 0.1, a: 1}
-  roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  bridgeColor: {r: 0.6, g: 0.45, b: 0.25, a: 1}
 --- !u!114 &163266148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -638,6 +632,114 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!1 &229069423
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 229069425}
+  - component: {fileID: 229069424}
+  m_Layer: 0
+  m_Name: PIPELINE GEN
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &229069424
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229069423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c32be575df84e1a981585237a336671, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GenerationPipeline
+  dontDestroyOnLoad: 1
+  revealAnimator: {fileID: 163266148}
+--- !u!4 &229069425
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 229069423}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.26198, y: -366.195, z: 572.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &258766998
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 258766999}
+  m_Layer: 0
+  m_Name: -- SETTINGS --
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &258766999
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 258766998}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.26198, y: -366.195, z: 572.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &263120750
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 263120751}
+  m_Layer: 0
+  m_Name: -- CAMERA --
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &263120751
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 263120750}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.26198, y: -366.195, z: 572.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -1315,7 +1417,7 @@ GameObject:
   - component: {fileID: 1101395098}
   - component: {fileID: 1101395099}
   m_Layer: 0
-  m_Name: NearCityObjectPool
+  m_Name: NEAR CITY DISPLAY POOL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1460,6 +1562,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1232161207
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1232161208}
+  m_Layer: 0
+  m_Name: -- UI --
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1232161208
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1232161207}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.26198, y: -366.195, z: 572.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1327768805
 GameObject:
   m_ObjectHideFlags: 0
@@ -1491,7 +1624,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CityGenerator
   dontDestroyOnLoad: 0
-  revealAnimator: {fileID: 163266148}
   settlerSearchRadius: 5
   cityRenderer: {fileID: 1327768808}
   debugRenderer: {fileID: 1431205998}
@@ -1502,21 +1634,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
   houseData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
   nearbyCityPool: {fileID: 1101395099}
-  roadSettings:
-    noiseStrength: 11
-    noiseScale: 0.1
-    noiseOffsetX: 0
-    noiseOffsetY: 0
-    waterPenalty: 15
-    elevationMultiplier: 2
-    occupiedPenalty: 50
-    roadBonus: 3
-    roadProximityBonus: 3
-    roadProximityRadius: 3
-    bridgePenalty: 8
-    maxBridgeLength: 10
-    roadWidth: 1
-    allowOutOfBounds: 1
 --- !u!4 &1327768807
 Transform:
   m_ObjectHideFlags: 0
@@ -1682,12 +1799,6 @@ MonoBehaviour:
   meshRenderer: {fileID: 1431205999}
   meshFilter: {fileID: 1431206000}
   height: 2
-  plainColor: {r: 0.3, g: 0.8, b: 0.3, a: 0.7529412}
-  roadColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
-  bridgeColor: {r: 0.6, g: 0.45, b: 0.25, a: 0.5}
-  waterColor: {r: 0.2, g: 0.4, b: 0.8, a: 0.7529412}
-  riverColor: {r: 0.1, g: 0.3, b: 0.7, a: 0.7529412}
-  cityColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!23 &1431205999
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1756,7 +1867,7 @@ GameObject:
   - component: {fileID: 1463271908}
   - component: {fileID: 1463271907}
   m_Layer: 0
-  m_Name: GameManager
+  m_Name: GAME MANAGER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1904,6 +2015,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1515198189}
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1702916883
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1702916884}
+  m_Layer: 0
+  m_Name: ' -- GENERATION --'
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1702916884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1702916883}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 251.26198, y: -366.195, z: 572.514}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2068196066
 GameObject:
   m_ObjectHideFlags: 0
@@ -1965,12 +2107,17 @@ MonoBehaviour:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 263120751}
   - {fileID: 2068196067}
+  - {fileID: 258766999}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 1173853755}
+  - {fileID: 1702916884}
   - {fileID: 1060733103}
   - {fileID: 1327768807}
   - {fileID: 1101395098}
-  - {fileID: 35822807}
-  - {fileID: 1173853755}
   - {fileID: 1463271908}
+  - {fileID: 229069425}
+  - {fileID: 1232161208}
+  - {fileID: 35822807}

@@ -1,4 +1,4 @@
-﻿﻿using Core.Variables;
+﻿using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
@@ -49,7 +49,8 @@ public class UIManager : MonoBehaviour
         generateMapAction.action.Enable();
         generateMapAction.action.performed += OnGeneratePerformed;
 
-        MapGenerator.Instance.OnGenerationFullyComplete += OnGenerationComplete;
+        MapGenerator.Instance.OnGenerationComplete     += OnGenerationComplete;
+        GenerationPipeline.Instance.OnPipelineComplete += OnPipelineComplete;
     }
 
     private void OnGeneratePerformed(InputAction.CallbackContext _)
@@ -60,9 +61,12 @@ public class UIManager : MonoBehaviour
     private void OnDestroy()
     {
         generateMapAction.action.performed -= OnGeneratePerformed;
-        
+
         if (MapGenerator.HasInstance)
-            MapGenerator.Instance.OnGenerationFullyComplete -= OnGenerationComplete;
+            MapGenerator.Instance.OnGenerationComplete -= OnGenerationComplete;
+
+        if (GenerationPipeline.HasInstance)
+            GenerationPipeline.Instance.OnPipelineComplete -= OnPipelineComplete;
     }
 
     public void OnTerrainRenderToggle()
@@ -104,17 +108,23 @@ public class UIManager : MonoBehaviour
 
     public void OnGenerateMapButtonPressed()
     {
-        if (MapGenerator.IsGenerating) return;
+        if (GenerationPipeline.Instance.IsAnyGenerating) return;
 
         if (generateButton) generateButton.interactable = false;
 
         _ellipsisTimer = 0f;
         _ellipsisDots  = 0;
 
-        MapGenerator.Instance.GenerateMap();
+        GenerationPipeline.Instance.StartGeneration();
     }
 
     private void OnGenerationComplete()
+    {
+        if (generateButtonText)
+            generateButtonText.text = generatingBaseText + new string('.', _ellipsisDots);
+    }
+
+    private void OnPipelineComplete()
     {
         if (generateButton) generateButton.interactable = true;
 
@@ -124,7 +134,7 @@ public class UIManager : MonoBehaviour
 
     private void UpdateGeneratingEllipsis()
     {
-        if (!MapGenerator.IsGenerating || !generateButtonText) return;
+        if (!GenerationPipeline.Instance.IsAnyGenerating || !generateButtonText) return;
 
         _ellipsisTimer += Time.deltaTime;
 

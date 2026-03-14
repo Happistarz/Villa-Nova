@@ -15,7 +15,7 @@ public class TerrainRenderer : AbstractRenderer
 
         CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
 
-        MapGenerator.Instance.OnMapGenerated += () =>
+        MapGenerator.Instance.OnGenerationComplete += () =>
         {
             _colorConfig = GameManager.Instance.Config
                 ? GameManager.Instance.Config.GetRandomPalette()
