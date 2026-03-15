@@ -27,7 +27,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     public event Action OnGenerationComplete;
 
-    public Vector2Int              CityCenter          { get; private set; }
+    public Vector2Int                CityCenter         { get; private set; }
     public IReadOnlyList<Vector2Int> PlacedPOIPositions => _placedPOIPositions;
 
     private          WorldGrid        _grid;
@@ -35,7 +35,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     private void Start()
     {
-        _grid = WorldGrid.Instance;
+        _grid                                     =  WorldGrid.Instance;
         GameManager.Instance.NewGenerationStarted += NewGenerationStarted;
     }
 
@@ -62,7 +62,9 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         IsGenerating = true;
 
         var bestHomePoint = Vector2Int.zero;
-        yield return StartCoroutine(FindSettlePosCoroutine(_result => bestHomePoint = _result));
+        yield return StartCoroutine(
+            CityGenerationJobRunner
+                .FindBestSettlePoint(_grid, settlerSearchRadius, _point => bestHomePoint = _point));
         GenerateNearCitiesData();
 
         var cell = _grid.GetCell(bestHomePoint);
@@ -88,62 +90,6 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
         IsGenerating = false;
         OnGenerationComplete?.Invoke();
-    }
-
-    private IEnumerator FindSettlePosCoroutine(Action<Vector2Int> _onComplete)
-    {
-        var bestPoint = Vector2Int.zero;
-        var bestScore = float.MinValue;
-
-        for (var x = 0; x < _grid.size; x++)
-        {
-            for (var y = 0; y < _grid.size; y++)
-            {
-                var point = new Vector2Int(x, y);
-                var score = EvaluateSettlePoint(point);
-
-                if (!(score > bestScore)) continue;
-
-                bestScore = score;
-                bestPoint = point;
-            }
-
-            if (x % 10 == 0)
-                yield return null;
-        }
-
-        _onComplete?.Invoke(bestPoint);
-    }
-
-    private float EvaluateSettlePoint(Vector2Int _point)
-    {
-        var score = 0f;
-        var cell  = _grid.GetCell(_point);
-
-        var nearbyCells = _grid.GetTilesInRadius(_point, settlerSearchRadius);
-        foreach (var nearbyCell in nearbyCells)
-        {
-            switch (nearbyCell.Type)
-            {
-                case WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER:
-                    score += 1f;
-                    break;
-                case WorldGrid.CellType.PLAIN:
-                    score += 0.5f;
-                    break;
-            }
-        }
-
-        var center           = new Vector2Int(_grid.size / 2, _grid.size / 2);
-        var distanceToCenter = Vector2Int.Distance(_point, center);
-        score -= distanceToCenter * 0.3f;
-
-        if (cell?.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
-        {
-            score -= 999f;
-        }
-
-        return score;
     }
 
     private IEnumerator PlaceHousesCoroutine(WorldGrid.Cell _cityCell)
