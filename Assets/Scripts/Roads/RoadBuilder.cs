@@ -20,12 +20,7 @@ public static class RoadBuilder
             var path = FindRoadPath(from, to, _grid, perEdgeSettings);
 
             if (path == null)
-            {
-                var fromNode = _graph.Nodes[edge.FromIndex];
-                var toNode   = _graph.Nodes[edge.ToIndex];
-                Debug.LogWarning($"[RoadBuilder] No path: {fromNode.Label} → {toNode.Label}");
                 continue;
-            }
 
             path = MathHelper.SmoothPath(path);
             StampRoad(path, perEdgeSettings.roadWidth, _grid, perEdgeSettings.maxBridgeLength);
@@ -49,10 +44,7 @@ public static class RoadBuilder
             var path          = FindRoadPath(cityCenter, clampedTarget, _grid, perRoadSettings);
 
             if (path == null)
-            {
-                Debug.LogWarning($"[RoadBuilder] No path found to near city at {nearCity.CityPos}");
                 continue;
-            }
 
             path = MathHelper.SmoothPath(path);
             StampRoad(path, perRoadSettings.roadWidth, _grid, perRoadSettings.maxBridgeLength);
@@ -72,10 +64,7 @@ public static class RoadBuilder
             var path       = FindRoadPath(_cityCenter, clampedPoi, _grid, perRoadSettings);
 
             if (path == null)
-            {
-                Debug.LogWarning($"[RoadBuilder] No path found to POI at {poi}");
                 continue;
-            }
 
             path = MathHelper.SmoothPath(path);
             StampRoad(path, perRoadSettings.roadWidth, _grid, perRoadSettings.maxBridgeLength);
@@ -90,9 +79,10 @@ public static class RoadBuilder
         return Pathfinding.FindPath(_start, _end, _grid, costFunc, _settings.allowOutOfBounds);
     }
 
-    public static void StampRoad(List<Vector2Int> _path, int _width, WorldGrid _grid, int _maxBridgeLength)
+    public static int StampRoad(List<Vector2Int> _path, int _width, WorldGrid _grid, int _maxBridgeLength)
     {
-        var bridgeCells = new HashSet<Vector2Int>();
+        var stampedCount = 0;
+        var bridgeCells  = new HashSet<Vector2Int>();
         CollectBridgeCells(_path, _grid, _maxBridgeLength, bridgeCells);
 
         var half = _width / 2;
@@ -111,18 +101,25 @@ public static class RoadBuilder
                     if (cell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER
                         && bridgeCells.Contains(center))
                     {
+                        if (cell.Type == WorldGrid.CellType.BRIDGE) continue;
+
                         cell.Type = WorldGrid.CellType.BRIDGE;
                         _grid.UpdateCell(pos, cell);
+                        stampedCount++;
                         continue;
                     }
 
                     if (!CanPlaceRoad(pos, _grid)) continue;
+                    if (cell.Type == WorldGrid.CellType.ROAD) continue;
 
                     cell.Type = WorldGrid.CellType.ROAD;
                     _grid.UpdateCell(pos, cell);
+                    stampedCount++;
                 }
             }
         }
+
+        return stampedCount;
     }
 
     private static void CollectBridgeCells(List<Vector2Int> _path,            WorldGrid           _grid,

@@ -10,7 +10,6 @@ public static class GridJobUtilities
         public float Height;
         public bool IsOccupied;
         public bool HasPoi;
-        public int2 Position;
     }
 
     public static NativeArray<JobCellData> GetFlatGridData(WorldGrid _grid, Allocator _allocator)
@@ -27,11 +26,10 @@ public static class GridJobUtilities
 
                 nativeArray[index] = new JobCellData
                 {
-                    Type = cell.Type,
-                    Height = cell.Height,
+                    Type       = cell.Type,
+                    Height     = cell.Height,
                     IsOccupied = cell.IsOccupied,
-                    HasPoi = cell.POI != null,
-                    Position = new int2(x, y)
+                    HasPoi     = cell.POI
                 };
             }
         }
@@ -53,10 +51,8 @@ public static class GridJobUtilities
                 var targetX = _center.x + x;
                 var targetY = _center.y + y;
 
-                if (targetX >= 0 && targetX < _gridSize && targetY >= 0 && targetY < _gridSize)
-                {
+                if (targetX >= 0 && targetX < _gridSize && targetY >= 0 && targetY < _gridSize) 
                     _results.Add(targetY * _gridSize + targetX);
-                }
             }
         }
     }

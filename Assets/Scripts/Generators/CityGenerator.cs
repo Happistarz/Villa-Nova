@@ -140,49 +140,47 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     private IEnumerator PlacePOIsCoroutine(Vector2Int _cityCenter)
     {
         _placedPOIPositions.Clear();
-        var allPlacedPOIs = _placedPOIPositions;
 
         foreach (var poiData in poiDataList)
         {
             if (!poiData) continue;
 
-            var buildingData = poiData.BuildingData;
-
+            var buildingData  = poiData.BuildingData;
             var poiSpawnCount = Random.Range(poiData.SpawnRange.x, poiData.SpawnRange.y + 1);
+
             for (var i = 0; i < poiSpawnCount; i++)
             {
-                var bestPos      = Vector2Int.zero;
-                var bestScore    = float.MinValue;
-                var bestRotation = 0;
+                List<(Vector2Int pos, float score)> candidates = null;
+
+                yield return StartCoroutine(CityGenerationJobRunner.FindBestPoiLocation(
+                    _grid, poiData, _placedPOIPositions, _cityCenter,
+                    _result => candidates = _result));
+
+                if (candidates == null || candidates.Count == 0)
+                    continue;
+
                 var found        = false;
+                var bestPos      = Vector2Int.zero;
+                var bestRotation = 0;
 
-                for (var x = 0; x < _grid.size; x++)
+                var checksCount = 0;
+                foreach (var (pos, _) in candidates)
                 {
-                    for (var y = 0; y < _grid.size; y++)
+                    if (checksCount++ > 100) break;
+
+                    var rotation = 0;
+
+                    if (buildingData && buildingData.buildingArea is { Count: > 0 })
                     {
-                        var pos = new Vector2Int(x, y);
-
-                        if (!POIRulesValidator.IsValid(poiData, pos, _grid, allPlacedPOIs))
+                        rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
+                        if (rotation < 0) 
                             continue;
-
-                        var rotation = 0;
-                        if (buildingData && buildingData.buildingArea is { Count: > 0 })
-                        {
-                            rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
-                            if (rotation < 0) continue;
-                        }
-
-                        var score = POIRulesValidator.Score(poiData, pos, _grid, allPlacedPOIs, _cityCenter);
-                        if (!(score > bestScore)) continue;
-
-                        bestScore    = score;
-                        bestPos      = pos;
-                        bestRotation = rotation;
-                        found        = true;
                     }
 
-                    if (x % 10 == 0)
-                        yield return null;
+                    bestPos      = pos;
+                    bestRotation = rotation;
+                    found        = true;
+                    break;
                 }
 
                 if (!found) continue;
@@ -193,9 +191,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 var cell = _grid.Cells[bestPos.x, bestPos.y];
                 cell.POI = poiData;
                 _grid.UpdateCell(bestPos, cell);
-                allPlacedPOIs.Add(bestPos);
-
-                Debug.Log($"[POI] Placed {poiData.Type} ({i + 1}/{poiSpawnCount}) at {bestPos} with score {bestScore}");
+                _placedPOIPositions.Add(bestPos);
             }
         }
     }

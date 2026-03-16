@@ -69,13 +69,13 @@ namespace Core.Extensions
 
         #region VECTOR MATH
 
-        public static Vector2 ToVector2(this Vector3 v) => new Vector2(v.x, v.y);
+        public static Vector2 ToVector2(this Vector3 v) => new(v.x, v.y);
         
-        public static Vector3 WithX(this Vector3 v, float x) => new Vector3(x, v.y, v.z);
-        public static Vector3 WithY(this Vector3 v, float y) => new Vector3(v.x, y, v.z);
-        public static Vector3 WithZ(this Vector3 v, float z) => new Vector3(v.x, v.y, z);
+        public static Vector3 WithX(this Vector3 v, float x) => new(x, v.y, v.z);
+        public static Vector3 WithY(this Vector3 v, float y) => new(v.x, y,   v.z);
+        public static Vector3 WithZ(this Vector3 v, float z) => new(v.x, v.y, z);
 
-        public static Vector3 Flat(this Vector3 v) => new Vector3(v.x, 0, v.z);
+        public static Vector3 Flat(this Vector3 v) => new(v.x, 0, v.z);
         
         public static Quaternion WithXRotation(this Quaternion q, float x) => Quaternion.Euler(q.eulerAngles.WithX(x));
         public static Quaternion WithYRotation(this Quaternion q, float y) => Quaternion.Euler(q.eulerAngles.WithY(y));

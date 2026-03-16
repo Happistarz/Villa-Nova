@@ -23,9 +23,7 @@ public abstract class AbstractRenderer : MonoBehaviour
         if (renderToggledEvent) renderToggledEvent?.Raise();
 
         MapGenerator.Instance.OnGenerationComplete += BuildMesh;
-
-        if (GenerationPipeline.HasInstance)
-            GenerationPipeline.Instance.OnPipelineComplete += BuildMesh;
+        GenerationPipeline.Instance.OnPipelineComplete += BuildMesh;
     }
 
     protected void Update()

@@ -15,27 +15,22 @@ public struct SettleScoreJob : IJobParallelFor
 
     public void Execute(int _index)
     {
-        // 1. Décode la positon de CE job
         var x = _index % Size;
         var y = _index / Size;
         var currentCell = GridCells[_index];
 
-        // 2. Logique metier (EvaluateSettlePoint)
         var score = 0f;
 
-        // Voisins
         var r = (int)math.ceil(SearchRadius);
         for (var i = -r; i <= r; i++)
         {
             for (var j = -r; j <= r; j++)
             {
-                // Vérif distance (cercle)
                 if (i * i + j * j > SearchRadius * SearchRadius) continue;
 
                 var nX = x + i;
                 var nY = y + j;
 
-                // Vérif bounds
                 if (nX < 0 || nX >= Size || nY < 0 || nY >= Size) continue;
                 var nIndex   = nY * Size + nX;
                 var neighbor = GridCells[nIndex];
@@ -52,11 +47,9 @@ public struct SettleScoreJob : IJobParallelFor
             }
         }
 
-        // Distance au centre
         var distToCenter = math.distance(new float2(x, y), new float2(Size / 2f, Size / 2f));
         score -= distToCenter * 0.3f;
 
-        // Pénalité case eau
         if (currentCell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
         {
             score -= 999f;

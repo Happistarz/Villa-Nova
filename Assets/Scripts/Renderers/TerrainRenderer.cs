@@ -27,6 +27,7 @@ public class TerrainRenderer : AbstractRenderer
 
     public override void BuildMesh()
     {
+
         if (!_mesh)
         {
             _mesh = new Mesh { name = "WorldGridMesh", indexFormat = IndexFormat.UInt32 };
