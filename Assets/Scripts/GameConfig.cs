@@ -157,21 +157,12 @@ public class GameConfig : ScriptableObject
     [Header("Near Cities")]
     public string[] cityNames;
 
-    // ─────────────────────────── API ───────────────────────────
-
-    /// <summary>Picks a random biome palette for the current generation.</summary>
     public BiomeColorConfig GetRandomPalette()
     {
         if (biomePalettes == null || biomePalettes.Length == 0)
             return BiomeColorConfig.Default;
 
         return biomePalettes[Random.Range(0, biomePalettes.Length)];
-    }
-
-    /// <summary>Legacy — returns just the plain color from a random palette.</summary>
-    public Color GetRandomBiomeColor()
-    {
-        return GetRandomPalette().plainColor;
     }
 
     public List<string> GetRandomCityNames(int _count)

@@ -22,6 +22,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         public float      Height;
         public POIData    POI;
         public bool       IsOccupied;
+        
+        public float UrbanityLevel;
+        public int   RoadTier;
 
         public bool Is(params CellType[] _cellTypes)
         {
@@ -90,15 +93,6 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         Cells[_pos.x, _pos.y] = _cell;
     }
 
-    public Cell[] GetTilesInRadius(Vector2Int _center, float _radius)
-    {
-        FillTileBuffer(_center, _radius);
-
-        var result = new Cell[TileBufferCount];
-        System.Array.Copy(_TileBuffer, result, TileBufferCount);
-        return result;
-    }
-
     public void FillTileBuffer(Vector2Int _center, float _radius)
     {
         TileBufferCount = 0;
@@ -143,25 +137,5 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         Cells[_pos.x, _pos.y] = cell;
     }
 
-    public Cell[] GetNeighbors(Vector2Int _pos)
-    {
-        var neighbors = new List<Cell>();
-
-        var directions = new[]
-        {
-            Vector2Int.up,
-            Vector2Int.down,
-            Vector2Int.left,
-            Vector2Int.right
-        };
-
-        foreach (var dir in directions)
-        {
-            var neighborPos = _pos + dir;
-            if (IsInBounds(neighborPos))
-                neighbors.Add(Cells[neighborPos.x, neighborPos.y]);
-        }
-
-        return neighbors.ToArray();
-    }
 }
+

@@ -913,6 +913,72 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 18.258713}
   m_SizeDelta: {x: 0, y: 36.5174}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &345511755
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 345511756}
+  - component: {fileID: 345511757}
+  m_Layer: 0
+  m_Name: ROAD GENERATOR
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &345511756
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345511755}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1327768807}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &345511757
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 345511755}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61f8bde2afcc406593e239cfa90c0764, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RoadGenerator
+  dontDestroyOnLoad: 0
+  roadSettings:
+    noiseStrength: 3
+    noiseScale: 0.05
+    noiseOffsetX: 0
+    noiseOffsetY: 0
+    waterPenalty: 15
+    elevationMultiplier: 2
+    occupiedPenalty: 50
+    roadBonus: 0.8
+    roadProximityBonus: 0.3
+    roadProximityRadius: 3
+    bridgePenalty: 8
+    maxBridgeLength: 10
+    roadWidth: 1
+    allowOutOfBounds: 1
+  agentConfigs:
+  - {fileID: 11400000, guid: 90368cba267448b4e8b125eb943729d8, type: 2}
+  - {fileID: 11400000, guid: 0d1926b338647bc4a95431fc0a1c5b8d, type: 2}
+  - {fileID: 11400000, guid: cb6393e3d506d8541a24f9f3e1e17bcc, type: 2}
+  - {fileID: 11400000, guid: 09a113fff8a61204d841f3ba1b5cb421, type: 2}
+  urbanityConfig: {fileID: 11400000, guid: 68240bb498f45764b8124d051f4f016f, type: 2}
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -1646,7 +1712,8 @@ Transform:
   m_LocalPosition: {x: -140.67804, y: 220.14685, z: -33.3927}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 345511756}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1327768808
@@ -2160,10 +2227,10 @@ SceneRoots:
   - {fileID: 1173853755}
   - {fileID: 1702916884}
   - {fileID: 2021309492}
+  - {fileID: 229069425}
   - {fileID: 1060733103}
   - {fileID: 1327768807}
   - {fileID: 1101395098}
   - {fileID: 1463271908}
-  - {fileID: 229069425}
   - {fileID: 1232161208}
   - {fileID: 35822807}

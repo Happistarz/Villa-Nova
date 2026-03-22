@@ -15,8 +15,8 @@ public class POIData : ScriptableObject
     {
         NEAR_CITY,
         NEAR_WATER,
-        NEAR_ROAD,
         POI_DISTANCE,
+        NEAR_ROAD,
     }
 
     [System.Serializable]
@@ -34,4 +34,9 @@ public class POIData : ScriptableObject
     public POIRuleData[] Rules;
 
     public BuildingData BuildingData;
+
+    public override string ToString()
+    {
+        return $"{Type} (Rules: {Rules.Length}), Building: {BuildingData.name}, SpawnRange: {SpawnRange}, DebugColor: {DebugColor}";
+    }
 }

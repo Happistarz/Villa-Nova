@@ -189,7 +189,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                     BuildingAreaHelper.MarkCellAsOccupied(buildingData, bestPos, bestRotation, _grid);
 
                 var cell = _grid.Cells[bestPos.x, bestPos.y];
-                cell.POI = poiData;
+                cell.POI  = poiData;
                 _grid.UpdateCell(bestPos, cell);
                 _placedPOIPositions.Add(bestPos);
             }

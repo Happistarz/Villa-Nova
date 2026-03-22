@@ -49,16 +49,18 @@ public class TerrainRenderer : AbstractRenderer
             {
                 var cell = WorldGrid.Instance.Cells[x, y];
 
-                var color = cell.Type switch
-                {
-                    WorldGrid.CellType.PLAIN  => _colorConfig.plainColor,
-                    WorldGrid.CellType.WATER  => _colorConfig.waterColor,
-                    WorldGrid.CellType.RIVER  => _colorConfig.riverColor,
-                    WorldGrid.CellType.CITY   => _colorConfig.cityColor,
-                    WorldGrid.CellType.ROAD   => _colorConfig.roadColor,
-                    WorldGrid.CellType.BRIDGE => _colorConfig.bridgeColor,
-                    _                         => Color.magenta
-                };
+                var color = cell.POI
+                    ? cell.POI.DebugColor
+                    : cell.Type switch
+                    {
+                        WorldGrid.CellType.PLAIN  => _colorConfig.plainColor,
+                        WorldGrid.CellType.WATER  => _colorConfig.waterColor,
+                        WorldGrid.CellType.RIVER  => _colorConfig.riverColor,
+                        WorldGrid.CellType.CITY   => _colorConfig.cityColor,
+                        WorldGrid.CellType.ROAD   => _colorConfig.roadColor,
+                        WorldGrid.CellType.BRIDGE => _colorConfig.bridgeColor,
+                        _                         => Color.magenta
+                    };
 
                 var cellHeight = cell.Height;
 

@@ -36,4 +36,3 @@ public class GenerationJobManager : MonoSingleton<GenerationJobManager>
             disposable?.Dispose();
     }
 }
-
