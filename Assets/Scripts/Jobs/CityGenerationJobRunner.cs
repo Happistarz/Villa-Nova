@@ -108,14 +108,20 @@ public static class CityGenerationJobRunner
         for (var i = 0; i < _existingPois.Count; i++)
             existingPois[i] = new int2(_existingPois[i].x, _existingPois[i].y);
 
+        var buildingData  = _poiData.BuildingData;
+        var buildingSize  = buildingData && buildingData.buildingArea is { Count: > 0 } ? buildingData.buildingSize : 1;
+        var flatTolerance = buildingData ? buildingData.flatTolerance : 0f;
+
         var job = new PoiScoreJob
         {
-            GridCells    = gridData,
-            Rules        = rules.AsArray(),
-            ExistingPois = existingPois,
-            CityCenter   = new int2(_cityCenter.x, _cityCenter.y),
-            GridSize     = _grid.size,
-            Results      = scores
+            GridCells     = gridData,
+            Rules         = rules.AsArray(),
+            ExistingPois  = existingPois,
+            CityCenter    = new int2(_cityCenter.x, _cityCenter.y),
+            GridSize      = _grid.size,
+            BuildingSize  = buildingSize,
+            FlatTolerance = flatTolerance,
+            Results       = scores
         };
 
         yield return GenerationJobManager.Instance.StartCoroutine(

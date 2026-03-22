@@ -123,6 +123,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                         if (rotation < 0) continue;
                     }
 
+                    var heightStep = MapGenerator.Instance.heightStep;
+                    BuildingAreaHelper.FlattenArea(houseData, point, rotation, _grid, heightStep);
                     BuildingAreaHelper.MarkCellAsOccupied(houseData, point, rotation, _grid);
                 }
 
@@ -185,12 +187,21 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
                 if (!found) continue;
 
-                if (buildingData && buildingData.buildingArea is { Count: > 0 })
-                    BuildingAreaHelper.MarkCellAsOccupied(buildingData, bestPos, bestRotation, _grid);
+                var heightStep = MapGenerator.Instance.heightStep;
 
-                var cell = _grid.Cells[bestPos.x, bestPos.y];
-                cell.POI  = poiData;
-                _grid.UpdateCell(bestPos, cell);
+                if (buildingData && buildingData.buildingArea is { Count: > 0 })
+                {
+                    BuildingAreaHelper.FlattenArea(buildingData, bestPos, bestRotation, _grid, heightStep);
+                    BuildingAreaHelper.MarkAreaAsPoi(buildingData, bestPos, bestRotation, _grid, poiData);
+                }
+                else
+                {
+                    var cell   = _grid.Cells[bestPos.x, bestPos.y];
+                    cell.POI        = poiData;
+                    cell.IsOccupied = true;
+                    _grid.UpdateCell(bestPos, cell);
+                }
+
                 _placedPOIPositions.Add(bestPos);
             }
         }

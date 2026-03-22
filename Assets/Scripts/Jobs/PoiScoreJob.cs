@@ -1,3 +1,4 @@
+using System;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -18,6 +19,8 @@ public struct PoiScoreJob : IJobParallelFor
     [ReadOnly] public NativeArray<int2>                         ExistingPois;
     [ReadOnly] public int2                                      CityCenter;
     [ReadOnly] public int                                       GridSize;
+    [ReadOnly] public int                                       BuildingSize;
+    [ReadOnly] public float                                     FlatTolerance;
 
     public NativeArray<float> Results;
 
@@ -30,7 +33,8 @@ public struct PoiScoreJob : IJobParallelFor
 
         if (cell.IsOccupied || cell.HasPoi
                             || cell.Type == WorldGrid.CellType.WATER
-                            || cell.Type == WorldGrid.CellType.RIVER)
+                            || cell.Type == WorldGrid.CellType.RIVER || BuildingSize > 1
+                            && !CanFitInArea(x, y, cell.Height))
         {
             Results[_index] = float.MinValue;
             return;
@@ -38,9 +42,8 @@ public struct PoiScoreJob : IJobParallelFor
 
         var score = 0f;
 
-        for (var i = 0; i < Rules.Length; i++)
+        foreach (var rule in Rules)
         {
-            var rule      = Rules[i];
             var ruleType  = (POIData.POIRule)rule.RuleTypeInt;
             var ruleScore = 0f;
             var valid     = true;
@@ -72,6 +75,8 @@ public struct PoiScoreJob : IJobParallelFor
                     else
                         ruleScore = 1f;
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             if (!valid)
@@ -83,8 +88,8 @@ public struct PoiScoreJob : IJobParallelFor
             score += ruleScore * rule.Weight;
         }
 
-        score -= math.distance(pos, new float2(CityCenter.x, CityCenter.y)) * 0.1f;
-        Results[_index] = score;
+        score           -= math.distance(pos, new float2(CityCenter.x, CityCenter.y)) * 0.1f;
+        Results[_index] =  score;
     }
 
     private float GetProximityScore(int _cx, int _cy, WorldGrid.CellType _type, float _radius)
@@ -121,11 +126,40 @@ public struct PoiScoreJob : IJobParallelFor
     {
         var minDistSq = _minDistance * _minDistance;
 
-        for (var i = 0; i < ExistingPois.Length; i++)
+        foreach (var p in ExistingPois)
         {
-            var p = ExistingPois[i];
             if (math.distancesq(_pos, new float2(p.x, p.y)) < minDistSq)
                 return false;
+        }
+
+        return true;
+    }
+
+    private bool CanFitInArea(int _cx, int _cy, float _originHeight)
+    {
+        var half = BuildingSize / 2;
+
+        for (var dx = -half; dx < BuildingSize - half; dx++)
+        {
+            for (var dy = -half; dy < BuildingSize - half; dy++)
+            {
+                var nx = _cx + dx;
+                var ny = _cy + dy;
+
+                if (nx < 0 || nx >= GridSize || ny < 0 || ny >= GridSize)
+                    return false;
+
+                var neighbor = GridCells[ny * GridSize + nx];
+
+                if (neighbor.IsOccupied || neighbor.HasPoi)
+                    return false;
+
+                if (neighbor.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
+                    return false;
+
+                if (FlatTolerance > 0 && math.abs(neighbor.Height - _originHeight) > FlatTolerance)
+                    return false;
+            }
         }
 
         return true;

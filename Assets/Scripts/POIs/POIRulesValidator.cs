@@ -15,6 +15,13 @@ public static class POIRulesValidator
         if (cell.Value.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
             return false;
 
+        var buildingData = _poiData.BuildingData;
+        if (buildingData && buildingData.buildingArea is { Count: > 0 })
+        {
+            var rotation = BuildingAreaHelper.FindBestRotation(buildingData, _position, _grid);
+            if (rotation < 0) return false;
+        }
+
         foreach (var rule in _poiData.Rules)
         {
             switch (rule.rule)

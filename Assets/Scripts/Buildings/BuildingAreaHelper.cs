@@ -54,6 +54,44 @@ public static class BuildingAreaHelper
         }
     }
 
+    public static void MarkAreaAsPoi(BuildingData _data, Vector2Int _position, int _rotation,
+                                          WorldGrid _grid, POIData _poiData)
+    {
+        foreach (var offset in _data.buildingArea)
+        {
+            var rotatedOffset = RotateOffset(offset, _rotation);
+            var cellPosition  = _position + rotatedOffset;
+            if (!_grid.IsInBounds(cellPosition)) continue;
+
+            var cell       = _grid.Cells[cellPosition.x, cellPosition.y];
+            cell.POI        = _poiData;
+            cell.IsOccupied = true;
+            _grid.Cells[cellPosition.x, cellPosition.y] = cell;
+        }
+    }
+
+    public static void FlattenArea(BuildingData _data, Vector2Int _position, int _rotation,
+                                        WorldGrid _grid, float _heightStep)
+    {
+        var originCell = _grid.GetCell(_position);
+        if (originCell == null) return;
+
+        var targetHeight = _heightStep > 0
+            ? MathHelper.Quantize(originCell.Value.Height, _heightStep)
+            : originCell.Value.Height;
+
+        foreach (var offset in _data.buildingArea)
+        {
+            var rotatedOffset = RotateOffset(offset, _rotation);
+            var cellPosition  = _position + rotatedOffset;
+            if (!_grid.IsInBounds(cellPosition)) continue;
+
+            var cell   = _grid.Cells[cellPosition.x, cellPosition.y];
+            cell.Height = targetHeight;
+            _grid.Cells[cellPosition.x, cellPosition.y] = cell;
+        }
+    }
+
     public static int FindBestRotation(BuildingData _data, Vector2Int _position, WorldGrid _grid)
     {
         var bestRotation = -1;
