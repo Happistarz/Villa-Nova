@@ -1,0 +1,149 @@
+using Core;
+using UnityEngine;
+
+public class CameraCloseState : State<CameraController>
+{
+    private float _orbitRadius, _targetOrbitRadius, _orbitRadiusVelocity;
+    private float _orbitHeight, _targetOrbitHeight, _orbitHeightVelocity;
+    private float _yaw,         _targetYaw,         _yawVelocity;
+    private float _pitch;
+
+    private float      _transitionTimer;
+    private Vector3    _transitionStartPos;
+    private Quaternion _transitionStartRot;
+    private bool       _transitioning;
+
+    private Vector3 _currentPivot;
+    private Vector3 _pivotVelocity;
+    private bool    _initialized;
+
+    public CameraCloseState(CameraController _context) : base(_context)
+    {
+    }
+
+    public override void Enter()
+    {
+        var cam = Context.camera;
+        var cfg = Context.closeConfig;
+
+        _transitionStartPos = cam.transform.position;
+        _transitionStartRot = cam.transform.rotation;
+        _transitionTimer    = 0f;
+        _transitioning      = true;
+
+        if (!_initialized)
+        {
+            _currentPivot = Context.MapCenter;
+
+            var startRadius = (cfg.minRadius + cfg.maxRadius) * 0.5f;
+
+            _yaw       = cam.transform.eulerAngles.y;
+            _targetYaw = _yaw;
+
+            _orbitRadius       = startRadius;
+            _targetOrbitRadius = startRadius;
+
+            _orbitHeight       = (cam.transform.position - _currentPivot).y;
+            _targetOrbitHeight = _orbitHeight;
+
+            _pitch = Mathf.Lerp(cfg.pitchBounds.x, cfg.pitchBounds.y, 0.5f);
+
+            _initialized = true;
+        }
+
+        _pivotVelocity       = Vector3.zero;
+        _yawVelocity         = 0f;
+        _orbitRadiusVelocity = 0f;
+        _orbitHeightVelocity = 0f;
+
+        cam.orthographic = cfg.orthographic;
+        if (cfg.orthographic)
+            cam.orthographicSize = cfg.orthoSize;
+    }
+
+    public override void Exit()
+    {
+        Context.camera.orthographic = false;
+    }
+
+    public override void Update()
+    {
+        if (_transitioning)
+        {
+            _transitionTimer += Time.deltaTime / Context.transitionDuration;
+            if (_transitionTimer >= 1f)
+                _transitioning = false;
+        }
+
+        _currentPivot = Vector3.SmoothDamp(_currentPivot, Context.CityCenter, ref _pivotVelocity, Context.transitionDuration);
+
+        HandleZoom();
+        HandleRotation();
+        ApplyTransform();
+    }
+
+    private void HandleZoom()
+    {
+        var scroll = Context.ReadScroll();
+        if (Mathf.Approximately(scroll, 0f)) return;
+
+        var cfg = Context.closeConfig;
+        _targetOrbitRadius += scroll / 120f * cfg.zoomSpeed;
+        _targetOrbitRadius =  Mathf.Clamp(_targetOrbitRadius, cfg.minRadius, cfg.maxRadius);
+
+        if (cfg.orthographic)
+        {
+            var zoomT = Mathf.InverseLerp(cfg.minRadius, cfg.maxRadius, _targetOrbitRadius);
+            Context.camera.orthographicSize = Mathf.Lerp(cfg.orthoSize * 0.5f, cfg.orthoSize, zoomT);
+        }
+    }
+
+    private void HandleRotation()
+    {
+        var cfg = Context.closeConfig;
+
+        if (Context.IsRotateHeld())
+        {
+            var delta = Context.ReadRotateDelta();
+            _targetYaw += delta.x * cfg.rotateSpeed;
+        }
+        else if (cfg.autoRotateSpeed > 0f)
+        {
+            _targetYaw += cfg.autoRotateSpeed * Time.deltaTime;
+        }
+    }
+
+    private void ApplyTransform()
+    {
+        var cfg = Context.closeConfig;
+        var st  = Context.smoothTime;
+
+        _yaw         = Mathf.SmoothDampAngle(_yaw, _targetYaw, ref _yawVelocity, st);
+        _orbitRadius = Mathf.SmoothDamp(_orbitRadius, _targetOrbitRadius, ref _orbitRadiusVelocity, st);
+        _orbitHeight = Mathf.SmoothDamp(_orbitHeight, _targetOrbitHeight, ref _orbitHeightVelocity, st);
+
+        if (Context.zoomLevel)
+            Context.zoomLevel.value = Mathf.InverseLerp(cfg.minRadius, cfg.maxRadius, _orbitRadius);
+
+        var zoomT = Mathf.Clamp01((_orbitRadius - cfg.minRadius) / (cfg.maxRadius - cfg.minRadius));
+        _pitch = Mathf.Lerp(cfg.pitchBounds.x, cfg.pitchBounds.y, zoomT);
+
+        var rotation = Quaternion.Euler(_pitch, _yaw, 0f);
+        var flatRot  = Quaternion.Euler(0f,     _yaw, 0f);
+
+        var targetPos = _currentPivot + flatRot * new Vector3(0f, 0f, -_orbitRadius) + Vector3.up * _orbitHeight;
+        var targetRot = rotation;
+
+        if (_transitioning)
+        {
+            var t = Mathf.SmoothStep(0f, 1f, _transitionTimer);
+            Context.camera.transform.position = Vector3.Lerp(_transitionStartPos, targetPos, t);
+            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, targetRot, t);
+        }
+        else
+        {
+            Context.camera.transform.position = targetPos;
+            Context.camera.transform.rotation = targetRot;
+        }
+    }
+}

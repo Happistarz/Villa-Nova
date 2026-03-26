@@ -30,6 +30,12 @@ public abstract class AbstractRenderer : MonoBehaviour
     {
         if (toggleAction?.action == null) return;
         if (!toggleAction.action.WasPressedThisFrame()) return;
+
+        ToggleVisibility();
+    }
+
+    public void ToggleVisibility()
+    {
         if (GenerationPipeline.Instance.IsAnyGenerating) return;
 
         renderEnabled.Value  = !renderEnabled.Value;

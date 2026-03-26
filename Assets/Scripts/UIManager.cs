@@ -13,6 +13,16 @@ public class UIManager : MonoBehaviour
     public Button generateButton;
     public Text   generateButtonText;
 
+    [Header("Renderer Toggles")]
+    public AbstractRenderer terrainRenderer;
+    public AbstractRenderer debugRenderer;
+
+    [Header("Camera Mode")]
+    public Button          cameraMainButton;
+    public Button          cameraCloseButton;
+    public Button          cameraFreeButton;
+    public CameraController cameraController;
+
     [Header("Variables")]
     public BoolVariable terrainEnabled;
 
@@ -25,6 +35,8 @@ public class UIManager : MonoBehaviour
     public float maxZoomLevel        = 100f;
     public Color renderNormalColor   = Color.white;
     public Color renderDisabledColor = new(0.5f, 0.5f, 0.5f, 0.5f);
+    public Color cameraActiveColor   = Color.white;
+    public Color cameraInactiveColor = new(0.5f, 0.5f, 0.5f, 0.5f);
 
     [Header("Generate Button")]
     public string generateDefaultText = "GENERATE";
@@ -39,8 +51,8 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
-        OnTerrainRenderToggle();
-        OnDebugRenderToggle();
+        RefreshRendererIcon(terrainRenderImage, terrainEnabled.Value);
+        RefreshRendererIcon(debugRenderImage, debugEnabled.Value);
         OnZoomLevelChanged();
 
         if (generateButtonText)
@@ -51,6 +63,21 @@ public class UIManager : MonoBehaviour
 
         MapGenerator.Instance.OnGenerationComplete     += OnGenerationComplete;
         GenerationPipeline.Instance.OnPipelineComplete += OnPipelineComplete;
+
+        if (cameraMainButton)
+            cameraMainButton.onClick.AddListener(() => SetCameraMode(CameraController.CameraStateType.MAIN));
+        if (cameraCloseButton)
+            cameraCloseButton.onClick.AddListener(() => SetCameraMode(CameraController.CameraStateType.CLOSE));
+        if (cameraFreeButton)
+            cameraFreeButton.onClick.AddListener(() => SetCameraMode(CameraController.CameraStateType.FREE));
+
+        if (terrainEnabled) terrainEnabled.OnChanged += OnTerrainEnabledChanged;
+        if (debugEnabled)   debugEnabled.OnChanged   += OnDebugEnabledChanged;
+
+        if (!cameraController) return;
+        
+        cameraController.OnModeChanged += RefreshCameraButtons;
+        RefreshCameraButtons(cameraController.ActiveMode);
     }
 
     private void OnGeneratePerformed(InputAction.CallbackContext _)
@@ -67,24 +94,73 @@ public class UIManager : MonoBehaviour
 
         if (GenerationPipeline.HasInstance)
             GenerationPipeline.Instance.OnPipelineComplete -= OnPipelineComplete;
+
+        if (terrainEnabled) terrainEnabled.OnChanged -= OnTerrainEnabledChanged;
+        if (debugEnabled)   debugEnabled.OnChanged   -= OnDebugEnabledChanged;
+
+        if (cameraController) cameraController.OnModeChanged -= RefreshCameraButtons;
+    }
+
+    private void OnTerrainEnabledChanged(bool _enabled) => RefreshRendererIcon(terrainRenderImage, _enabled);
+    private void OnDebugEnabledChanged(bool _enabled)   => RefreshRendererIcon(debugRenderImage, _enabled);
+
+    #region Renderer
+
+    public void OnTerrainToggleClicked()
+    {
+        if (terrainRenderer) terrainRenderer.ToggleVisibility();
+    }
+
+    public void OnDebugToggleClicked()
+    {
+        if (debugRenderer) debugRenderer.ToggleVisibility();
     }
 
     public void OnTerrainRenderToggle()
     {
-        SetIconAlpha(terrainRenderImage, terrainEnabled.Value);
+        RefreshRendererIcon(terrainRenderImage, terrainEnabled.Value);
     }
 
     public void OnDebugRenderToggle()
     {
-        SetIconAlpha(debugRenderImage, debugEnabled.Value);
+        RefreshRendererIcon(debugRenderImage, debugEnabled.Value);
     }
 
-    private void SetIconAlpha(Image _image, bool _enabled)
+    private void RefreshRendererIcon(Image _image, bool _enabled)
     {
         if (!_image) return;
-
         _image.color = _enabled ? renderNormalColor : renderDisabledColor;
     }
+
+    #endregion
+
+    #region Camera Mode
+
+    public void SetCameraMode(CameraController.CameraStateType _mode)
+    {
+        if (!cameraController) return;
+        cameraController.SetMode(_mode);
+    }
+
+    private void RefreshCameraButtons(CameraController.CameraStateType _active)
+    {
+        SetButtonColor(cameraMainButton,  _active == CameraController.CameraStateType.MAIN);
+        SetButtonColor(cameraCloseButton, _active == CameraController.CameraStateType.CLOSE);
+        SetButtonColor(cameraFreeButton,  _active == CameraController.CameraStateType.FREE);
+    }
+
+    private void SetButtonColor(Button _button, bool _active)
+    {
+        if (!_button) return;
+
+        var colors = _button.colors;
+        colors.normalColor = _active ? cameraActiveColor : cameraInactiveColor;
+        _button.colors = colors;
+    }
+
+    #endregion
+
+    #region Zoom
 
     private float _lastZoomValue = -1f;
 
@@ -99,6 +175,10 @@ public class UIManager : MonoBehaviour
         var rectTransform = zoomImage.rectTransform;
         rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, remappedZoom);
     }
+
+    #endregion
+
+    #region Generation
 
     private void Update()
     {
@@ -145,4 +225,6 @@ public class UIManager : MonoBehaviour
 
         generateButtonText.text = generatingBaseText + new string('.', _ellipsisDots);
     }
+
+    #endregion
 }

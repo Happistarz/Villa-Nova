@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Core.Variables
@@ -8,17 +9,24 @@ namespace Core.Variables
         [SerializeField] private bool value;
         [SerializeField] private bool defaultValue;
 
+        public event Action<bool> OnChanged;
+
         public bool Value
         {
             get => value;
-            set => this.value = value;
+            set
+            {
+                if (this.value == value) return;
+                this.value = value;
+                OnChanged?.Invoke(this.value);
+            }
         }
 
-        public void SetValue(bool newValue) => Value = newValue;
-        public void SetValue(BoolVariable variable) => Value = variable.Value;
-        
+        public void SetValue(bool _newValue) => Value = _newValue;
+        public void SetValue(BoolVariable _variable) => Value = _variable.Value;
+
         public void Toggle() => Value = !Value;
-        
+
         public void ResetToDefault() => Value = defaultValue;
     }
 }

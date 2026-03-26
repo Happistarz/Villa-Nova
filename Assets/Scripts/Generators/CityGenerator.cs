@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,7 +10,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 {
     public string Name => "City";
 
-    public float settlerSearchRadius = 5f;
+    public float     settlerSearchRadius = 5f;
+    public Transform cityCenterMarker;
 
     public CityRenderer  cityRenderer;
     public DebugRenderer debugRenderer;
@@ -75,7 +77,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
             yield break;
         }
 
-        CityCenter = bestHomePoint;
+        CityCenter                = bestHomePoint;
+        cityCenterMarker.position = bestHomePoint.ToVector3();
 
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;

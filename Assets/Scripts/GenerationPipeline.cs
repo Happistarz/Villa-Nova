@@ -38,9 +38,7 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
         var grid = WorldGrid.Instance;
 
         var mapGen = MapGenerator.Instance;
-        Debug.Log($"[Pipeline] Starting: {mapGen.Name}");
         yield return StartCoroutine(mapGen.Generate(grid));
-        Debug.Log($"[Pipeline] Completed: {mapGen.Name}");
 
         if (revealAnimator && revealAnimator.isActiveAndEnabled && revealAnimator.IsRevealing)
         {
@@ -57,9 +55,7 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
         for (var i = 1; i < _generators.Count; i++)
         {
             var generator = _generators[i];
-            Debug.Log($"[Pipeline] Starting: {generator.Name}");
             yield return StartCoroutine(generator.Generate(grid));
-            Debug.Log($"[Pipeline] Completed: {generator.Name}");
         }
 
         MapGenerator.IsGenerating = false;

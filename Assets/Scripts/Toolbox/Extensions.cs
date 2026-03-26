@@ -17,7 +17,7 @@ namespace Core.Extensions
                 Object.Destroy(child.gameObject);
             }
         }
-        
+
         /// <summary>
         /// Gets the component or adds it if it doesn't exist.
         /// </summary>
@@ -28,14 +28,15 @@ namespace Core.Extensions
             {
                 component = gameObject.AddComponent<T>();
             }
+
             return component;
         }
 
         public static void ResetTransformation(this Transform trans)
         {
-            trans.position = Vector3.zero;
+            trans.position      = Vector3.zero;
             trans.localRotation = Quaternion.identity;
-            trans.localScale = new Vector3(1, 1, 1);
+            trans.localScale    = new Vector3(1, 1, 1);
         }
 
         #endregion
@@ -47,7 +48,8 @@ namespace Core.Extensions
         /// </summary>
         public static T RandomItem<T>(this IList<T> list)
         {
-            if (list.Count == 0) throw new System.IndexOutOfRangeException("Cannot select a random item from an empty list");
+            if (list.Count == 0)
+                throw new System.IndexOutOfRangeException("Cannot select a random item from an empty list");
             return list[Random.Range(0, list.Count)];
         }
 
@@ -69,14 +71,15 @@ namespace Core.Extensions
 
         #region VECTOR MATH
 
-        public static Vector2 ToVector2(this Vector3 v) => new(v.x, v.y);
-        
+        public static Vector2 ToVector2(this Vector3    v) => new(v.x, v.y);
+        public static Vector3 ToVector3(this Vector2Int v) => new(v.x, 0f, v.y);
+
         public static Vector3 WithX(this Vector3 v, float x) => new(x, v.y, v.z);
-        public static Vector3 WithY(this Vector3 v, float y) => new(v.x, y,   v.z);
+        public static Vector3 WithY(this Vector3 v, float y) => new(v.x, y, v.z);
         public static Vector3 WithZ(this Vector3 v, float z) => new(v.x, v.y, z);
 
         public static Vector3 Flat(this Vector3 v) => new(v.x, 0, v.z);
-        
+
         public static Quaternion WithXRotation(this Quaternion q, float x) => Quaternion.Euler(q.eulerAngles.WithX(x));
         public static Quaternion WithYRotation(this Quaternion q, float y) => Quaternion.Euler(q.eulerAngles.WithY(y));
         public static Quaternion WithZRotation(this Quaternion q, float z) => Quaternion.Euler(q.eulerAngles.WithZ(z));
@@ -84,4 +87,3 @@ namespace Core.Extensions
         #endregion
     }
 }
-
