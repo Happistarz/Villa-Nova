@@ -25,8 +25,8 @@ public class NearbyCityPool : MonoBehaviour
 
     public void Release(NearbyCityDisplay _instance)
     {
-        _active.Remove(_instance);
         _pool.Release(_instance);
+        _active.Remove(_instance);
     }
 
     public void ReleaseAll()

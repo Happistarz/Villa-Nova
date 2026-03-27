@@ -3,6 +3,9 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Color = UnityEngine.Color;
 
+/// <summary>
+/// Builds the main terrain mesh with per-cell height, biome colors and vertical wall faces.
+/// </summary>
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class TerrainRenderer : AbstractRenderer
 {
@@ -50,7 +53,7 @@ public class TerrainRenderer : AbstractRenderer
                 var cell = WorldGrid.Instance.Cells[x, y];
 
                 var color = cell.POI
-                    ? cell.POI.DebugColor
+                    ? cell.POI.debugColor
                     : cell.Type switch
                     {
                         WorldGrid.CellType.PLAIN  => _colorConfig.plainColor,

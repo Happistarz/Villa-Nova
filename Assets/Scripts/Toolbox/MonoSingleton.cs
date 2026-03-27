@@ -2,6 +2,9 @@ using UnityEngine;
 
 namespace Core.Patterns
 {
+    /// <summary>
+    /// MonoBehaviour singleton base class. Auto-creates an instance if none exists.
+    /// </summary>
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
         private static T _instance;

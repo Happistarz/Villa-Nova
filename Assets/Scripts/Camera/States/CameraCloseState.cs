@@ -1,6 +1,9 @@
 using Core;
 using UnityEngine;
 
+/// <summary>
+/// Close camera state. Orbits around the city center in orthographic mode with smooth pivot lerp.
+/// </summary>
 public class CameraCloseState : State<CameraController>
 {
     private float _orbitRadius, _targetOrbitRadius, _orbitRadiusVelocity;

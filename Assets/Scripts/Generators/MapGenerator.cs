@@ -93,7 +93,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
         var elevationOffsetX = Random.Range(0f, 1000f);
         var elevationOffsetY = Random.Range(0f, 1000f);
 
-        // For each cell, sample noise and determine height
         for (var x = 0; x < size; x++)
         {
             for (var y = 0; y < size; y++)
@@ -104,7 +103,7 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
                 _grid.Cells[x, y] = new WorldGrid.Cell
                 {
-                    Type     = WorldGrid.CellType.PLAIN, // Default type
+                    Type     = WorldGrid.CellType.PLAIN,
                     Position = new Vector2Int(x, y),
                     Height   = height
                 };
@@ -131,7 +130,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
             var noiseOffsetX = Random.Range(0f, 1000f);
             var noiseOffsetY = Random.Range(0f, 1000f);
 
-            // Along the chosen edge segment, determine water depth with noise and edge fading
             for (var along = 0; along < length; along++)
             {
                 var t          = (float)along / length;
@@ -143,7 +141,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
                 var localDepth = Mathf.RoundToInt(depth * depthNoise * edgeFade);
                 if (localDepth <= 0) continue;
 
-                // For each point along the edge segment, mark cells as water based on the local depth
                 for (var d = 0; d < localDepth; d++)
                 {
                     int x, y;
@@ -188,7 +185,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
         for (var i = 0; i < lakeCount; i++)
         {
-            // Randomly determine the center and radii of the lake, ensuring it fits within the map boundaries
             var cx = Random.Range(margin,        size          - margin);
             var cy = Random.Range(margin,        size          - margin);
             var rx = Random.Range(lakeMinRadius, lakeMaxRadius + 1);
@@ -206,7 +202,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
                 var angle     = Mathf.Atan2(dy, dx);
                 var edgeNoise = MathHelper.FBm(angle * 3f, noiseOffset, 2);
 
-                // Cells closer to the edge of the ellipse have a higher chance to be skipped
                 if (normalizedDist > 0.6f + edgeNoise * 0.4f) continue;
                 if (!_grid.IsInBounds(p)) continue;
 
@@ -222,7 +217,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
         {
             if (_count >= _max) return;
 
-            // Avoid placing river cells on top of water or other rivers, and ensure we stay within bounds
             if (!_grid.IsInBounds(p) || _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.RIVER) ||
                 _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.WATER)) continue;
 
@@ -251,7 +245,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
         Vector2Int startPos, endPos;
 
-        // Randomly select start and end points on the edges of the map, ensuring they are far enough apart to create a meaningful river
         var safetyRetries = 0;
         do
         {

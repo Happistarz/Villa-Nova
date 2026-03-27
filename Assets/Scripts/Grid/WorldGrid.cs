@@ -12,9 +12,12 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         WATER,
         RIVER,
         ROAD,
-        BRIDGE,
+        BRIDGE
     }
 
+    /// <summary>
+    /// Single cell on the grid. Stores terrain type, height, POI and road info.
+    /// </summary>
     public struct Cell
     {
         public CellType   Type;
@@ -23,9 +26,13 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         public POIData    POI;
         public bool       IsOccupied;
         
+        // Values between 0 and 1 indicating how urbanized the cell is
         public float UrbanityLevel;
+        
+        // For road cells, indicates the tier of the road (e.g., HIGHWAY, MAIN, ALLEY)
         public int   RoadTier;
 
+        /// Returns true if the cell type matches any of the provided types.
         public bool Is(params CellType[] _cellTypes)
         {
             foreach (var type in _cellTypes)
@@ -43,6 +50,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     private Vector3 CenterPosition => new(size / 2f, 0, size  / 2f);
     private Vector3 BedrockScale   => new(size / 10f, 1, size / 10f);
 
+    /// <summary>
+    /// Data for a city visible on the map border.
+    /// </summary>
     public class NearCityData
     {
         public string     Name;
@@ -54,8 +64,10 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 
     public Cell[,] Cells;
 
+    // Shared buffer for storing cells within a radius during generation and validation.
     private static Cell[] _TileBuffer = new Cell[256];
 
+    /// Number of valid cells currently in the tile buffer after calling FillTileBuffer.
     public static int    TileBufferCount { get; private set; }
     public static Cell[] TileBuffer      => _TileBuffer;
 
@@ -93,6 +105,9 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         Cells[_pos.x, _pos.y] = _cell;
     }
 
+    /// <summary>
+    /// Fills the shared tile buffer with cells inside the given radius.
+    /// </summary>
     public void FillTileBuffer(Vector2Int _center, float _radius)
     {
         TileBufferCount = 0;

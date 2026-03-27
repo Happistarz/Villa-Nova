@@ -2,6 +2,9 @@ using Core;
 using Core.Extensions;
 using UnityEngine;
 
+/// <summary>
+/// Main camera state. Orbits around the map center with auto-rotation and scroll zoom.
+/// </summary>
 public class CameraMainState : State<CameraController>
 {
     private float _orbitRadius, _targetOrbitRadius, _orbitRadiusVelocity;

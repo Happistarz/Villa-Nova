@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Core
 {
+    /// <summary>
+    /// Simple GameObject pool with pre-instantiation.
+    /// </summary>
     public class ObjectPool : MonoBehaviour
     {
         [SerializeField] private GameObject prefab;

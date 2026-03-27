@@ -4,6 +4,10 @@ using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// FSM-based camera controller with three modes: Main (orbit overview), Close (city focus) and Free (FPS).
+/// Handles input routing, mode transitions and keyboard shortcuts.
+/// </summary>
 public class CameraController : MonoBehaviour
 {
     public enum CameraStateType

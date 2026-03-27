@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Serialization;
 
 [CreateAssetMenu(fileName = "POI Data", menuName = "POI Data", order = 0)]
 public class POIData : ScriptableObject
@@ -8,7 +9,7 @@ public class POIData : ScriptableObject
         CHURCH,
         MARKET,
         TOWN_HALL,
-        WELL,
+        WELL
     }
 
     public enum POIRule
@@ -16,7 +17,7 @@ public class POIData : ScriptableObject
         NEAR_CITY,
         NEAR_WATER,
         POI_DISTANCE,
-        NEAR_ROAD,
+        NEAR_ROAD
     }
 
     [System.Serializable]
@@ -27,16 +28,16 @@ public class POIData : ScriptableObject
         public float   scoreWeight;
     }
 
-    public POIType    Type;
-    public Color      DebugColor = Color.magenta;
-    public Vector2Int SpawnRange = new(1,1);
+    [FormerlySerializedAs("Type")]       public POIType    type;
+    [FormerlySerializedAs("DebugColor")] public Color      debugColor = Color.magenta;
+    [FormerlySerializedAs("SpawnRange")] public Vector2Int spawnRange = new(1,1);
 
-    public POIRuleData[] Rules;
+    [FormerlySerializedAs("Rules")] public POIRuleData[] rules;
 
-    public BuildingData BuildingData;
+    [FormerlySerializedAs("BuildingData")] public BuildingData buildingData;
 
     public override string ToString()
     {
-        return $"{Type} (Rules: {Rules.Length}), Building: {BuildingData.name}, SpawnRange: {SpawnRange}, DebugColor: {DebugColor}";
+        return $"{type} (Rules: {rules.Length}), Building: {buildingData.name}, SpawnRange: {spawnRange}, DebugColor: {debugColor}";
     }
 }

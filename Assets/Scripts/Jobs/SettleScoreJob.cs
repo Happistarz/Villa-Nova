@@ -21,10 +21,10 @@ public struct SettleScoreJob : IJobParallelFor
 
         var score = 0f;
 
-        var r = (int)math.ceil(SearchRadius);
-        for (var i = -r; i <= r; i++)
+        var radius = (int)math.ceil(SearchRadius);
+        for (var i = -radius; i <= radius; i++)
         {
-            for (var j = -r; j <= r; j++)
+            for (var j = -radius; j <= radius; j++)
             {
                 if (i * i + j * j > SearchRadius * SearchRadius) continue;
 

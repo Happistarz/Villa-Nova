@@ -4,7 +4,8 @@ using UnityEngine;
 public static class RoadBuilder
 {
 
-    public static int StampRoad(List<Vector2Int> _path, int _width, WorldGrid _grid, int _maxBridgeLength, RoadGraph.EdgeType _roadTier)
+    public static void StampRoad(List<Vector2Int>   _path, int _width, WorldGrid _grid, int _maxBridgeLength,
+                                 RoadGraph.EdgeType _roadTier)
     {
         var stampedCount = 0;
         var bridgeCells  = new HashSet<Vector2Int>();
@@ -23,10 +24,10 @@ public static class RoadBuilder
 
                     var cell = _grid.Cells[pos.x, pos.y];
 
-                    if (cell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER
+                    if (cell.Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER)
                         && bridgeCells.Contains(center))
                     {
-                        if (cell.Type == WorldGrid.CellType.BRIDGE) continue;
+                        if (cell.Is(WorldGrid.CellType.BRIDGE)) continue;
 
                         cell.Type = WorldGrid.CellType.BRIDGE;
                         _grid.UpdateCell(pos, cell);
@@ -35,7 +36,7 @@ public static class RoadBuilder
                     }
 
                     if (!CanPlaceRoad(pos, _grid)) continue;
-                    if (cell.Type == WorldGrid.CellType.ROAD) continue;
+                    if (cell.Is(WorldGrid.CellType.ROAD)) continue;
                     
                     if (cell.RoadTier > 0 && cell.RoadTier < (byte)_roadTier) continue;
 
@@ -46,8 +47,6 @@ public static class RoadBuilder
                 }
             }
         }
-
-        return stampedCount;
     }
 
     private static void CollectBridgeCells(List<Vector2Int> _path,            WorldGrid           _grid,
@@ -65,7 +64,7 @@ public static class RoadBuilder
 
             var cell = _grid.Cells[pos.x, pos.y];
 
-            if (cell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
+            if (cell.Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER))
                 waterRun.Add(pos);
             else
                 FlushWaterRun(waterRun, _maxBridgeLength, _bridgeCells);
@@ -74,6 +73,9 @@ public static class RoadBuilder
         FlushWaterRun(waterRun, _maxBridgeLength, _bridgeCells);
     }
 
+    /// <summary>
+    /// Checks if the current run of water cells is a valid bridge (not too long) and adds it to the bridgeCells set if so.
+    /// </summary>
     private static void FlushWaterRun(List<Vector2Int>    _waterRun, int _maxLength,
                                       HashSet<Vector2Int> _bridgeCells)
     {

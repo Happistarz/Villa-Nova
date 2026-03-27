@@ -1,5 +1,8 @@
 using UnityEngine;
 
+/// <summary>
+/// Makes the transform always face the main camera on the Y axis.
+/// </summary>
 public class Billboard : MonoBehaviour
 {
     public Camera mainCamera;

@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Renders city buildings using GPU instancing with distance-based LOD batches.
+/// </summary>
 public class CityRenderer : MonoBehaviour
 {
     private const int _INSTANCED_BATCH_SIZE = 1023;

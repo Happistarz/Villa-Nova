@@ -4,6 +4,9 @@ using JetBrains.Annotations;
 
 namespace Core
 {
+    /// <summary>
+    /// Generic finite state machine. Evaluates transitions each frame and switches states.
+    /// </summary>
     public class FiniteStateMachine<T>
     {
         private readonly    List<State<T>> _states;
@@ -76,6 +79,9 @@ namespace Core
         }
     }
 
+    /// <summary>
+    /// Base state with transitions and optional sub-FSM support.
+    /// </summary>
     public class State<T>
     {
         protected internal T                      Context     { get; }
@@ -108,6 +114,9 @@ namespace Core
         }
     }
 
+    /// <summary>
+    /// Weighted transition between two states. Condition returns a score (0 = no transition).
+    /// </summary>
     public class Transition<T>
     {
         public readonly State<T>       To;

@@ -3,6 +3,9 @@ using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
 
+/// <summary>
+/// Represents a single pathfinding request with start and end points, as well as parameters for terrain cost calculation.
+/// </summary>
 public struct PathRequest
 {
     public int2 Start;
@@ -47,6 +50,7 @@ public struct PathfindingProcessJob : IJobParallelFor
             return;
         }
 
+        // Using Native collections for Burst compatibility.
         var openSet  = new NativeList<int>(256, Allocator.Temp);
         var closed   = new NativeHashSet<int>(1024, Allocator.Temp);
         var cameFrom = new NativeHashMap<int, int>(1024, Allocator.Temp);
@@ -163,13 +167,16 @@ public struct PathfindingProcessJob : IJobParallelFor
     private        int2 ToPos(int      _idx) => new(_idx % GridSize, _idx / GridSize);
     private        bool IsInBounds(int2 _pos) => _pos.x >= 0 && _pos.x < GridSize && _pos.y >= 0 && _pos.y < GridSize;
 
+    /// <summary>
+    /// Octile distance heuristic for A* on a grid that allows diagonal movement.
+    /// </summary>
     private static float OctileHeuristic(int2 _a, int2 _b)
     {
         var dx = math.abs(_a.x - _b.x);
         var dy = math.abs(_a.y - _b.y);
         return math.max(dx, dy) + (_SQRT2 - 1f) * math.min(dx, dy);
     }
-
+    
     private float CalculateCost(int2 _from, int2 _to, PathRequest _req)
     {
         var cell = GridCells[ToIndex(_to)];

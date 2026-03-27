@@ -4,6 +4,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Game Config", order = 0)]
 public class GameConfig : ScriptableObject
 {
+    /// <summary>
+    /// Full color set for one biome. Includes terrain, debug overlay and structure colors.
+    /// </summary>
     [System.Serializable]
     public struct BiomeColorConfig
     {
@@ -49,7 +52,7 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f, 0.3f,  0.7f,   0.5f),
             debugRoadColor   = new Color(0.5f, 0.5f,  0.5f,   0.5f),
             debugBridgeColor = new Color(0.6f, 0.45f, 0.25f,  0.5f),
-            debugCityColor   = new Color(1f,   0.92f, 0.016f, 1f),
+            debugCityColor   = new Color(1f,   0.92f, 0.016f, 1f)
         };
     }
 
@@ -74,7 +77,7 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f,  0.28f, 0.55f, 0.5f),
             debugRoadColor   = new Color(0.65f, 0.55f, 0.35f, 0.5f),
             debugBridgeColor = new Color(0.7f,  0.55f, 0.3f,  0.5f),
-            debugCityColor   = new Color(1f,    0.85f, 0.3f,  1f),
+            debugCityColor   = new Color(1f,    0.85f, 0.3f,  1f)
         },
 
         // Taiga
@@ -93,7 +96,7 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.12f, 0.25f, 0.5f,  0.5f),
             debugRoadColor   = new Color(0.45f, 0.42f, 0.38f, 0.5f),
             debugBridgeColor = new Color(0.5f,  0.4f,  0.25f, 0.5f),
-            debugCityColor   = new Color(0.9f,  0.85f, 0.6f,  1f),
+            debugCityColor   = new Color(0.9f,  0.85f, 0.6f,  1f)
         },
 
         // Harvest
@@ -112,7 +115,7 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.12f, 0.3f,  0.58f, 0.5f),
             debugRoadColor   = new Color(0.5f,  0.42f, 0.3f,  0.5f),
             debugBridgeColor = new Color(0.55f, 0.4f,  0.22f, 0.5f),
-            debugCityColor   = new Color(0.95f, 0.8f,  0.3f,  1f),
+            debugCityColor   = new Color(0.95f, 0.8f,  0.3f,  1f)
         },
 
         // Marshland
@@ -131,7 +134,7 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f,  0.25f, 0.3f,  0.5f),
             debugRoadColor   = new Color(0.4f,  0.38f, 0.3f,  0.5f),
             debugBridgeColor = new Color(0.45f, 0.38f, 0.2f,  0.5f),
-            debugCityColor   = new Color(0.7f,  0.65f, 0.4f,  1f),
+            debugCityColor   = new Color(0.7f,  0.65f, 0.4f,  1f)
         },
 
         // Winter
@@ -150,13 +153,14 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.15f, 0.3f,  0.5f,  0.5f),
             debugRoadColor   = new Color(0.6f,  0.58f, 0.55f, 0.5f),
             debugBridgeColor = new Color(0.55f, 0.48f, 0.35f, 0.5f),
-            debugCityColor   = new Color(0.8f,  0.75f, 0.6f,  1f),
-        },
+            debugCityColor   = new Color(0.8f,  0.75f, 0.6f,  1f)
+        }
     };
 
     [Header("Near Cities")]
     public string[] cityNames;
 
+    /// <summary>Returns a random palette from the array, or default if empty.</summary>
     public BiomeColorConfig GetRandomPalette()
     {
         if (biomePalettes == null || biomePalettes.Length == 0)
@@ -165,6 +169,7 @@ public class GameConfig : ScriptableObject
         return biomePalettes[Random.Range(0, biomePalettes.Length)];
     }
 
+    /// <summary>Picks unique random names from the pool without repetition.</summary>
     public List<string> GetRandomCityNames(int _count)
     {
         var pool   = new List<string>(cityNames);

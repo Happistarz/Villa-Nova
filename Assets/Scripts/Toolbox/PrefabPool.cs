@@ -2,7 +2,9 @@
 using System.Linq;
 using UnityEngine;
 
-
+/// <summary>
+/// Generic GameObject pool backed by a prefab.
+/// </summary>
 public class PrefabPool
 {
     private readonly List<GameObject> _availableObjects;
@@ -48,6 +50,9 @@ public class PrefabPool
     }
 }
 
+/// <summary>
+/// Typed prefab pool that returns a specific MonoBehaviour component.
+/// </summary>
 public class PrefabPool<T> where T : MonoBehaviour
 {
     private readonly List<T> _availableObjects;

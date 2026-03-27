@@ -15,12 +15,13 @@ public struct JobPoiRule
 public struct PoiScoreJob : IJobParallelFor
 {
     [ReadOnly] public NativeArray<GridJobUtilities.JobCellData> GridCells;
-    [ReadOnly] public NativeArray<JobPoiRule>                   Rules;
-    [ReadOnly] public NativeArray<int2>                         ExistingPois;
-    [ReadOnly] public int2                                      CityCenter;
-    [ReadOnly] public int                                       GridSize;
-    [ReadOnly] public int                                       BuildingSize;
-    [ReadOnly] public float                                     FlatTolerance;
+
+    [ReadOnly] public NativeArray<JobPoiRule> Rules;
+    [ReadOnly] public NativeArray<int2>       ExistingPois;
+    [ReadOnly] public int2                    CityCenter;
+    [ReadOnly] public int                     GridSize;
+    [ReadOnly] public int                     BuildingSize;
+    [ReadOnly] public float                   FlatTolerance;
 
     public NativeArray<float> Results;
 
@@ -70,7 +71,7 @@ public struct PoiScoreJob : IJobParallelFor
                     break;
 
                 case POIData.POIRule.POI_DISTANCE:
-                    if (!IsMinDistanceFromPois(pos, rule.Value))
+                    if (!IsMinDistanceFromPOIs(pos, rule.Value))
                         valid = false;
                     else
                         ruleScore = 1f;
@@ -94,41 +95,41 @@ public struct PoiScoreJob : IJobParallelFor
 
     private float GetProximityScore(int _cx, int _cy, WorldGrid.CellType _type, float _radius)
     {
-        var r          = (int)math.ceil(_radius);
-        var radiusSq   = _radius * _radius;
-        var bestDistSq = float.MaxValue;
+        var radius          = (int)math.ceil(_radius);
+        var radiusSquare   = _radius * _radius;
+        var baseDistSquare = float.MaxValue;
         var found      = false;
 
-        for (var dx = -r; dx <= r; dx++)
+        for (var dx = -radius; dx <= radius; dx++)
         {
-            for (var dy = -r; dy <= r; dy++)
+            for (var dy = -radius; dy <= radius; dy++)
             {
-                var distSq = dx * dx + dy * dy;
-                if (distSq > radiusSq) continue;
+                var distSquare = dx * dx + dy * dy;
+                if (distSquare > radiusSquare) continue;
 
                 var tx = _cx + dx;
                 var ty = _cy + dy;
                 if (tx < 0 || tx >= GridSize || ty < 0 || ty >= GridSize) continue;
 
                 if (GridCells[ty * GridSize + tx].Type != _type) continue;
-                if (!(distSq < bestDistSq)) continue;
+                if (!(distSquare < baseDistSquare)) continue;
 
-                bestDistSq = distSq;
+                baseDistSquare = distSquare;
                 found      = true;
             }
         }
 
         if (!found) return -1f;
-        return 1f - math.sqrt(bestDistSq) / _radius;
+        return 1f - math.sqrt(baseDistSquare) / _radius;
     }
 
-    private bool IsMinDistanceFromPois(float2 _pos, float _minDistance)
+    private bool IsMinDistanceFromPOIs(float2 _pos, float _minDistance)
     {
-        var minDistSq = _minDistance * _minDistance;
+        var minDistSquare = _minDistance * _minDistance;
 
         foreach (var p in ExistingPois)
         {
-            if (math.distancesq(_pos, new float2(p.x, p.y)) < minDistSq)
+            if (math.distancesq(_pos, new float2(p.x, p.y)) < minDistSquare)
                 return false;
         }
 

@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 
+/// <summary>
+/// Per-mode camera parameters: zoom range, pitch bounds, rotation speed and projection type.
+/// </summary>
 [Serializable]
 public struct CameraModeConfig
 {
@@ -37,4 +40,3 @@ public struct CameraModeConfig
         orthoSize       = 30f
     };
 }
-

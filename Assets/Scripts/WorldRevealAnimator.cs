@@ -19,7 +19,7 @@ public class WorldRevealAnimator : MonoBehaviour
 
     public event System.Action OnRevealComplete;
 
-    public bool IsRevealing => _isRevealing;
+    public bool IsRevealing { get; private set; }
 
     private MaterialPropertyBlock _propBlock;
 
@@ -27,9 +27,9 @@ public class WorldRevealAnimator : MonoBehaviour
     private float   _maxRadius;
     private float   _elapsedTime;
     private float   _totalDuration;
-    private bool    _isRevealing;
     private Vector4 _center;
 
+    // Shader property IDs
     private static readonly int _REVEAL_CENTER_ID   = Shader.PropertyToID("_RevealCenter");
     private static readonly int _REVEAL_RADIUS_ID   = Shader.PropertyToID("_RevealRadius");
     private static readonly int _REVEAL_WIDTH_ID    = Shader.PropertyToID("_RevealWidth");
@@ -39,7 +39,8 @@ public class WorldRevealAnimator : MonoBehaviour
 
     private void Start()
     {
-        _propBlock                                 =  new MaterialPropertyBlock();
+        _propBlock = new MaterialPropertyBlock();
+
         MapGenerator.Instance.OnGenerationComplete += OnMapGenerated;
 
         SetRevealRadius(-10f);
@@ -86,14 +87,14 @@ public class WorldRevealAnimator : MonoBehaviour
         _totalDuration = _maxRadius / revealSpeed;
         _elapsedTime   = -startDelay;
         _currentRadius = -revealWidth;
-        _isRevealing   = true;
+        IsRevealing    = true;
 
         SetRevealRadius(-revealWidth);
     }
 
     private void Update()
     {
-        if (!_isRevealing) return;
+        if (!IsRevealing) return;
 
         _elapsedTime += Time.deltaTime;
 
@@ -111,8 +112,8 @@ public class WorldRevealAnimator : MonoBehaviour
         SetRevealRadius(_currentRadius);
 
         if (!(normalizedTime >= 1f)) return;
-        
-        _isRevealing = false;
+
+        IsRevealing = false;
 
         SetRevealRadius(_maxRadius + 100f);
 

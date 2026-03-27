@@ -27,6 +27,10 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
         StartCoroutine(RunPipeline());
     }
 
+    /// <summary>
+    /// Runs the generation pipeline sequentially, waiting for each generator to complete before starting the next.
+    /// </summary>
+    /// <returns></returns>
     private IEnumerator RunPipeline()
     {
         IsAnyGenerating           = true;
@@ -51,6 +55,7 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
             revealAnimator.OnRevealComplete -= OnReveal;
         }
 
+        // Start the remaining generators in sequence
         for (var i = 1; i < _generators.Count; i++)
         {
             var generator = _generators[i];

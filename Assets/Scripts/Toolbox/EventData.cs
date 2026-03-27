@@ -3,6 +3,9 @@ using UnityEngine;
 
 namespace Core.Events
 {
+    /// <summary>
+    /// ScriptableObject-based event channel. Listeners register and get notified on Raise().
+    /// </summary>
     [CreateAssetMenu(fileName = "GameEvent", menuName = "Toolbox/EventData", order = 0)]
     public class EventData : ScriptableObject
     {

@@ -15,12 +15,14 @@ public class UIManager : MonoBehaviour
 
     [Header("Renderer Toggles")]
     public AbstractRenderer terrainRenderer;
+
     public AbstractRenderer debugRenderer;
 
     [Header("Camera Mode")]
-    public Button          cameraMainButton;
-    public Button          cameraCloseButton;
-    public Button          cameraFreeButton;
+    public Button cameraMainButton;
+
+    public Button           cameraCloseButton;
+    public Button           cameraFreeButton;
     public CameraController cameraController;
 
     [Header("Variables")]
@@ -41,8 +43,9 @@ public class UIManager : MonoBehaviour
     [Header("Generate Button")]
     public string generateDefaultText = "GENERATE";
 
-    public string               generatingBaseText = "GENERATING";
-    public float                ellipsisSpeed      = 0.4f;
+    public string generatingBaseText = "GENERATING";
+    public float  ellipsisSpeed      = 0.4f;
+
     public InputActionReference generateMapAction;
 
     private float  _ellipsisTimer;
@@ -52,7 +55,7 @@ public class UIManager : MonoBehaviour
     private void Start()
     {
         RefreshRendererIcon(terrainRenderImage, terrainEnabled.Value);
-        RefreshRendererIcon(debugRenderImage, debugEnabled.Value);
+        RefreshRendererIcon(debugRenderImage,   debugEnabled.Value);
         OnZoomLevelChanged();
 
         if (generateButtonText)
@@ -72,10 +75,10 @@ public class UIManager : MonoBehaviour
             cameraFreeButton.onClick.AddListener(() => SetCameraMode(CameraController.CameraStateType.FREE));
 
         if (terrainEnabled) terrainEnabled.OnChanged += OnTerrainEnabledChanged;
-        if (debugEnabled)   debugEnabled.OnChanged   += OnDebugEnabledChanged;
+        if (debugEnabled) debugEnabled.OnChanged     += OnDebugEnabledChanged;
 
         if (!cameraController) return;
-        
+
         cameraController.OnModeChanged += RefreshCameraButtons;
         RefreshCameraButtons(cameraController.ActiveMode);
     }
@@ -96,13 +99,13 @@ public class UIManager : MonoBehaviour
             GenerationPipeline.Instance.OnPipelineComplete -= OnPipelineComplete;
 
         if (terrainEnabled) terrainEnabled.OnChanged -= OnTerrainEnabledChanged;
-        if (debugEnabled)   debugEnabled.OnChanged   -= OnDebugEnabledChanged;
+        if (debugEnabled) debugEnabled.OnChanged     -= OnDebugEnabledChanged;
 
         if (cameraController) cameraController.OnModeChanged -= RefreshCameraButtons;
     }
 
     private void OnTerrainEnabledChanged(bool _enabled) => RefreshRendererIcon(terrainRenderImage, _enabled);
-    private void OnDebugEnabledChanged(bool _enabled)   => RefreshRendererIcon(debugRenderImage, _enabled);
+    private void OnDebugEnabledChanged(bool   _enabled) => RefreshRendererIcon(debugRenderImage,   _enabled);
 
     #region Renderer
 
@@ -155,7 +158,7 @@ public class UIManager : MonoBehaviour
 
         var colors = _button.colors;
         colors.normalColor = _active ? cameraActiveColor : cameraInactiveColor;
-        _button.colors = colors;
+        _button.colors     = colors;
     }
 
     #endregion

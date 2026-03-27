@@ -68,6 +68,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 
         var spawnCells = new List<Vector2Int>();
 
+        // Foreach path, smooth and stamp it onto the grid, while collecting spawn cells for agents
         if (foundPaths != null && foundPaths.Count == requests.Count)
         {
             for (var i = 0; i < foundPaths.Count; i++)
@@ -78,7 +79,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
                 var smoothed = MathHelper.SmoothPath(path);
                 var meta     = edgeMeta[i];
                 RoadBuilder.StampRoad(smoothed, meta.settings.roadWidth, _grid,
-                    meta.settings.maxBridgeLength, meta.edge.Type);
+                                      meta.settings.maxBridgeLength, meta.edge.Type);
 
                 spawnCells.AddRange(smoothed);
 
@@ -86,6 +87,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
             }
         }
 
+        // Run agents to organically expand roads from the stamped paths and create smaller branches
         if (agentConfigs != null && spawnCells.Count > 0)
         {
             foreach (var config in agentConfigs)
@@ -102,6 +104,9 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
         OnGenerationComplete?.Invoke();
     }
 
+    /// <summary>
+    /// Computes an urbanity level for each cell in the grid based on distance from city center and noise.
+    /// </summary>
     private IEnumerator ComputeUrbanity(WorldGrid _grid, Vector2Int _cityCenter)
     {
         if (!urbanityConfig)
@@ -127,8 +132,8 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 
         yield return GenerationJobManager.Instance.StartCoroutine(
             GenerationJobManager.DispatchJob(job, totalCells, 64,
-                _completed => ApplyUrbanityResults(_completed, _grid, totalCells),
-                results));
+                                             _completed => ApplyUrbanityResults(_completed, _grid, totalCells),
+                                             results));
     }
 
     private static void ApplyUrbanityResults(UrbanityJob _job, WorldGrid _grid, int _totalCells)

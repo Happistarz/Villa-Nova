@@ -3,13 +3,14 @@ using UnityEngine;
 
 namespace Core.Extensions
 {
+    /// <summary>
+    /// Common extension methods for Transform, GameObject, collections and vectors.
+    /// </summary>
     public static class Extensions
     {
         #region TRANSFORM & GAMEOBJECT
 
-        /// <summary>
-        /// Destroys all children of the transform.
-        /// </summary>
+        /// <summary>Destroys all children of the transform.</summary>
         public static void DestroyChildren(this Transform t)
         {
             foreach (Transform child in t)
@@ -18,9 +19,7 @@ namespace Core.Extensions
             }
         }
 
-        /// <summary>
-        /// Gets the component or adds it if it doesn't exist.
-        /// </summary>
+        /// <summary>Gets or adds a component on the GameObject.</summary>
         public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
         {
             var component = gameObject.GetComponent<T>();
@@ -43,9 +42,7 @@ namespace Core.Extensions
 
         #region COLLECTIONS
 
-        /// <summary>
-        /// Returns a random element from the list.
-        /// </summary>
+        /// <summary>Returns a random element from the list.</summary>
         public static T RandomItem<T>(this IList<T> list)
         {
             if (list.Count == 0)
@@ -53,9 +50,7 @@ namespace Core.Extensions
             return list[Random.Range(0, list.Count)];
         }
 
-        /// <summary>
-        /// Shuffles the list in place using Fisher-Yates algorithm.
-        /// </summary>
+        /// <summary>Shuffles the list in place (Fisher-Yates).</summary>
         public static void Shuffle<T>(this IList<T> list)
         {
             var n = list.Count;

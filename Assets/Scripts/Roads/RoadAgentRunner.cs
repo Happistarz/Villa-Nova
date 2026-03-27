@@ -4,6 +4,9 @@ using UnityEngine;
 
 public static class RoadAgentRunner
 {
+    /// <summary>
+    /// Internal state struct for a road agent: position, direction, steps remaining, road type and branching parameters.
+    /// </summary>
     private struct AgentState
     {
         public Vector2Int         Position;
@@ -72,9 +75,9 @@ public static class RoadAgentRunner
 
                 var cell = _grid.Cells[next.x, next.y];
 
-                if (cell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER) break;
+                if (cell.Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER)) break;
                 if (cell.UrbanityLevel < _config.minUrbanity) break;
-                if (cell.Type == WorldGrid.CellType.ROAD && step > 2) break;
+                if (cell.Is(WorldGrid.CellType.ROAD) && step > 2) break;
 
                 if (RoadBuilder.CanPlaceRoad(next, _grid))
                 {
@@ -139,4 +142,3 @@ public static class RoadAgentRunner
             : new Vector2Int(_dir.y, -_dir.x);
     }
 }
-

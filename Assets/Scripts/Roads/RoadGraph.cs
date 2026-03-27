@@ -11,6 +11,9 @@ public static class RoadGraph
         ALLEY
     }
 
+    /// <summary>
+    /// Simple graph structure for road pathfinding: nodes are city center, POIs and nearby cities; edges are prioritized connections between them.
+    /// </summary>
     public struct Node
     {
         public          Vector2Int Position;
@@ -23,6 +26,10 @@ public static class RoadGraph
         }
     }
 
+    /// <summary>
+    /// Edges connect nodes with a type (external, main, secondary) and a priority for pathfinding.
+    /// The graph is built with a main edge from each POI to the center, and secondary edges to the nearest existing node for redundancy.
+    /// </summary>
     public struct Edge
     {
         public int      FromIndex;
@@ -31,6 +38,10 @@ public static class RoadGraph
         public int      Priority;
     }
 
+    /// <summary>
+    /// The graph consists of a list of nodes and edges.
+    /// Nodes include the city center, POIs and nearby cities. Edges connect them with types and priorities for pathfinding.
+    /// </summary>
     public struct Graph
     {
         public List<Node> Nodes;
@@ -44,7 +55,7 @@ public static class RoadGraph
         var graph = new Graph
         {
             Nodes = new List<Node>(),
-            Edges = new List<Edge>(),
+            Edges = new List<Edge>()
         };
 
         var centerIdx = AddNode(ref graph, _cityCenter, "Center");
@@ -100,7 +111,7 @@ public static class RoadGraph
             FromIndex = _from,
             ToIndex   = _to,
             Type      = _type,
-            Priority  = _priority,
+            Priority  = _priority
         });
     }
 

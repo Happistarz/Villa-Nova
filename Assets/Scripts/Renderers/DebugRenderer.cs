@@ -2,6 +2,9 @@
 using UnityEngine;
 using Color = UnityEngine.Color;
 
+/// <summary>
+/// Builds a flat debug overlay mesh colored by cell type and POI presence.
+/// </summary>
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class DebugRenderer : AbstractRenderer
 {
@@ -37,7 +40,7 @@ public class DebugRenderer : AbstractRenderer
 
                 Color color;
                 if (cell.POI)
-                    color = cell.POI.DebugColor;
+                    color = cell.POI.debugColor;
                 else
                     color = cell.Type switch
                     {

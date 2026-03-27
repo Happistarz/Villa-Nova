@@ -24,6 +24,7 @@ public struct UrbanityJob : IJobParallelFor
         
         var radial = math.max(0f, 1f - dist / MaxRadius);
 
+        // Add noise to break up the circular pattern and create more natural variation.
         var nx = x * NoiseScale + Seed;
         var ny = y * NoiseScale + Seed;
         var noiseMask = math.saturate(noise.snoise(new float2(nx, ny)) * NoiseAmplitude + 0.5f);

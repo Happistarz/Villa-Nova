@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class MathHelper
 {
+    /// <summary>Fractal Brownian Motion using Perlin noise.</summary>
     public static float FBm(float _x, float _y, int _octaves)
     {
         var value     = 0f;
@@ -21,26 +22,31 @@ public static class MathHelper
         return value / max;
     }
 
+    /// <summary>Remaps a value from one range to another.</summary>
     public static float Remap(float _value, float _from1, float _to1, float _from2, float _to2)
     {
         return (_value - _from1) / (_to1 - _from1) * (_to2 - _from2) + _from2;
     }
 
+    /// <summary>Returns a triangle wave in [0,1] from t in [0,1].</summary>
     public static float TriangleWave(float _t)
     {
         return 1f - Mathf.Abs(2f * _t - 1f);
     }
 
+    /// <summary>Snaps a value to the nearest step.</summary>
     public static float Quantize(float _value, float _step)
     {
         return Mathf.Floor(_value / _step) * _step;
     }
 
+    /// <summary>Returns the 2D perpendicular vector (rotated 90°).</summary>
     public static Vector2 GetPerpendicular(Vector2 _v)
     {
         return new Vector2(-_v.y, _v.x);
     }
 
+    /// <summary>Yields all grid points inside a circle.</summary>
     public static IEnumerable<Vector2Int> GetPointsInCircle(Vector2Int _center, int _radius)
     {
         for (var dx = -_radius; dx <= _radius; dx++)
@@ -49,6 +55,7 @@ public static class MathHelper
                     yield return new Vector2Int(_center.x + dx, _center.y + dy);
     }
 
+    /// <summary>Yields all grid points inside an axis-aligned ellipse.</summary>
     public static IEnumerable<Vector2Int> GetPointsInEllipse(Vector2Int _center, int _rx, int _ry)
     {
         for (var dx = -_rx; dx <= _rx; dx++)
@@ -57,6 +64,7 @@ public static class MathHelper
                     yield return new Vector2Int(_center.x + dx, _center.y + dy);
     }
 
+    /// <summary>Rasterize a line between two grid points (Bresenham).</summary>
     public static IEnumerable<Vector2Int> BresenhamLine(Vector2Int _from, Vector2Int _to)
     {
         var x0 = _from.x;
@@ -69,7 +77,7 @@ public static class MathHelper
         var sx  = x0 < x1 ? 1 : -1;
         var sy  = y0 < y1 ? 1 : -1;
         var err = dx - dy;
-
+        
         while (true)
         {
             yield return new Vector2Int(x0, y0);
@@ -90,6 +98,7 @@ public static class MathHelper
         }
     }
 
+    /// <summary>Returns the normalized distance inside an ellipse (1.0 = on the border).</summary>
     public static float GetEllipseNormalizedDistance(float _dx, float _dy, float _rx, float _ry)
     {
         if (_rx == 0 || _ry == 0) return float.MaxValue;
@@ -98,6 +107,7 @@ public static class MathHelper
         return Mathf.Sqrt(_dx * _dx / (_rx * _rx) + _dy * _dy / (_ry * _ry));
     }
 
+    /// <summary>Smooths a grid path by inserting intermediate axis-aligned steps on diagonals.</summary>
     public static List<Vector2Int> SmoothPath(List<Vector2Int> _path)
     {
         if (_path == null || _path.Count < 2) return _path;
