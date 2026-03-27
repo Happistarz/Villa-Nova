@@ -22,4 +22,4 @@ MonoBehaviour:
   - rule: 2
     value: 25
     scoreWeight: 2
-  BuildingData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
+  BuildingData: {fileID: 11400000, guid: cf826a4c6ca807846a49f6b03d5af0d7, type: 2}

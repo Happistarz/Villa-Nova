@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 524de05a5fe8483c8e14534ff1b9e8bf, type: 3}
+  m_Name: SecondaryAgent
+  m_EditorClassIdentifier: Assembly-CSharp::RoadAgentConfig
+  roadType: 1
+  roadWidth: 1
+  minSteps: 8
+  maxSteps: 25
+  branchProbability: 0.25
+  minBranchSteps: 5
+  dirNoiseScale: 0.1
+  dirNoiseStrength: 20
+  minUrbanity: 0.4
+  maxAgents: 40
+  pathfindingSettings:
+    noiseStrength: 0
+    noiseScale: 0
+    noiseOffsetX: 0
+    noiseOffsetY: 0
+    waterPenalty: 0
+    elevationMultiplier: 0
+    occupiedPenalty: 0
+    roadBonus: 0
+    roadProximityBonus: 0
+    roadProximityRadius: 0
+    bridgePenalty: 0
+    maxBridgeLength: 0
+    roadWidth: 0
+    allowOutOfBounds: 0

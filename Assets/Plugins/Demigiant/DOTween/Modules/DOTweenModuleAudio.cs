@@ -2,7 +2,6 @@
 // Created: 2018/07/13
 
 #if !DOTWEEN_NOAUDIO // MODULE_MARKER
-using System;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
 using UnityEngine;

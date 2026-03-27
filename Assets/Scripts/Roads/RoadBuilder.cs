@@ -3,83 +3,8 @@ using UnityEngine;
 
 public static class RoadBuilder
 {
-    public static void BuildFromGraph(WorldGrid _grid, RoadGraph.Graph _graph, RoadSettings _settings)
-    {
-        foreach (var edge in _graph.Edges)
-        {
-            var from = _graph.Nodes[edge.FromIndex].Position;
-            var to   = _graph.Nodes[edge.ToIndex].Position;
 
-            var perEdgeSettings = _settings;
-            perEdgeSettings.noiseOffsetX = Random.Range(0f, 1000f);
-            perEdgeSettings.noiseOffsetY = Random.Range(0f, 1000f);
-
-            if (edge.Type == RoadGraph.EdgeType.SECONDARY)
-                perEdgeSettings.roadWidth = Mathf.Max(1, perEdgeSettings.roadWidth - 1);
-
-            var path = FindRoadPath(from, to, _grid, perEdgeSettings);
-
-            if (path == null)
-                continue;
-
-            path = MathHelper.SmoothPath(path);
-            StampRoad(path, perEdgeSettings.roadWidth, _grid, perEdgeSettings.maxBridgeLength);
-        }
-    }
-
-    public static void BuildExternalRoads(WorldGrid    _grid, List<WorldGrid.NearCityData> _nearCities,
-                                          RoadSettings _settings)
-    {
-        if (_nearCities == null || _nearCities.Count == 0) return;
-
-        var cityCenter = new Vector2Int(_grid.size / 2, _grid.size / 2);
-
-        foreach (var nearCity in _nearCities)
-        {
-            var perRoadSettings = _settings;
-            perRoadSettings.noiseOffsetX = Random.Range(0f, 1000f);
-            perRoadSettings.noiseOffsetY = Random.Range(0f, 1000f);
-
-            var clampedTarget = ClampToGrid(nearCity.CityPos, _grid);
-            var path          = FindRoadPath(cityCenter, clampedTarget, _grid, perRoadSettings);
-
-            if (path == null)
-                continue;
-
-            path = MathHelper.SmoothPath(path);
-            StampRoad(path, perRoadSettings.roadWidth, _grid, perRoadSettings.maxBridgeLength);
-        }
-    }
-
-    public static void BuildInternalRoads(WorldGrid        _grid,         Vector2Int   _cityCenter,
-                                          List<Vector2Int> _poiPositions, RoadSettings _settings)
-    {
-        foreach (var poi in _poiPositions)
-        {
-            var perRoadSettings = _settings;
-            perRoadSettings.noiseOffsetX = Random.Range(0f, 1000f);
-            perRoadSettings.noiseOffsetY = Random.Range(0f, 1000f);
-
-            var clampedPoi = ClampToGrid(poi, _grid);
-            var path       = FindRoadPath(_cityCenter, clampedPoi, _grid, perRoadSettings);
-
-            if (path == null)
-                continue;
-
-            path = MathHelper.SmoothPath(path);
-            StampRoad(path, perRoadSettings.roadWidth, _grid, perRoadSettings.maxBridgeLength);
-        }
-    }
-
-    private static List<Vector2Int> FindRoadPath(Vector2Int _start, Vector2Int   _end,
-                                                 WorldGrid  _grid,  RoadSettings _settings)
-    {
-        var costFunc = RoadCostCalculator.BuildCostFunction(_settings);
-
-        return Pathfinding.FindPath(_start, _end, _grid, costFunc, _settings.allowOutOfBounds);
-    }
-
-    public static int StampRoad(List<Vector2Int> _path, int _width, WorldGrid _grid, int _maxBridgeLength)
+    public static int StampRoad(List<Vector2Int> _path, int _width, WorldGrid _grid, int _maxBridgeLength, RoadGraph.EdgeType _roadTier)
     {
         var stampedCount = 0;
         var bridgeCells  = new HashSet<Vector2Int>();
@@ -111,7 +36,10 @@ public static class RoadBuilder
 
                     if (!CanPlaceRoad(pos, _grid)) continue;
                     if (cell.Type == WorldGrid.CellType.ROAD) continue;
+                    
+                    if (cell.RoadTier > 0 && cell.RoadTier < (byte)_roadTier) continue;
 
+                    cell.RoadTier = (byte)_roadTier;
                     cell.Type = WorldGrid.CellType.ROAD;
                     _grid.UpdateCell(pos, cell);
                     stampedCount++;

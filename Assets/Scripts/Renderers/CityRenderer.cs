@@ -43,11 +43,7 @@ public class CityRenderer : MonoBehaviour
 
     public void BakeBatches()
     {
-        if (lodLevels == null || lodLevels.Length == 0)
-        {
-            Debug.LogWarning("[CityRenderer] No LOD levels assigned.");
-            return;
-        }
+        if (lodLevels == null || lodLevels.Length == 0) return;
 
         _lodBatches = new List<Matrix4x4[]>[lodLevels.Length];
         for (var i = 0; i < lodLevels.Length; i++)

@@ -8,6 +8,7 @@ public static class RoadGraph
         EXTERNAL,
         MAIN,
         SECONDARY,
+        ALLEY
     }
 
     public struct Node

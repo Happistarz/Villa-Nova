@@ -5,30 +5,16 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BuildingData", menuName = "Building Data", order = 0)]
 public class BuildingData : ScriptableObject
 {
-    public enum Rotation
-    {
-        NONE,
-        ROTATE90,
-        ROTATE180,
-        ROTATE270
-    }
-
-    [Header("Zone multi-cases")]
+    [Header("General")]
     public int buildingSize = 3;
     
     public List<Vector2Int> buildingArea;
 
     [Header("Rotation")]
     public bool randomizeRotation;
-    
-    [HideInInspector]
-    public Rotation rotation;
 
-    [Header("Contraintes de terrain")]
+    [Header("Terrain")]
     public float flatTolerance = 0.1f;
-
-    [Header("Rendu")]
-    public Material material;
 
     [Serializable]
     public class BuildingLOD
@@ -40,7 +26,6 @@ public class BuildingData : ScriptableObject
     public List<BuildingLOD> lods;
 
     [Header("Debug")]
-    
     public Color debugColor = Color.red;
 
     public Mesh GetLODMesh(float _distance)

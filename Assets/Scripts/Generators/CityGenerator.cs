@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -9,9 +10,14 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 {
     public string Name => "City";
 
+    [Header("Settings")]
     public float settlerSearchRadius = 5f;
 
-    public CityRenderer  cityRenderer;
+    public Transform cityCenterMarker;
+
+    [Header("Renderers")]
+    public CityRenderer cityRenderer;
+
     public DebugRenderer debugRenderer;
 
     [Header("POI")]
@@ -35,7 +41,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     private void Start()
     {
-        _grid                                     =  WorldGrid.Instance;
+        _grid = WorldGrid.Instance;
+
         GameManager.Instance.NewGenerationStarted += NewGenerationStarted;
     }
 
@@ -61,12 +68,15 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         _grid        = _generationGrid;
         IsGenerating = true;
 
+        // Find best city center point for the settler
         var bestHomePoint = Vector2Int.zero;
         yield return StartCoroutine(
             CityGenerationJobRunner
                 .FindBestSettlePoint(_grid, settlerSearchRadius, _point => bestHomePoint = _point));
+
         GenerateNearCitiesData();
 
+        // End generation if no valid city center point found
         var cell = _grid.GetCell(bestHomePoint);
         if (cell == null)
         {
@@ -75,14 +85,17 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
             yield break;
         }
 
-        CityCenter = bestHomePoint;
+        CityCenter                = bestHomePoint;
+        cityCenterMarker.position = bestHomePoint.ToVector3();
 
+        // Mark the cell as city center
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
 
         yield return StartCoroutine(PlacePOIsCoroutine(bestHomePoint));
 
+        // Rebuild meshes with POIs before placing houses
         if (debugRenderer && debugRenderer.renderEnabled.Value)
             debugRenderer.BuildMesh();
 
@@ -123,6 +136,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                         if (rotation < 0) continue;
                     }
 
+                    var heightStep = MapGenerator.Instance.heightStep;
+                    BuildingAreaHelper.FlattenArea(houseData, point, rotation, _grid, heightStep);
                     BuildingAreaHelper.MarkCellAsOccupied(houseData, point, rotation, _grid);
                 }
 
@@ -141,20 +156,23 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     {
         _placedPOIPositions.Clear();
 
+        // foreach registered POI type, apply placement algorithm
         foreach (var poiData in poiDataList)
         {
             if (!poiData) continue;
 
-            var buildingData  = poiData.BuildingData;
-            var poiSpawnCount = Random.Range(poiData.SpawnRange.x, poiData.SpawnRange.y + 1);
+            var buildingData = poiData.BuildingData;
 
+            // Spawn a random number of these POI types within the defined range [0, n]
+            var poiSpawnCount = Random.Range(poiData.SpawnRange.x, poiData.SpawnRange.y + 1);
             for (var i = 0; i < poiSpawnCount; i++)
             {
                 List<(Vector2Int pos, float score)> candidates = null;
 
+                // Find the best candidate positions for this POI type, sorted by score
                 yield return StartCoroutine(CityGenerationJobRunner.FindBestPoiLocation(
-                    _grid, poiData, _placedPOIPositions, _cityCenter,
-                    _result => candidates = _result));
+                                                _grid, poiData, _placedPOIPositions, _cityCenter,
+                                                _result => candidates = _result));
 
                 if (candidates == null || candidates.Count == 0)
                     continue;
@@ -163,6 +181,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 var bestPos      = Vector2Int.zero;
                 var bestRotation = 0;
 
+                // Limit the number of candidates we check to avoid long generation times in case of many POIs or large maps
                 var checksCount = 0;
                 foreach (var (pos, _) in candidates)
                 {
@@ -170,10 +189,11 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
                     var rotation = 0;
 
+                    // Ensure the building has a valid area to be placed on
                     if (buildingData && buildingData.buildingArea is { Count: > 0 })
                     {
                         rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
-                        if (rotation < 0) 
+                        if (rotation < 0)
                             continue;
                     }
 
@@ -185,12 +205,23 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
                 if (!found) continue;
 
-                if (buildingData && buildingData.buildingArea is { Count: > 0 })
-                    BuildingAreaHelper.MarkCellAsOccupied(buildingData, bestPos, bestRotation, _grid);
+                var heightStep = MapGenerator.Instance.heightStep;
 
-                var cell = _grid.Cells[bestPos.x, bestPos.y];
-                cell.POI = poiData;
-                _grid.UpdateCell(bestPos, cell);
+                // If the POI has an associated building with a defined area, flatten the terrain and mark the area as occupied
+                if (buildingData && buildingData.buildingArea is { Count: > 0 })
+                {
+                    BuildingAreaHelper.FlattenArea(buildingData, bestPos, bestRotation, _grid, heightStep);
+                    BuildingAreaHelper.MarkAreaAsPoi(buildingData, bestPos, bestRotation, _grid, poiData);
+                }
+                else
+                {
+                    // If no building area, just mark the single cell as occupied by this POI
+                    var cell = _grid.Cells[bestPos.x, bestPos.y];
+                    cell.POI        = poiData;
+                    cell.IsOccupied = true;
+                    _grid.UpdateCell(bestPos, cell);
+                }
+
                 _placedPOIPositions.Add(bestPos);
             }
         }
@@ -202,6 +233,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         var       cityCount       = Random.Range(0, MAX_NEAR_CITIES + 1);
         var       nearCitiesData  = new List<WorldGrid.NearCityData>();
 
+        // Fill near cities data with random positions around the map edges, ensuring they are not too close to each other
         for (var i = 0; i < cityCount; i++)
         {
             var edge       = Random.Range(0, 4);
@@ -219,10 +251,12 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
         nearCitiesData.Sort((_a, _b) => _a.Distance.CompareTo(_b.Distance));
 
+        // Get random names for the near cities from the config
         var names = GameManager.Instance.Config
             ? GameManager.Instance.Config.GetRandomCityNames(nearCitiesData.Count)
             : null;
 
+        // Default to "City 1", "City 2", etc. if no names available
         for (var i = 0; i < nearCitiesData.Count; i++)
             nearCitiesData[i].Name = names != null ? names[i] : $"City {i + 1}";
 
@@ -238,6 +272,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
         for (var attempt = 0; attempt < 10; attempt++)
         {
+            // Generate a position along the specified edge with an offset to avoid being too close to the actual edge
             pos = _edge switch
             {
                 0 => new Vector2Int(-EDGE_OFFSET,             _randomCell),
@@ -247,6 +282,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 _ => Vector2Int.zero
             };
 
+            // Check if this position is too close to any existing near city
             var tooClose = false;
             foreach (var existingCity in _existing)
             {

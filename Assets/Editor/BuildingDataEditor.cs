@@ -12,7 +12,7 @@ public class BuildingDataEditor : Editor
 
     public override VisualElement CreateInspectorGUI()
     {
-        var root = new VisualElement();
+        var root             = new VisualElement();
         var defaultInspector = new IMGUIContainer(() => DrawDefaultInspector());
         root.Add(defaultInspector);
 
@@ -40,7 +40,7 @@ public class BuildingDataEditor : Editor
         Handles.color = data.debugColor;
         foreach (var offset in data.buildingArea)
         {
-            var rotated = BuildingAreaHelper.RotateOffset(offset, _previewRotation);
+            var rotated  = BuildingAreaHelper.RotateOffset(offset, _previewRotation);
             var worldPos = new Vector3(rotated.x, 0, rotated.y);
             Handles.DrawWireCube(worldPos, Vector3.one);
         }
@@ -48,10 +48,10 @@ public class BuildingDataEditor : Editor
 
     private static void DrawRectBorder(Rect _rect, Color _color)
     {
-        EditorGUI.DrawRect(new Rect(_rect.x, _rect.y, _rect.width, 1), _color);
-        EditorGUI.DrawRect(new Rect(_rect.x, _rect.yMax - 1, _rect.width, 1), _color);
-        EditorGUI.DrawRect(new Rect(_rect.x, _rect.y, 1, _rect.height), _color);
-        EditorGUI.DrawRect(new Rect(_rect.xMax - 1, _rect.y, 1, _rect.height), _color);
+        EditorGUI.DrawRect(new Rect(_rect.x,        _rect.y,        _rect.width, 1),            _color);
+        EditorGUI.DrawRect(new Rect(_rect.x,        _rect.yMax - 1, _rect.width, 1),            _color);
+        EditorGUI.DrawRect(new Rect(_rect.x,        _rect.y,        1,           _rect.height), _color);
+        EditorGUI.DrawRect(new Rect(_rect.xMax - 1, _rect.y,        1,           _rect.height), _color);
     }
 
     private static void DrawLegendSwatch(Color _color, string _label)
@@ -60,30 +60,39 @@ public class BuildingDataEditor : Editor
         EditorGUI.DrawRect(rect, _color);
         EditorGUILayout.LabelField(_label, GUILayout.Width(80));
     }
-    
+
     private void DrawBuildingAreaGrid()
     {
         var data = (BuildingData)target;
-        if (data.buildingArea == null)
-            data.buildingArea = new List<Vector2Int>();
+        data.buildingArea ??= new List<Vector2Int>();
 
-        var gridSize = data.buildingSize;
+        var gridSize  = data.buildingSize;
         var totalSize = gridSize * CELL_SIZE;
+
+        if (gridSize <= 0) return;
 
         var rect = GUILayoutUtility.GetRect(totalSize, totalSize);
         DrawRectBorder(rect, Color.gray);
+
+        var cellStyle = new GUIStyle(GUI.skin.button)
+        {
+            fontSize  = (int)(CELL_SIZE * 0.55f),
+            fontStyle = FontStyle.Bold,
+            alignment = TextAnchor.MiddleCenter
+        };
 
         for (var x = 0; x < gridSize; x++)
         {
             for (var y = 0; y < gridSize; y++)
             {
-                var cellRect = new Rect(rect.x + x * CELL_SIZE, rect.y + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-                var offset = new Vector2Int(x - gridSize / 2, y - gridSize / 2);
+                var cellRect   = new Rect(rect.x + x * CELL_SIZE, rect.y + y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                var offset     = new Vector2Int(x - gridSize / 2, y - gridSize / 2);
                 var isOccupied = data.buildingArea.Contains(offset);
 
-                EditorGUI.DrawRect(cellRect, isOccupied ? data.debugColor : new Color(0, 0, 0, 0.1f));
-                if (!GUI.Button(cellRect, GUIContent.none)) continue;
-                
+                var label = isOccupied ? "#" : "";
+
+                if (!GUI.Button(cellRect, label, cellStyle)) continue;
+
                 if (isOccupied)
                     data.buildingArea.Remove(offset);
                 else
