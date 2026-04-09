@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections;
+using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 {
@@ -13,11 +13,6 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     bool IGenerator.IsGenerating => IsGenerating;
 
     public event Action OnGenerationComplete;
-
-    [Header("General")]
-    public int seed;
-
-    public bool useRandomSeed = true;
 
     [Header("Terrain")]
     [Range(1f, 50f)] public float noiseScale = 20f;
@@ -66,18 +61,14 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
         _grid        = _generationGrid;
         IsGenerating = true;
 
-        if (useRandomSeed)
-            seed = DateTime.Now.Millisecond;
-
-        Random.InitState(seed);
-
         _grid.InitGrid();
 
         GenerateTerrain();
         GenerateCoasts();
         GenerateLakes();
 
-        var riverCount = Random.Range(0, maxRivers + 1);
+        var rng        = GameManager.Instance.RandomEngine;
+        var riverCount = rng.Range(0, maxRivers + 1);
         for (var r = 0; r < riverCount; r++)
             GenerateRiver();
 
@@ -89,9 +80,10 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     private void GenerateTerrain()
     {
         var size = _grid.size;
+        var rng  = GameManager.Instance.RandomEngine;
 
-        var elevationOffsetX = Random.Range(0f, 1000f);
-        var elevationOffsetY = Random.Range(0f, 1000f);
+        var elevationOffsetX = rng.Range(0f, 1000f);
+        var elevationOffsetY = rng.Range(0f, 1000f);
 
         for (var x = 0; x < size; x++)
         {
@@ -115,19 +107,20 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
         if (maxCoastPatches <= 0) return;
 
         var size       = _grid.size;
-        var patchCount = Random.Range(0, maxCoastPatches + 1);
+        var rng        = GameManager.Instance.RandomEngine;
+        var patchCount = rng.Range(0, maxCoastPatches + 1);
 
         for (var i = 0; i < patchCount; i++)
         {
-            var edge = Random.Range(0, 4);
+            var edge = rng.Range(0, 4);
 
-            var length = Random.Range(coastMinLength, Mathf.Min(coastMaxLength + 1, size));
-            var depth  = Random.Range(coastMinDepth,  coastMaxDepth + 1);
+            var length = rng.Range(coastMinLength, Mathf.Min(coastMaxLength + 1, size));
+            var depth  = rng.Range(coastMinDepth,  coastMaxDepth + 1);
 
-            var start = Random.Range(0, size - length);
+            var start = rng.Range(0, size - length);
 
-            var noiseOffsetX = Random.Range(0f, 1000f);
-            var noiseOffsetY = Random.Range(0f, 1000f);
+            var noiseOffsetX = rng.Range(0f, 1000f);
+            var noiseOffsetY = rng.Range(0f, 1000f);
 
             for (var along = 0; along < length; along++)
             {
@@ -179,17 +172,18 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
         var size   = _grid.size;
         var margin = lakeMaxRadius + 2;
+        var rng    = GameManager.Instance.RandomEngine;
 
-        var lakeCount = Random.Range(0, maxLakes + 1);
+        var lakeCount = rng.Range(0, maxLakes + 1);
 
         for (var i = 0; i < lakeCount; i++)
         {
-            var cx = Random.Range(margin,        size          - margin);
-            var cy = Random.Range(margin,        size          - margin);
-            var rx = Random.Range(lakeMinRadius, lakeMaxRadius + 1);
-            var ry = Random.Range(lakeMinRadius, lakeMaxRadius + 1);
+            var cx = rng.Range(margin,        size          - margin);
+            var cy = rng.Range(margin,        size          - margin);
+            var rx = rng.Range(lakeMinRadius, lakeMaxRadius + 1);
+            var ry = rng.Range(lakeMinRadius, lakeMaxRadius + 1);
 
-            var noiseOffset = Random.Range(0f, 1000f);
+            var noiseOffset = rng.Range(0f, 1000f);
 
             foreach (var p in MathHelper.GetPointsInEllipse(new Vector2Int(cx, cy), rx, ry))
             {
@@ -228,12 +222,13 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     private Vector2Int GetEdgePosition(int _edge)
     {
         var size = _grid.size;
+        var rng  = GameManager.Instance.RandomEngine;
         return _edge switch
         {
-            0 => new Vector2Int(0,        Random.Range(0, size)),          // Left edge
-            1 => new Vector2Int(size - 1, Random.Range(0, size)),          // Right edge
-            2 => new Vector2Int(Random.Range(0,           size), 0),       // Top edge
-            _ => new Vector2Int(Random.Range(0,           size), size - 1) // Bottom edge
+            0 => new Vector2Int(0,        rng.Range(0, size)),          // Left edge
+            1 => new Vector2Int(size - 1, rng.Range(0, size)),          // Right edge
+            2 => new Vector2Int(rng.Range(0,           size), 0),       // Top edge
+            _ => new Vector2Int(rng.Range(0,           size), size - 1) // Bottom edge
         };
     }
 
@@ -241,21 +236,22 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     {
         var size        = _grid.size;
         var minDistance = size / 2f;
+        var rng         = GameManager.Instance.RandomEngine;
 
         Vector2Int startPos, endPos;
 
         var safetyRetries = 0;
         do
         {
-            var startEdge = Random.Range(0, 4);
+            var startEdge = rng.Range(0, 4);
             startPos = GetEdgePosition(startEdge);
-            var endEdge = (startEdge + Random.Range(1, 4)) % 4;
+            var endEdge = (startEdge + rng.Range(1, 4)) % 4;
             endPos = GetEdgePosition(endEdge);
             safetyRetries++;
         } while (Vector2Int.Distance(startPos, endPos) < minDistance && safetyRetries < 100);
 
-        var riverNoiseOffset = Random.Range(0f, 1000f);
-        var widthNoiseOffset = Random.Range(0f, 1000f);
+        var riverNoiseOffset = rng.Range(0f, 1000f);
+        var widthNoiseOffset = rng.Range(0f, 1000f);
 
         var startF = new Vector2(startPos.x, startPos.y);
         var endF   = new Vector2(endPos.x,   endPos.y);

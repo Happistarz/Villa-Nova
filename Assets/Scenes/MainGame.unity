@@ -1164,18 +1164,11 @@ MonoBehaviour:
   roadSettings:
     noiseStrength: 3
     noiseScale: 0.05
-    noiseOffsetX: 0
-    noiseOffsetY: 0
     waterPenalty: 15
     elevationMultiplier: 2
     occupiedPenalty: 50
-    roadBonus: 0.8
-    roadProximityBonus: 0.3
-    roadProximityRadius: 3
-    bridgePenalty: 8
     maxBridgeLength: 10
     roadWidth: 1
-    allowOutOfBounds: 1
   agentConfigs:
   - {fileID: 11400000, guid: 90368cba267448b4e8b125eb943729d8, type: 2}
   - {fileID: 11400000, guid: 0d1926b338647bc4a95431fc0a1c5b8d, type: 2}
@@ -1989,8 +1982,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
   dontDestroyOnLoad: 0
-  seed: 0
-  useRandomSeed: 1
   noiseScale: 20
   elevationNoiseScale: 40
   elevationScale: 1
@@ -2004,6 +1995,7 @@ MonoBehaviour:
   maxLakes: 5
   lakeMinRadius: 3
   lakeMaxRadius: 8
+  maxRivers: 3
   riverNoiseScale: 7.4
   riverAmplitude: 0.078
   riverResolution: 50
@@ -2238,7 +2230,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b7b93512352429849a0901a36853b708, type: 2}
   - {fileID: 11400000, guid: 9560c40e36e84f947a013e56078a4c7d, type: 2}
   - {fileID: 11400000, guid: a29a4d80bfd567349819eda7af4aac16, type: 2}
-  houseData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
   nearbyCityPool: {fileID: 1101395099}
 --- !u!4 &1327768807
 Transform:
@@ -2494,6 +2485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameManager
   dontDestroyOnLoad: 1
   config: {fileID: 11400000, guid: cb1acac4b0227af4c807d7deacee3293, type: 2}
+  seed: -1
 --- !u!4 &1463271908
 Transform:
   m_ObjectHideFlags: 0

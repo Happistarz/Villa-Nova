@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Core.Extensions;
 using Core.Patterns;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 {
@@ -64,7 +63,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     {
         _grid        = _generationGrid;
         IsGenerating = true;
-
+        
         var bestHomePoint = Vector2Int.zero;
         yield return StartCoroutine(
             CityGenerationJobRunner
@@ -86,7 +85,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
-
+        
         yield return StartCoroutine(PlacePOIsCoroutine(bestHomePoint));
 
         // Rebuild meshes with POIs before placing houses
@@ -109,7 +108,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
             var buildingData = poiData.buildingData;
 
-            var poiSpawnCount = Random.Range(poiData.spawnRange.x, poiData.spawnRange.y + 1);
+            var poiSpawnCount = GameManager.Instance.RandomEngine.Range(poiData.spawnRange.x, poiData.spawnRange.y + 1);
             for (var i = 0; i < poiSpawnCount; i++)
             {
                 List<(Vector2Int pos, float score)> candidates = null;
@@ -170,17 +169,18 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     private void GenerateNearCitiesData()
     {
         const int MAX_NEAR_CITIES = 4;
-        var       cityCount       = Random.Range(0, MAX_NEAR_CITIES + 1);
+        var       rng             = GameManager.Instance.RandomEngine;
+        var       cityCount       = rng.Range(0, MAX_NEAR_CITIES + 1);
         var       nearCitiesData  = new List<WorldGrid.NearCityData>();
 
         for (var i = 0; i < cityCount; i++)
         {
-            var edge       = Random.Range(0, 4);
-            var randomCell = Random.Range(0, _grid.size);
+            var edge       = rng.Range(0, 4);
+            var randomCell = rng.Range(0, _grid.size);
             var pos        = FindSafeCityPosition(edge, randomCell, nearCitiesData);
 
             var distanceToCenter    = Vector2Int.Distance(pos, new Vector2Int(_grid.size / 2, _grid.size / 2));
-            var randomExtraDistance = Random.Range(0f, 20f);
+            var randomExtraDistance = rng.Range(0f, 20f);
             nearCitiesData.Add(new WorldGrid.NearCityData
             {
                 CityPos  = pos,
@@ -231,7 +231,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
             if (!tooClose) break;
 
-            _randomCell = Random.Range(0, _grid.size);
+            _randomCell = GameManager.Instance.RandomEngine.Range(0, _grid.size);
         }
 
         return pos;

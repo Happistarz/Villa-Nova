@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Core.Extensions;
 using Core.Patterns;
 using Generators;
 using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 {
@@ -35,9 +35,11 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 
         yield return StartCoroutine(ComputeUrbanity(_grid, cityCenter));
 
-        var graph    = RoadGraph.Build(_grid, cityCenter, poiPositions, nearCities);
+        var graph = RoadGraph.Build(_grid, cityCenter, poiPositions, nearCities);
+
         var requests = new List<PathRequest>();
         var edgeMeta = new List<(RoadGraph.Edge edge, RoadSettings settings)>();
+        var rng      = GameManager.Instance.RandomEngine;
 
         foreach (var edge in graph.Edges)
         {
@@ -48,8 +50,8 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
             {
                 Start        = new int2(fromNode.Position.x, fromNode.Position.y),
                 End          = new int2(toNode.Position.x,   toNode.Position.y),
-                NoiseOffsetX = Random.Range(0f, 1000f),
-                NoiseOffsetY = Random.Range(0f, 1000f)
+                NoiseOffsetX = rng.Range(0f, 1000f),
+                NoiseOffsetY = rng.Range(0f, 1000f)
             };
 
             var edgeSettings = roadSettings;
@@ -94,9 +96,8 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
             {
                 if (!config) continue;
 
-                var agentSeed = Random.Range(int.MinValue, int.MaxValue);
                 yield return StartCoroutine(
-                    RoadAgentRunner.Run(_grid, config, spawnCells, agentSeed));
+                    RoadAgentRunner.Run(_grid, config, spawnCells));
             }
         }
 
@@ -117,7 +118,6 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 
         var totalCells = _grid.size * _grid.size;
         var results    = new NativeArray<float>(totalCells, Allocator.Persistent);
-        var noiseSeed  = Random.Range(0f, 1000f);
 
         var job = new UrbanityJob
         {
@@ -126,8 +126,8 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
             MaxRadius      = urbanityConfig.maxRadius,
             NoiseScale     = urbanityConfig.noiseScale,
             NoiseAmplitude = urbanityConfig.noiseAmplitude,
-            Seed           = noiseSeed,
-            Results        = results
+            Results        = results,
+            Seed           = GameManager.Instance.RandomEngine.Next()
         };
 
         yield return GenerationJobManager.Instance.StartCoroutine(

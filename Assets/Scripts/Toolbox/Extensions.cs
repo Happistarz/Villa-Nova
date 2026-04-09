@@ -80,5 +80,21 @@ namespace Core.Extensions
             Quaternion.Euler(_q.eulerAngles.WithZ(_z));
 
         #endregion
+
+        #region SYSTEM RANDOM
+
+        /// <summary>Returns a random int in [min, max[</summary>
+        public static int Range(this System.Random _rng, int _min, int _max)
+        {
+            return _rng.Next(_min, _max);
+        }
+
+        /// <summary>Returns a random float in [min, max[</summary>
+        public static float Range(this System.Random _rng, float _min, float _max)
+        {
+            return _min + (float)_rng.NextDouble() * (_max - _min);
+        }
+
+        #endregion
     }
 }

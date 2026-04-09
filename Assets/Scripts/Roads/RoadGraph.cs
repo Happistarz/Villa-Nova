@@ -45,7 +45,7 @@ public static class RoadGraph
     }
 
     /// <summary>
-    /// Builds a road graph based on the world grid, city center, points of interest, and nearby cities.
+    /// Builds a road graph based on the world grid, city center, points of interest, and nearby cities
     /// The graph will have nodes for the city center, each POI, and each nearby city, with edges connecting them according to their types and priorities
     /// </summary>
     public static Graph Build(WorldGrid                    _grid, Vector2Int _cityCenter,
@@ -64,9 +64,10 @@ public static class RoadGraph
         {
             for (var i = 0; i < _nearCities.Count; i++)
             {
-                var nc  = _nearCities[i];
-                var pos = RoadBuilder.ClampToGrid(nc.CityPos, _grid);
-                var idx = AddNode(ref graph, pos);
+                var nc       = _nearCities[i];
+                var clamped  = RoadBuilder.ClampToGrid(nc.CityPos, _grid);
+                var walkable = FindNearestWalkable(_grid, clamped);
+                var idx      = AddNode(ref graph, walkable);
 
                 AddEdge(ref graph, idx, centerIdx, EdgeType.EXTERNAL, _priority: 0);
             }
@@ -102,6 +103,41 @@ public static class RoadGraph
     {
         _graph.Nodes.Add(new Node(_pos));
         return _graph.Nodes.Count - 1;
+    }
+
+    /// <summary>
+    /// Spirals outward from a position to find the nearest cell that is not water/river and is in bounds
+    /// Returns the original position if nothing better is found within a reasonable radius
+    /// </summary>
+    private static Vector2Int FindNearestWalkable(WorldGrid _grid, Vector2Int _pos)
+    {
+        if (_grid.IsInBounds(_pos))
+        {
+            var cell = _grid.Cells[_pos.x, _pos.y];
+            if (!cell.Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER))
+                return _pos;
+        }
+
+        const int MAX_SEARCH = 30;
+        for (var r = 1; r <= MAX_SEARCH; r++)
+        {
+            for (var dx = -r; dx <= r; dx++)
+            {
+                for (var dy = -r; dy <= r; dy++)
+                {
+                    if (Mathf.Abs(dx) != r && Mathf.Abs(dy) != r) continue; // only perimeter
+
+                    var candidate = new Vector2Int(_pos.x + dx, _pos.y + dy);
+                    if (!_grid.IsInBounds(candidate)) continue;
+
+                    var c = _grid.Cells[candidate.x, candidate.y];
+                    if (!c.Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER))
+                        return candidate;
+                }
+            }
+        }
+
+        return _pos;
     }
 
     private static void AddEdge(ref Graph _graph, int _from, int _to, EdgeType _type, int _priority)

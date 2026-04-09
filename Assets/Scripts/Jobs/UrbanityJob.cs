@@ -11,7 +11,7 @@ public struct UrbanityJob : IJobParallelFor
     [ReadOnly] public float MaxRadius;
     [ReadOnly] public float NoiseScale;
     [ReadOnly] public float NoiseAmplitude;
-    [ReadOnly] public float Seed;
+    [ReadOnly] public int   Seed;
 
     public NativeArray<float> Results;
 
@@ -19,16 +19,16 @@ public struct UrbanityJob : IJobParallelFor
     {
         var x = _i % GridSize;
         var y = _i / GridSize;
-        
+
         var dist = math.distance(new float2(x, y), CitySettlePos);
-        
+
         var radial = math.max(0f, 1f - dist / MaxRadius);
 
         // Add noise to break up the circular pattern and create a more organic distribution
-        var nx = x * NoiseScale + Seed;
-        var ny = y * NoiseScale + Seed;
+        var nx        = x * NoiseScale + Seed;
+        var ny        = y * NoiseScale + Seed;
         var noiseMask = math.saturate(noise.snoise(new float2(nx, ny)) * NoiseAmplitude + 0.5f);
-        
+
         Results[_i] = radial * noiseMask;
     }
 }

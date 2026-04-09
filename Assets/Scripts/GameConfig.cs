@@ -163,19 +163,20 @@ public class GameConfig : ScriptableObject
         if (biomePalettes == null || biomePalettes.Length == 0)
             return BiomeColorConfig.Default;
 
-        return biomePalettes[Random.Range(0, biomePalettes.Length)];
+        return biomePalettes[GameManager.Instance.RandomEngine.Next(0, biomePalettes.Length)];
     }
 
     /// <summary>Picks unique random names from the pool without repetition</summary>
     public List<string> GetRandomCityNames(int _count)
     {
+        var rng    = GameManager.Instance.RandomEngine;
         var pool   = new List<string>(cityNames);
         var count  = Mathf.Min(_count, pool.Count);
         var result = new List<string>(count);
 
         for (var i = 0; i < count; i++)
         {
-            var index = Random.Range(0, pool.Count);
+            var index = rng.Next(0, pool.Count);
             result.Add(pool[index]);
             pool.RemoveAt(index);
         }

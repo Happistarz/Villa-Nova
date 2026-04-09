@@ -6,7 +6,7 @@ using Unity.Jobs;
 public class GenerationJobManager : MonoSingleton<GenerationJobManager>
 {
     /// <summary>Dispatches an IJobParallelFor and yields until complete</summary>
-    public static IEnumerator DispatchJob<T>(T _job, int _arrayLength, int _batchCount,
+    public static IEnumerator DispatchJob<T>(T         _job,        int                  _arrayLength, int _batchCount,
                                              Action<T> _onComplete, params IDisposable[] _disposables)
         where T : struct, IJobParallelFor
     {

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Core.Extensions;
 using UnityEngine;
 
 public static class RoadAgentRunner
@@ -29,13 +30,13 @@ public static class RoadAgentRunner
     /// The goal is to create a more organic looking road network, influenced by noise, urbanity, agents
     /// </summary>
     public static IEnumerator Run(WorldGrid _grid, RoadAgentConfig _config,
-                                  List<Vector2Int> _spawnCells, int _seed)
+                                  List<Vector2Int> _spawnCells)
     {
         if (_spawnCells == null || _spawnCells.Count == 0 || !_config)
             yield break;
 
-        var rng         = new System.Random(_seed);
-        var noiseOffset = (float)(rng.NextDouble() * 1000.0);
+        var rng         = GameManager.Instance.RandomEngine;
+        var noiseOffset = rng.Range(0f, 1000f);
         var queue       = new Queue<AgentState>();
         var spawnCount  = Mathf.Min(_config.maxAgents, _spawnCells.Count);
 
@@ -43,9 +44,9 @@ public static class RoadAgentRunner
         {
             queue.Enqueue(new AgentState
             {
-                Position          = _spawnCells[rng.Next(0, _spawnCells.Count)],
-                Direction         = _CARDINAL[rng.Next(0, 4)],
-                StepsRemaining    = rng.Next(_config.minSteps, _config.maxSteps + 1),
+                Position          = _spawnCells[rng.Range(0, _spawnCells.Count)],
+                Direction         = _CARDINAL[rng.Range(0, 4)],
+                StepsRemaining    = rng.Range(_config.minSteps, _config.maxSteps + 1),
                 RoadType          = _config.roadType,
                 RoadWidth         = _config.roadWidth,
                 BranchProbability = _config.branchProbability,
@@ -71,7 +72,7 @@ public static class RoadAgentRunner
                         agent.Position.y * _config.dirNoiseScale + noiseOffset);
 
                     if (n > 1f - _config.dirNoiseStrength / 45f)
-                        agent.Direction = Perpendicular(agent.Direction, rng.Next(0, 2) == 0);
+                        agent.Direction = Perpendicular(agent.Direction, rng.Range(0, 2) == 0);
                 }
 
                 var next = agent.Position + agent.Direction;
@@ -93,17 +94,17 @@ public static class RoadAgentRunner
                 agent.Position = next;
 
                 if (step >= agent.MinBranchSteps &&
-                    rng.NextDouble() < agent.BranchProbability &&
+                    rng.Range(0, 100) <= _config.branchProbability &&
                     agentCount + queue.Count < maxAgents)
                 {
-                    var branchSteps = rng.Next(
+                    var branchSteps = rng.Range(
                         agent.MinBranchSteps,
                         Mathf.Max(agent.MinBranchSteps + 1, agent.StepsRemaining - step));
 
                     queue.Enqueue(new AgentState
                     {
                         Position          = agent.Position,
-                        Direction         = Perpendicular(agent.Direction, rng.Next(0, 2) == 0),
+                        Direction         = Perpendicular(agent.Direction, rng.Range(0, 2) == 0),
                         StepsRemaining    = branchSteps,
                         RoadType          = RoadGraph.EdgeType.ALLEY,
                         RoadWidth         = 1,

@@ -23,6 +23,9 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
     public void StartGeneration()
     {
         if (IsAnyGenerating) return;
+        
+        GameManager.Instance.SetSeed(-1);
+        GameManager.Instance.InitSeed();
 
         StartCoroutine(RunPipeline());
     }
@@ -39,8 +42,7 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
 
         var grid = WorldGrid.Instance;
 
-        var mapGen = MapGenerator.Instance;
-        yield return StartCoroutine(mapGen.Generate(grid));
+        yield return StartCoroutine(MapGenerator.Instance.Generate(grid));
 
         if (revealAnimator && revealAnimator.isActiveAndEnabled && revealAnimator.IsRevealing)
         {
@@ -54,7 +56,6 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
             revealAnimator.OnRevealComplete -= OnReveal;
         }
 
-        // Start the remaining generators in sequence
         for (var i = 1; i < _generators.Count; i++)
         {
             var generator = _generators[i];
