@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// Renders city buildings using GPU instancing with distance-based LOD batches.
-/// </summary>
 public class CityRenderer : MonoBehaviour
 {
     private const int _INSTANCED_BATCH_SIZE = 1023;
@@ -74,7 +71,7 @@ public class CityRenderer : MonoBehaviour
     {
         if (!_baked || _lodBatches == null) return;
 
-        if (_cam != null)
+        if (_cam)
         {
             var camPos = _cam.transform.position;
             if (Vector3.SqrMagnitude(camPos - _lastCamPos) > lodRebakeThreshold * lodRebakeThreshold)
@@ -86,7 +83,7 @@ public class CityRenderer : MonoBehaviour
 
         for (var lod = 0; lod < lodLevels.Length; lod++)
         {
-            if (lodLevels[lod].mesh == null) continue;
+            if (!lodLevels[lod].mesh) continue;
             foreach (var batch in _lodBatches[lod])
                 Graphics.DrawMeshInstanced(lodLevels[lod].mesh, 0, material, batch);
         }
@@ -101,7 +98,7 @@ public class CityRenderer : MonoBehaviour
         for (var i = 0; i < lodLevels.Length; i++)
             accumulators[i] = new List<Matrix4x4>();
 
-        var camPos = _cam != null ? _cam.transform.position : Vector3.zero;
+        var camPos = _cam ? _cam.transform.position : Vector3.zero;
 
         for (var i = 0; i < _positions.Count; i++)
         {

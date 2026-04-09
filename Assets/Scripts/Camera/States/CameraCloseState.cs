@@ -1,9 +1,6 @@
 using Core;
 using UnityEngine;
 
-/// <summary>
-/// Close camera state. Orbits around the city center in orthographic mode with smooth pivot lerp.
-/// </summary>
 public class CameraCloseState : State<CameraController>
 {
     private float _orbitRadius, _targetOrbitRadius, _orbitRadiusVelocity;
@@ -94,11 +91,10 @@ public class CameraCloseState : State<CameraController>
         _targetOrbitRadius += scroll / 120f * cfg.zoomSpeed;
         _targetOrbitRadius =  Mathf.Clamp(_targetOrbitRadius, cfg.minRadius, cfg.maxRadius);
 
-        if (cfg.orthographic)
-        {
-            var zoomT = Mathf.InverseLerp(cfg.minRadius, cfg.maxRadius, _targetOrbitRadius);
-            Context.camera.orthographicSize = Mathf.Lerp(cfg.orthoSize * 0.5f, cfg.orthoSize, zoomT);
-        }
+        if (!cfg.orthographic) return;
+        
+        var zoomT = Mathf.InverseLerp(cfg.minRadius, cfg.maxRadius, _targetOrbitRadius);
+        Context.camera.orthographicSize = Mathf.Lerp(cfg.orthoSize * 0.5f, cfg.orthoSize, zoomT);
     }
 
     private void HandleRotation()
@@ -135,18 +131,17 @@ public class CameraCloseState : State<CameraController>
         var flatRot  = Quaternion.Euler(0f,     _yaw, 0f);
 
         var targetPos = _currentPivot + flatRot * new Vector3(0f, 0f, -_orbitRadius) + Vector3.up * _orbitHeight;
-        var targetRot = rotation;
 
         if (_transitioning)
         {
             var t = Mathf.SmoothStep(0f, 1f, _transitionTimer);
             Context.camera.transform.position = Vector3.Lerp(_transitionStartPos, targetPos, t);
-            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, targetRot, t);
+            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, rotation, t);
         }
         else
         {
             Context.camera.transform.position = targetPos;
-            Context.camera.transform.rotation = targetRot;
+            Context.camera.transform.rotation = rotation;
         }
     }
 }

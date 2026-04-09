@@ -4,10 +4,6 @@ using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// FSM-based camera controller with three modes: Main (orbit overview), Close (city focus) and Free (FPS).
-/// Handles input routing, mode transitions and keyboard shortcuts.
-/// </summary>
 public class CameraController : MonoBehaviour
 {
     public enum CameraStateType
@@ -191,11 +187,10 @@ public class CameraController : MonoBehaviour
         Gizmos.color = new Color(0f, 1f, 1f, 0.5f);
         Gizmos.DrawLine(pivot, transform.position);
 
-        if (freeBounds.size.sqrMagnitude > 0f)
-        {
-            Gizmos.color = new Color(1f, 0.5f, 0f, 0.15f);
-            Gizmos.DrawWireCube(freeBounds.center, freeBounds.size);
-        }
+        if (!(freeBounds.size.sqrMagnitude > 0f)) return;
+        
+        Gizmos.color = new Color(1f, 0.5f, 0f, 0.15f);
+        Gizmos.DrawWireCube(freeBounds.center, freeBounds.size);
     }
 
     #endregion

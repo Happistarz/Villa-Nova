@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace Core.Variables
 {
-    /// <summary>
-    /// ScriptableObject wrapper for a bool value with change notification.
-    /// </summary>
     [CreateAssetMenu(fileName = "NewBoolVariable", menuName = "Toolbox/Variables/Bool", order = 2)]
     public class BoolVariable : ScriptableObject
     {

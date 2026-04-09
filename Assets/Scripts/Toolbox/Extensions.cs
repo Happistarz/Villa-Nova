@@ -3,62 +3,57 @@ using UnityEngine;
 
 namespace Core.Extensions
 {
-    /// <summary>
-    /// Common extension methods for Transform, GameObject, collections and vectors.
-    /// </summary>
     public static class Extensions
     {
         #region TRANSFORM & GAMEOBJECT
 
-        /// <summary>Destroys all children of the transform.</summary>
-        public static void DestroyChildren(this Transform t)
+        /// <summary>Destroys all children of the transform</summary>
+        public static void DestroyChildren(this Transform _t)
         {
-            foreach (Transform child in t)
+            foreach (Transform child in _t)
             {
                 Object.Destroy(child.gameObject);
             }
         }
 
-        /// <summary>Gets or adds a component on the GameObject.</summary>
-        public static T GetOrAddComponent<T>(this GameObject gameObject) where T : Component
+        /// <summary>Gets or adds a component on the GameObject</summary>
+        public static T GetOrAddComponent<T>(this GameObject _gameObject) where T : Component
         {
-            var component = gameObject.GetComponent<T>();
-            if (component == null)
-            {
-                component = gameObject.AddComponent<T>();
-            }
+            var component = _gameObject.GetComponent<T>();
+
+            if (!component) component = _gameObject.AddComponent<T>();
 
             return component;
         }
 
-        public static void ResetTransformation(this Transform trans)
+        public static void ResetTransformation(this Transform _trans)
         {
-            trans.position      = Vector3.zero;
-            trans.localRotation = Quaternion.identity;
-            trans.localScale    = new Vector3(1, 1, 1);
+            _trans.position      = Vector3.zero;
+            _trans.localRotation = Quaternion.identity;
+            _trans.localScale    = new Vector3(1, 1, 1);
         }
 
         #endregion
 
         #region COLLECTIONS
 
-        /// <summary>Returns a random element from the list.</summary>
-        public static T RandomItem<T>(this IList<T> list)
+        /// <summary>Returns a random element from the list</summary>
+        public static T RandomItem<T>(this IList<T> _list)
         {
-            if (list.Count == 0)
-                throw new System.IndexOutOfRangeException("Cannot select a random item from an empty list");
-            return list[Random.Range(0, list.Count)];
+            return _list.Count == 0
+                ? throw new System.IndexOutOfRangeException("Can't select a random item from an empty list")
+                : _list[Random.Range(0, _list.Count)];
         }
 
-        /// <summary>Shuffles the list in place (Fisher-Yates).</summary>
-        public static void Shuffle<T>(this IList<T> list)
+        /// <summary>Shuffles the list in place</summary>
+        public static void Shuffle<T>(this IList<T> _list)
         {
-            var n = list.Count;
+            var n = _list.Count;
             while (n > 1)
             {
                 n--;
                 var k = Random.Range(0, n + 1);
-                (list[k], list[n]) = (list[n], list[k]);
+                (_list[k], _list[n]) = (_list[n], _list[k]);
             }
         }
 
@@ -66,18 +61,23 @@ namespace Core.Extensions
 
         #region VECTOR MATH
 
-        public static Vector2 ToVector2(this Vector3    v) => new(v.x, v.y);
-        public static Vector3 ToVector3(this Vector2Int v) => new(v.x, 0f, v.y);
+        public static Vector2 ToVector2(this Vector3    _v) => new(_v.x, _v.y);
+        public static Vector3 ToVector3(this Vector2Int _v) => new(_v.x, 0f, _v.y);
 
-        public static Vector3 WithX(this Vector3 v, float x) => new(x, v.y, v.z);
-        public static Vector3 WithY(this Vector3 v, float y) => new(v.x, y, v.z);
-        public static Vector3 WithZ(this Vector3 v, float z) => new(v.x, v.y, z);
+        public static Vector3 WithX(this Vector3 _v, float _x) => new(_x, _v.y, _v.z);
+        public static Vector3 WithY(this Vector3 _v, float _y) => new(_v.x, _y, _v.z);
+        public static Vector3 WithZ(this Vector3 _v, float _z) => new(_v.x, _v.y, _z);
 
-        public static Vector3 Flat(this Vector3 v) => new(v.x, 0, v.z);
+        public static Vector3 Flat(this Vector3 _v) => new(_v.x, 0, _v.z);
 
-        public static Quaternion WithXRotation(this Quaternion q, float x) => Quaternion.Euler(q.eulerAngles.WithX(x));
-        public static Quaternion WithYRotation(this Quaternion q, float y) => Quaternion.Euler(q.eulerAngles.WithY(y));
-        public static Quaternion WithZRotation(this Quaternion q, float z) => Quaternion.Euler(q.eulerAngles.WithZ(z));
+        public static Quaternion WithXRotation(this Quaternion _q, float _x) =>
+            Quaternion.Euler(_q.eulerAngles.WithX(_x));
+
+        public static Quaternion WithYRotation(this Quaternion _q, float _y) =>
+            Quaternion.Euler(_q.eulerAngles.WithY(_y));
+
+        public static Quaternion WithZRotation(this Quaternion _q, float _z) =>
+            Quaternion.Euler(_q.eulerAngles.WithZ(_z));
 
         #endregion
     }

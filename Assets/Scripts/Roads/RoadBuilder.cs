@@ -3,11 +3,15 @@ using UnityEngine;
 
 public static class RoadBuilder
 {
-
+    /// <summary>
+    /// Stamps a road onto the grid along the given path with the specified width and road tier
+    /// If the path crosses water, it will attempt to place a bridge if the water run is within the max bridge length
+    /// If a cell already has a road of a lower tier, it will be upgraded to the new tier
+    /// If a cell already has a road of the same or higher tier, it will be left unchanged
+    /// </summary>
     public static void StampRoad(List<Vector2Int>   _path, int _width, WorldGrid _grid, int _maxBridgeLength,
                                  RoadGraph.EdgeType _roadTier)
     {
-        var stampedCount = 0;
         var bridgeCells  = new HashSet<Vector2Int>();
         CollectBridgeCells(_path, _grid, _maxBridgeLength, bridgeCells);
 
@@ -31,7 +35,6 @@ public static class RoadBuilder
 
                         cell.Type = WorldGrid.CellType.BRIDGE;
                         _grid.UpdateCell(pos, cell);
-                        stampedCount++;
                         continue;
                     }
 
@@ -43,12 +46,14 @@ public static class RoadBuilder
                     cell.RoadTier = (byte)_roadTier;
                     cell.Type = WorldGrid.CellType.ROAD;
                     _grid.UpdateCell(pos, cell);
-                    stampedCount++;
                 }
             }
         }
     }
 
+    /// <summary>
+    /// Collects all water cells along the path that are within the max bridge length and adds them to the bridgeCells set
+    /// </summary>
     private static void CollectBridgeCells(List<Vector2Int> _path,            WorldGrid           _grid,
                                            int              _maxBridgeLength, HashSet<Vector2Int> _bridgeCells)
     {
@@ -74,7 +79,7 @@ public static class RoadBuilder
     }
 
     /// <summary>
-    /// Checks if the current run of water cells is a valid bridge (not too long) and adds it to the bridgeCells set if so.
+    /// Checks if the current run of water cells is a valid bridge and adds it to the bridgeCells set if so
     /// </summary>
     private static void FlushWaterRun(List<Vector2Int>    _waterRun, int _maxLength,
                                       HashSet<Vector2Int> _bridgeCells)

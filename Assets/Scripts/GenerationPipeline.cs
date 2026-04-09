@@ -28,9 +28,8 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
     }
 
     /// <summary>
-    /// Runs the generation pipeline sequentially, waiting for each generator to complete before starting the next.
+    /// Runs the generation pipeline sequentially, waiting for each generator to complete before starting the next
     /// </summary>
-    /// <returns></returns>
     private IEnumerator RunPipeline()
     {
         IsAnyGenerating           = true;

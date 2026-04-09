@@ -3,9 +3,6 @@ using UnityEngine;
 
 namespace Core
 {
-    /// <summary>
-    /// Simple GameObject pool with pre-instantiation.
-    /// </summary>
     public class ObjectPool : MonoBehaviour
     {
         [SerializeField] private GameObject prefab;
@@ -36,11 +33,11 @@ namespace Core
             return obj;
         }
 
-        public void Return(GameObject obj)
+        public void Return(GameObject _obj)
         {
-            obj.SetActive(false);
-            obj.transform.SetParent(transform);
-            _pool.Enqueue(obj);
+            _obj.SetActive(false);
+            _obj.transform.SetParent(transform);
+            _pool.Enqueue(_obj);
         }
     }
 }

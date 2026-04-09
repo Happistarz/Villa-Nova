@@ -3,9 +3,6 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using Color = UnityEngine.Color;
 
-/// <summary>
-/// Builds the main terrain mesh with per-cell height, biome colors and vertical wall faces.
-/// </summary>
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class TerrainRenderer : AbstractRenderer
 {

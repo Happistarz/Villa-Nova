@@ -25,7 +25,7 @@ public class BuildingData : ScriptableObject
     [Header("Debug")]
     public Color debugColor = Color.red;
 
-    /// <summary>Returns the LOD mesh for the given camera distance.</summary>
+    /// <summary>Returns the LOD mesh for the given camera distance</summary>
     public Mesh GetLODMesh(float _distance)
     {
         foreach (var lod in lods)

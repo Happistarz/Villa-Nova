@@ -1,6 +1,4 @@
-﻿/// <summary>
-/// Global constants shared across the project.
-/// </summary>
+﻿
 public static class Constants
 {
     public const float CELL_SIZE              = 1f;

@@ -12,23 +12,20 @@ public static class RoadGraph
     }
 
     /// <summary>
-    /// Simple graph structure for road pathfinding: nodes are city center, POIs and nearby cities; edges are prioritized connections between them.
+    /// Represents a node in the road graph, which can be a city center, a point of interest (POI), or a nearby city
     /// </summary>
     public struct Node
     {
-        public          Vector2Int Position;
-        public readonly string     Label;
+        public Vector2Int Position;
 
-        public Node(Vector2Int _pos, string _label)
+        public Node(Vector2Int _pos)
         {
             Position = _pos;
-            Label    = _label;
         }
     }
 
     /// <summary>
-    /// Edges connect nodes with a type (external, main, secondary) and a priority for pathfinding.
-    /// The graph is built with a main edge from each POI to the center, and secondary edges to the nearest existing node for redundancy.
+    /// Represents a directed edge in the road graph, connecting two nodes with a specific type and priority
     /// </summary>
     public struct Edge
     {
@@ -39,8 +36,7 @@ public static class RoadGraph
     }
 
     /// <summary>
-    /// The graph consists of a list of nodes and edges.
-    /// Nodes include the city center, POIs and nearby cities. Edges connect them with types and priorities for pathfinding.
+    /// Represents the entire road graph, containing a list of nodes and edges that define the connections between them
     /// </summary>
     public struct Graph
     {
@@ -48,6 +44,10 @@ public static class RoadGraph
         public List<Edge> Edges;
     }
 
+    /// <summary>
+    /// Builds a road graph based on the world grid, city center, points of interest, and nearby cities.
+    /// The graph will have nodes for the city center, each POI, and each nearby city, with edges connecting them according to their types and priorities
+    /// </summary>
     public static Graph Build(WorldGrid                    _grid, Vector2Int _cityCenter,
                               IReadOnlyList<Vector2Int>    _poiPositions,
                               List<WorldGrid.NearCityData> _nearCities)
@@ -58,7 +58,7 @@ public static class RoadGraph
             Edges = new List<Edge>()
         };
 
-        var centerIdx = AddNode(ref graph, _cityCenter, "Center");
+        var centerIdx = AddNode(ref graph, _cityCenter);
 
         if (_nearCities != null)
         {
@@ -66,7 +66,7 @@ public static class RoadGraph
             {
                 var nc  = _nearCities[i];
                 var pos = RoadBuilder.ClampToGrid(nc.CityPos, _grid);
-                var idx = AddNode(ref graph, pos, nc.Name ?? $"NearCity {i}");
+                var idx = AddNode(ref graph, pos);
 
                 AddEdge(ref graph, idx, centerIdx, EdgeType.EXTERNAL, _priority: 0);
             }
@@ -77,7 +77,7 @@ public static class RoadGraph
         {
             for (var i = 0; i < _poiPositions.Count; i++)
             {
-                var idx = AddNode(ref graph, _poiPositions[i], $"POI {i}");
+                var idx = AddNode(ref graph, _poiPositions[i]);
                 poiIndices.Add(idx);
             }
         }
@@ -98,9 +98,9 @@ public static class RoadGraph
         return graph;
     }
 
-    private static int AddNode(ref Graph _graph, Vector2Int _pos, string _label)
+    private static int AddNode(ref Graph _graph, Vector2Int _pos)
     {
-        _graph.Nodes.Add(new Node(_pos, _label));
+        _graph.Nodes.Add(new Node(_pos));
         return _graph.Nodes.Count - 1;
     }
 

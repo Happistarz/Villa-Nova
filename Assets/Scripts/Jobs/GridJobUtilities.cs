@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class GridJobUtilities
 {
-    /// <summary>Flat cell data struct safe for Burst jobs.</summary>
+    /// <summary>Flat cell data struct safe for Burst jobs</summary>
     public struct JobCellData
     {
         public WorldGrid.CellType Type;
@@ -13,7 +13,7 @@ public static class GridJobUtilities
         public bool HasPoi;
     }
 
-    /// <summary>Copies grid cells into a flat NativeArray for job consumption.</summary>
+    /// <summary>Copies grid cells into a flat NativeArray for job consumption</summary>
     public static NativeArray<JobCellData> GetFlatGridData(WorldGrid _grid, Allocator _allocator)
     {
         var size = _grid.size;
@@ -39,7 +39,7 @@ public static class GridJobUtilities
         return nativeArray;
     }
 
-    /// <summary>Collects all flat indices within a radius around a center point.</summary>
+    /// <summary>Collects all flat indices within a radius around a center point</summary>
     public static void GetIndicesInRadius(int2 _center, float _radius, int _gridSize, NativeList<int> _results)
     {
         var r = Mathf.CeilToInt(_radius);

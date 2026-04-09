@@ -4,9 +4,6 @@ using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-/// <summary>
-/// Base class for mesh renderers. Handles toggle input, visibility state and mesh rebuild triggers.
-/// </summary>
 public abstract class AbstractRenderer : MonoBehaviour
 {
     public InputActionReference toggleAction;

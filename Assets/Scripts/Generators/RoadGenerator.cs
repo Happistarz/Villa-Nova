@@ -87,7 +87,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
             }
         }
 
-        // Run agents to organically expand roads from the stamped paths and create smaller branches
+        // Run agents to organically expand roads from the main paths
         if (agentConfigs != null && spawnCells.Count > 0)
         {
             foreach (var config in agentConfigs)
@@ -105,7 +105,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
     }
 
     /// <summary>
-    /// Computes an urbanity level for each cell in the grid based on distance from city center and noise.
+    /// Computes an urbanity level for each cell in the grid based on distance from city center and noise
     /// </summary>
     private IEnumerator ComputeUrbanity(WorldGrid _grid, Vector2Int _cityCenter)
     {

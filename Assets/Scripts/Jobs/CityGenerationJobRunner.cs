@@ -7,7 +7,7 @@ using UnityEngine;
 
 public static class CityGenerationJobRunner
 {
-    /// <summary>Finds the best city center position based on terrain scoring.</summary>
+    /// <summary>Finds the best city center position based on terrain scoring</summary>
     public static IEnumerator FindBestSettlePoint(WorldGrid _grid, float _radius, Action<Vector2Int> _onComplete)
     {
         var totalCells = _grid.size * _grid.size;
@@ -44,7 +44,7 @@ public static class CityGenerationJobRunner
         _onComplete?.Invoke(new Vector2Int(bestIndex % _grid.size, bestIndex / _grid.size));
     }
 
-    /// <summary>Computes A* paths for a batch of path requests using jobs.</summary>
+    /// <summary>Computes A* paths for a batch of path requests using jobs</summary>
     public static IEnumerator ComputePaths(WorldGrid _grid, List<PathRequest> _requests,
                                            RoadSettings _settings,
                                            Action<List<List<Vector2Int>>> _onComplete)
@@ -55,8 +55,8 @@ public static class CityGenerationJobRunner
             yield break;
         }
 
-        // Prepare job data: flatten grid, convert requests and allocate result arrays.
-        // Persistent allocator because we need the data to survive across frames until the job completes.
+        // Flatten grid, convert requests and allocate result arrays
+        // The job is a bit time-consuming, so we need to ensure datas stays valid across multiple frames
         var gridData    = GridJobUtilities.GetFlatGridData(_grid, Allocator.Persistent);
         var requests    = new NativeArray<PathRequest>(_requests.Count, Allocator.Persistent);
         var allPaths    = new NativeArray<int2>(_requests.Count * PathfindingProcessJob.MAX_PATH_LENGTH, Allocator.Persistent);
@@ -88,7 +88,7 @@ public static class CityGenerationJobRunner
                 gridData, requests, allPaths, pathLengths));
     }
 
-    /// <summary>Scores all grid cells for POI placement and returns sorted candidates.</summary>
+    /// <summary>Scores all grid cells for POI placement and returns sorted candidates</summary>
     public static IEnumerator FindBestPoiLocation(WorldGrid _grid, POIData _poiData,
                                                   List<Vector2Int> _existingPois,
                                                   Vector2Int _cityCenter,

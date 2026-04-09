@@ -3,7 +3,7 @@ using UnityEngine;
 
 public static class MathHelper
 {
-    /// <summary>Fractal Brownian Motion using Perlin noise.</summary>
+    /// <summary>Fractal Brownian Motion using Perlin noise</summary>
     public static float FBm(float _x, float _y, int _octaves)
     {
         var value     = 0f;
@@ -22,25 +22,25 @@ public static class MathHelper
         return value / max;
     }
 
-    /// <summary>Remaps a value from one range to another.</summary>
+    /// <summary>Remaps a value from one range to another</summary>
     public static float Remap(float _value, float _from1, float _to1, float _from2, float _to2)
     {
         return (_value - _from1) / (_to1 - _from1) * (_to2 - _from2) + _from2;
     }
 
-    /// <summary>Returns a triangle wave in [0,1] from t in [0,1].</summary>
+    /// <summary>Returns a triangle wave in [0,1] from t in [0,1]</summary>
     public static float TriangleWave(float _t)
     {
         return 1f - Mathf.Abs(2f * _t - 1f);
     }
 
-    /// <summary>Snaps a value to the nearest step.</summary>
+    /// <summary>Snaps a value to the nearest step</summary>
     public static float Quantize(float _value, float _step)
     {
         return Mathf.Floor(_value / _step) * _step;
     }
 
-    /// <summary>Returns the 2D perpendicular vector (rotated 90°).</summary>
+    /// <summary>Returns the 2D perpendicular vector.</summary>
     public static Vector2 GetPerpendicular(Vector2 _v)
     {
         return new Vector2(-_v.y, _v.x);
@@ -64,7 +64,7 @@ public static class MathHelper
                     yield return new Vector2Int(_center.x + dx, _center.y + dy);
     }
 
-    /// <summary>Rasterize a line between two grid points (Bresenham).</summary>
+    /// <summary>Rasterize a line between two grid points.</summary>
     public static IEnumerable<Vector2Int> BresenhamLine(Vector2Int _from, Vector2Int _to)
     {
         var x0 = _from.x;

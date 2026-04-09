@@ -50,6 +50,7 @@ public struct SettleScoreJob : IJobParallelFor
         var distToCenter = math.distance(new float2(x, y), new float2(Size / 2f, Size / 2f));
         score -= distToCenter * 0.3f;
 
+        // Just don't place on water xd
         if (currentCell.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
         {
             score -= 999f;

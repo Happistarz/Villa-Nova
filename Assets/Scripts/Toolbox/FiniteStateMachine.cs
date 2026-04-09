@@ -4,36 +4,33 @@ using JetBrains.Annotations;
 
 namespace Core
 {
-    /// <summary>
-    /// Generic finite state machine. Evaluates transitions each frame and switches states.
-    /// </summary>
     public class FiniteStateMachine<T>
     {
-        private readonly    List<State<T>> _states;
-        [CanBeNull] private State<T>       _currentState;
-        private readonly    State<T>       _defaultState;
+        private readonly List<State<T>> _states;
+        private readonly State<T>       _defaultState;
 
-        public State<T> CurrentState => _currentState;
+        [CanBeNull]
+        public State<T> CurrentState { get; private set; }
 
         public FiniteStateMachine([CanBeNull] State<T> _initialState = null, [CanBeNull] List<State<T>> _states = null)
         {
             _defaultState = _initialState;
-            _currentState = _initialState;
+            CurrentState = _initialState;
 
             this._states = _states ?? new List<State<T>>();
         }
 
         private State<T> TryGetNextState()
         {
-            if (_currentState == null)
+            if (CurrentState == null)
                 return null;
 
             State<T> bestState = null;
             var      bestScore = 0f;
 
-            foreach (var transition in _currentState.Transitions)
+            foreach (var transition in CurrentState.Transitions)
             {
-                var score = transition.Evaluate(_currentState.Context);
+                var score = transition.Evaluate(CurrentState.Context);
                 if (!(score > bestScore)) continue;
                 bestScore = score;
                 bestState = transition.To;
@@ -44,43 +41,43 @@ namespace Core
 
         public void Update()
         {
-            if (_currentState == null)
+            if (CurrentState == null)
                 return;
 
             var nextState = TryGetNextState();
-            if (nextState != null && nextState != _currentState)
+            if (nextState != null && nextState != CurrentState)
             {
-                _currentState.Exit();
-                _currentState = nextState;
-                _currentState.Enter();
+                CurrentState.Exit();
+                CurrentState = nextState;
+                CurrentState.Enter();
             }
             
-            _currentState.Update();
+            CurrentState.Update();
         }
 
         public void Start()
         {
-            _currentState?.Enter();
+            CurrentState?.Enter();
         }
 
         public void ForceState(State<T> _state)
         {
-            if (_state == _currentState) return;
-            _currentState?.Exit();
-            _currentState = _state;
-            _currentState?.Enter();
+            if (_state == CurrentState) return;
+            CurrentState?.Exit();
+            CurrentState = _state;
+            CurrentState?.Enter();
         }
 
         public void Reset()
         {
-            _currentState?.Exit();
-            _currentState = _defaultState;
-            _currentState?.Enter();
+            CurrentState?.Exit();
+            CurrentState = _defaultState;
+            CurrentState?.Enter();
         }
     }
 
     /// <summary>
-    /// Base state with transitions and optional sub-FSM support.
+    /// Base state with transitions and optional sub-FSM support
     /// </summary>
     public class State<T>
     {
@@ -115,7 +112,7 @@ namespace Core
     }
 
     /// <summary>
-    /// Weighted transition between two states. Condition returns a score (0 = no transition).
+    /// Weighted transition between two states.
     /// </summary>
     public class Transition<T>
     {

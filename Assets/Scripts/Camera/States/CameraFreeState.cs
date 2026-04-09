@@ -2,10 +2,6 @@ using Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-/// <summary>
-/// Free camera state. FPS-style movement with WASD and mouse look on left-click hold.
-/// Preserves position across mode switches and clamps to defined bounds.
-/// </summary>
 public class CameraFreeState : State<CameraController>
 {
     private float _yaw;

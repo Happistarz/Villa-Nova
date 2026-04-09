@@ -103,9 +103,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
                 _grid.Cells[x, y] = new WorldGrid.Cell
                 {
-                    Type     = WorldGrid.CellType.PLAIN,
-                    Position = new Vector2Int(x, y),
-                    Height   = height
+                    Type   = WorldGrid.CellType.PLAIN,
+                    Height = height
                 };
             }
         }
@@ -270,6 +269,7 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
         var         riverCellCount = 0;
         var         maxRiverCells  = Mathf.RoundToInt(size * size * maxRiverCoverage);
 
+        // Iterate along the river path and place river cells with noise-based offsets and widths
         for (var i = 0; i <= scaledResolution; i++)
         {
             if (riverCellCount >= maxRiverCells) break;

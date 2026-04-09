@@ -5,7 +5,7 @@ using UnityEngine;
 public static class RoadAgentRunner
 {
     /// <summary>
-    /// Internal state struct for a road agent: position, direction, steps remaining, road type and branching parameters.
+    /// Represents the state of a single road agent as it walks through the grid and builds roads
     /// </summary>
     private struct AgentState
     {
@@ -23,6 +23,11 @@ public static class RoadAgentRunner
         Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left
     };
 
+    /// <summary>
+    /// Runs the road agent simulation, which spawns agents at random locations and has them walk around the grid, building roads as they go
+    /// Agents can branch off into new agents, creating a network of roads
+    /// The goal is to create a more organic looking road network, influenced by noise, urbanity, agents
+    /// </summary>
     public static IEnumerator Run(WorldGrid _grid, RoadAgentConfig _config,
                                   List<Vector2Int> _spawnCells, int _seed)
     {

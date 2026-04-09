@@ -2,49 +2,44 @@ using UnityEngine;
 
 namespace Core.Patterns
 {
-    /// <summary>
-    /// MonoBehaviour singleton base class. Auto-creates an instance if none exists.
-    /// </summary>
     public abstract class MonoSingleton<T> : MonoBehaviour where T : MonoSingleton<T>
     {
-        private static T _instance;
-        private static bool _isQuitting;
+        private static T    _Instance;
+        private static bool _IsQuitting;
 
         [Header("MonoSingleton")]
         [SerializeField] private bool dontDestroyOnLoad = true;
 
-        public static bool HasInstance => _instance != null && !_isQuitting;
+        public static bool HasInstance => _Instance && !_IsQuitting;
 
         public static T Instance
         {
             get
             {
-                if (_isQuitting) return _instance;
-                
-                if (_instance) return _instance;
+                if (_IsQuitting || _Instance) return _Instance;
 
-                _instance = FindFirstObjectByType<T>();
+                _Instance = FindFirstObjectByType<T>();
 
-                if (_instance) return _instance;
+                if (_Instance) return _Instance;
 
                 var obj = new GameObject(typeof(T).Name);
-                _instance = obj.AddComponent<T>();
+                _Instance = obj.AddComponent<T>();
 
-                return _instance;
+                return _Instance;
             }
         }
 
         protected virtual void Awake()
         {
-            if (!_instance)
+            if (!_Instance)
             {
-                _instance = (T)this;
+                _Instance = (T)this;
                 if (!transform.parent && dontDestroyOnLoad)
                     DontDestroyOnLoad(gameObject);
 
                 Initialize();
             }
-            else if (_instance != this)
+            else if (_Instance != this)
             {
                 Destroy(gameObject);
             }
@@ -52,16 +47,16 @@ namespace Core.Patterns
 
         protected virtual void OnApplicationQuit()
         {
-            _isQuitting = true;
+            _IsQuitting = true;
         }
 
         protected virtual void OnDestroy()
         {
-            if (_instance == this)
-                _instance = null;
+            if (_Instance == this)
+                _Instance = null;
         }
 
-        protected virtual void Initialize()
+        protected void Initialize()
         {
         }
     }

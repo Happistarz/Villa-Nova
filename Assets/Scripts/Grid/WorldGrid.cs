@@ -16,23 +16,22 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     }
 
     /// <summary>
-    /// Single cell on the grid. Stores terrain type, height, POI and road info.
+    /// Single cell on the grid. Stores terrain type, height, POI and road information
     /// </summary>
     public struct Cell
     {
-        public CellType   Type;
-        public Vector2Int Position;
-        public float      Height;
-        public POIData    POI;
-        public bool       IsOccupied;
-        
-        // Values between 0 and 1 indicating how urbanized the cell is
-        public float UrbanityLevel;
-        
-        // For road cells, indicates the tier of the road (e.g., HIGHWAY, MAIN, ALLEY)
-        public int   RoadTier;
+        public CellType Type;
+        public float    Height;
+        public POIData  POI;
+        public bool     IsOccupied;
 
-        /// Returns true if the cell type matches any of the provided types.
+        // Urbanity level from 0 to 1 (rural to urban)
+        public float UrbanityLevel;
+
+        // For road cells, indicates the tier of the road (HIGHWAY, MAIN, ALLEY...)
+        public int RoadTier;
+
+        /// Shorthand for checking if the cell is a specific type or one of multiple types
         public bool Is(params CellType[] _cellTypes)
         {
             foreach (var type in _cellTypes)
@@ -51,7 +50,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     private Vector3 BedrockScale   => new(size / 10f, 1, size / 10f);
 
     /// <summary>
-    /// Data for a city visible on the map border.
+    /// Data for a city visible on the map border
     /// </summary>
     public class NearCityData
     {
@@ -64,12 +63,13 @@ public class WorldGrid : MonoSingleton<WorldGrid>
 
     public Cell[,] Cells;
 
-    // Shared buffer for storing cells within a radius during generation and validation.
+    // Shared buffer for storing cells within a radius during generation and validation
     private static Cell[] _TileBuffer = new Cell[256];
 
-    /// Number of valid cells currently in the tile buffer after calling FillTileBuffer.
-    public static int    TileBufferCount { get; private set; }
-    public static Cell[] TileBuffer      => _TileBuffer;
+    /// Number of valid cells currently in the tile buffer after calling FillTileBuffer
+    public static int TileBufferCount { get; private set; }
+
+    public static Cell[] TileBuffer => _TileBuffer;
 
     private void Start()
     {
@@ -106,7 +106,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     }
 
     /// <summary>
-    /// Fills the shared tile buffer with cells inside the given radius.
+    /// Fills the shared tile buffer with cells inside the given radius
     /// </summary>
     public void FillTileBuffer(Vector2Int _center, float _radius)
     {
@@ -151,6 +151,4 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         cell.IsOccupied       = true;
         Cells[_pos.x, _pos.y] = cell;
     }
-
 }
-

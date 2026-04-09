@@ -2,9 +2,6 @@ using Core;
 using Core.Extensions;
 using UnityEngine;
 
-/// <summary>
-/// Main camera state. Orbits around the map center with auto-rotation and scroll zoom.
-/// </summary>
 public class CameraMainState : State<CameraController>
 {
     private float _orbitRadius, _targetOrbitRadius, _orbitRadiusVelocity;
@@ -119,18 +116,17 @@ public class CameraMainState : State<CameraController>
         var flatRot  = Quaternion.Euler(0f,     _yaw, 0f);
 
         var targetPos = pivot + flatRot * new Vector3(0f, 0f, -_orbitRadius) + Vector3.up * _orbitHeight;
-        var targetRot = rotation;
 
         if (_transitioning)
         {
             var t = Mathf.SmoothStep(0f, 1f, _transitionTimer);
             Context.camera.transform.position = Vector3.Lerp(_transitionStartPos, targetPos, t);
-            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, targetRot, t);
+            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, rotation, t);
         }
         else
         {
             Context.camera.transform.position = targetPos;
-            Context.camera.transform.rotation = targetRot;
+            Context.camera.transform.rotation = rotation;
         }
     }
 }

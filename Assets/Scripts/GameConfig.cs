@@ -4,9 +4,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Game Config", order = 0)]
 public class GameConfig : ScriptableObject
 {
-    /// <summary>
-    /// Full color set for one biome. Includes terrain, debug overlay and structure colors.
-    /// </summary>
     [System.Serializable]
     public struct BiomeColorConfig
     {
@@ -160,7 +157,7 @@ public class GameConfig : ScriptableObject
     [Header("Near Cities")]
     public string[] cityNames;
 
-    /// <summary>Returns a random palette from the array, or default if empty.</summary>
+    /// <summary>Returns a random palette from the array, or default if empty</summary>
     public BiomeColorConfig GetRandomPalette()
     {
         if (biomePalettes == null || biomePalettes.Length == 0)
@@ -169,7 +166,7 @@ public class GameConfig : ScriptableObject
         return biomePalettes[Random.Range(0, biomePalettes.Length)];
     }
 
-    /// <summary>Picks unique random names from the pool without repetition.</summary>
+    /// <summary>Picks unique random names from the pool without repetition</summary>
     public List<string> GetRandomCityNames(int _count)
     {
         var pool   = new List<string>(cityNames);

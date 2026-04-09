@@ -49,6 +49,7 @@ public struct PoiScoreJob : IJobParallelFor
             var ruleScore = 0f;
             var valid     = true;
 
+            // Rules behaviors
             switch (ruleType)
             {
                 case POIData.POIRule.NEAR_CITY:
@@ -93,6 +94,9 @@ public struct PoiScoreJob : IJobParallelFor
         Results[_index] =  score;
     }
 
+    /// <summary>
+    /// Calculates a score based on how close the cell is to the specified type
+    /// </summary>
     private float GetProximityScore(int _cx, int _cy, WorldGrid.CellType _type, float _radius)
     {
         var radius          = (int)math.ceil(_radius);
@@ -123,6 +127,9 @@ public struct PoiScoreJob : IJobParallelFor
         return 1f - math.sqrt(baseDistSquare) / _radius;
     }
 
+    /// <summary>
+    /// Checks if the position is at least a certain distance away from all existing POIs to avoid overcrowding
+    /// </summary>
     private bool IsMinDistanceFromPOIs(float2 _pos, float _minDistance)
     {
         var minDistSquare = _minDistance * _minDistance;
@@ -136,10 +143,13 @@ public struct PoiScoreJob : IJobParallelFor
         return true;
     }
 
+    /// <summary>
+    /// Checks if a building of the specified size can fit in the area without overlapping occupied cells
+    /// </summary>
     private bool CanFitInArea(int _cx, int _cy, float _originHeight)
     {
         var half = BuildingSize / 2;
-
+        
         for (var dx = -half; dx < BuildingSize - half; dx++)
         {
             for (var dy = -half; dy < BuildingSize - half; dy++)

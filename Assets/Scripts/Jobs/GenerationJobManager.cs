@@ -5,7 +5,7 @@ using Unity.Jobs;
 
 public class GenerationJobManager : MonoSingleton<GenerationJobManager>
 {
-    /// <summary>Dispatches an IJobParallelFor and yields until complete.</summary>
+    /// <summary>Dispatches an IJobParallelFor and yields until complete</summary>
     public static IEnumerator DispatchJob<T>(T _job, int _arrayLength, int _batchCount,
                                              Action<T> _onComplete, params IDisposable[] _disposables)
         where T : struct, IJobParallelFor
@@ -22,7 +22,7 @@ public class GenerationJobManager : MonoSingleton<GenerationJobManager>
             disposable?.Dispose();
     }
 
-    /// <summary>Dispatches a single IJob and yields until complete.</summary>
+    /// <summary>Dispatches a single IJob and yields until complete</summary>
     public static IEnumerator DispatchJob<T>(T _job, Action<T> _onComplete, params IDisposable[] _disposables)
         where T : struct, IJob
     {

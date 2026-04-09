@@ -3,9 +3,6 @@ using UnityEngine.Events;
 
 namespace Core.Events
 {
-    /// <summary>
-    /// Subscribes to an EventData channel and invokes a UnityEvent response.
-    /// </summary>
     public class GameEventListener : MonoBehaviour
     {
         public EventData @event;
