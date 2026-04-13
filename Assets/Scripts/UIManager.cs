@@ -137,6 +137,7 @@ public class UIManager : MonoBehaviour
         });
         
         cameraController.StartAnimation();
+        AudioManager.Instance.PlayBGM();
     }
 
     #endregion
