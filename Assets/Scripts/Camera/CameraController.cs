@@ -32,8 +32,14 @@ public class CameraController : MonoBehaviour
     public float  freeLookSensitivity = 0.3f;
     public Bounds freeBounds          = new(Vector3.zero, Vector3.one * 400f);
 
+    [Header("Start Mode")]
+    public float duration = 2f;
+
+    public float startPitch = 45f;
+
     [Header("Shared")]
     public Transform mapCenterMarker;
+
     public Transform cityCenterMarker;
 
     public float         smoothTime         = 0.08f;
@@ -42,23 +48,34 @@ public class CameraController : MonoBehaviour
 
     public new Camera camera;
 
-    public Vector3 MapCenter  => mapCenterMarker  ? mapCenterMarker.position  : Vector3.zero;
-    public Vector3 CityCenter => cityCenterMarker ? cityCenterMarker.position : Vector3.zero;
+    public Vector3          MapCenter     => mapCenterMarker ? mapCenterMarker.position : Vector3.zero;
+    public Vector3          CityCenter    => cityCenterMarker ? cityCenterMarker.position : Vector3.zero;
     public CameraStateType? RequestedMode { get; set; }
     public CameraStateType  ActiveMode    { get; private set; } = CameraStateType.MAIN;
 
     public event Action<CameraStateType> OnModeChanged;
 
     private FiniteStateMachine<CameraController> _fsm;
-    private CameraMainState                      _mainState;
-    private CameraCloseState                     _closeState;
-    private CameraFreeState                      _freeState;
+
+    private CameraMainState  _mainState;
+    private CameraCloseState _closeState;
+    private CameraFreeState  _freeState;
+    private CameraStartState _startState;
 
     private void Start()
     {
+        _startState = new CameraStartState(this);
         _mainState  = new CameraMainState(this);
         _closeState = new CameraCloseState(this);
         _freeState  = new CameraFreeState(this);
+
+        _startState.Transitions.Add(
+            new Transition<CameraController>(_mainState, _ctx =>
+            {
+                if (!_ctx._startState.IsDone) return 0f;
+                _ctx._mainState.SkipNextTransition();
+                return 1f;
+            }));
 
         _mainState.Transitions.Add(new Transition<CameraController>(
                                        _closeState, _ctx => _ctx.RequestedMode == CameraStateType.CLOSE ? 1f : 0f));
@@ -75,7 +92,7 @@ public class CameraController : MonoBehaviour
         _freeState.Transitions.Add(new Transition<CameraController>(
                                        _closeState, _ctx => _ctx.RequestedMode == CameraStateType.CLOSE ? 1f : 0f));
 
-        _fsm = new FiniteStateMachine<CameraController>(_mainState);
+        _fsm = new FiniteStateMachine<CameraController>(_startState);
         _fsm.Start();
 
         EnableActions();
@@ -103,9 +120,9 @@ public class CameraController : MonoBehaviour
     private void UpdateActiveMode()
     {
         var current = _fsm.CurrentState;
-        if (current == _mainState)       ActiveMode = CameraStateType.MAIN;
+        if (current      == _mainState) ActiveMode  = CameraStateType.MAIN;
         else if (current == _closeState) ActiveMode = CameraStateType.CLOSE;
-        else if (current == _freeState)  ActiveMode = CameraStateType.FREE;
+        else if (current == _freeState) ActiveMode  = CameraStateType.FREE;
     }
 
     private void HandleModeInput()
@@ -116,6 +133,12 @@ public class CameraController : MonoBehaviour
             RequestedMode = CameraStateType.CLOSE;
         else if (Keyboard.current.digit3Key.wasPressedThisFrame)
             RequestedMode = CameraStateType.FREE;
+    }
+
+    public void StartAnimation()
+    {
+        if (_fsm.CurrentState == _startState)
+            _startState?.StartAnimation();
     }
 
     #region Input Helpers
@@ -188,7 +211,7 @@ public class CameraController : MonoBehaviour
         Gizmos.DrawLine(pivot, transform.position);
 
         if (!(freeBounds.size.sqrMagnitude > 0f)) return;
-        
+
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.15f);
         Gizmos.DrawWireCube(freeBounds.center, freeBounds.size);
     }

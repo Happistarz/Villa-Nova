@@ -13,11 +13,13 @@ public class CameraMainState : State<CameraController>
     private Vector3    _transitionStartPos;
     private Quaternion _transitionStartRot;
     private bool       _transitioning;
-    private bool       _initialized;
+    private bool       _skipTransition;
 
     public CameraMainState(CameraController _context) : base(_context)
     {
     }
+
+    public void SkipNextTransition() => _skipTransition = true;
 
     public override void Enter()
     {
@@ -26,29 +28,32 @@ public class CameraMainState : State<CameraController>
 
         cam.orthographic = cfg.orthographic;
 
-        _transitionStartPos = cam.transform.position;
-        _transitionStartRot = cam.transform.rotation;
-        _transitionTimer    = 0f;
-        _transitioning      = true;
+        var pivot    = Context.MapCenter;
+        var toCamera = cam.transform.position - pivot;
+        var flat     = toCamera.Flat();
 
-        if (!_initialized)
+        _orbitRadius       = Mathf.Clamp(flat.magnitude, cfg.minRadius, cfg.maxRadius);
+        _targetOrbitRadius = _orbitRadius;
+
+        _orbitHeight       = toCamera.y;
+        _targetOrbitHeight = _orbitHeight;
+
+        _yaw       = cam.transform.eulerAngles.y;
+        _targetYaw = _yaw;
+
+        _pitch = cam.transform.eulerAngles.x;
+
+        if (_skipTransition)
         {
-            var pivot    = Context.MapCenter;
-            var toCamera = cam.transform.position - pivot;
-            var flat     = toCamera.Flat();
-
-            _orbitRadius       = Mathf.Clamp(flat.magnitude, cfg.minRadius, cfg.maxRadius);
-            _targetOrbitRadius = _orbitRadius;
-
-            _orbitHeight       = toCamera.y;
-            _targetOrbitHeight = _orbitHeight;
-
-            _yaw       = cam.transform.eulerAngles.y;
-            _targetYaw = _yaw;
-
-            _pitch = cam.transform.eulerAngles.x;
-
-            _initialized = true;
+            _transitioning  = false;
+            _skipTransition = false;
+        }
+        else
+        {
+            _transitionStartPos = cam.transform.position;
+            _transitionStartRot = cam.transform.rotation;
+            _transitionTimer    = 0f;
+            _transitioning      = true;
         }
 
         _orbitRadiusVelocity = 0f;

@@ -1,10 +1,16 @@
 ﻿using Core.Variables;
+using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+    [Header("Screens")]
+    public CanvasGroup startScreen;
+
+    public CanvasGroup mainScreen;
+
     [Header("References")]
     public Image terrainRenderImage;
 
@@ -54,6 +60,13 @@ public class UIManager : MonoBehaviour
 
     private void Start()
     {
+        startScreen.alpha          = 1f;
+        startScreen.interactable   = true;
+        startScreen.blocksRaycasts = true;
+        mainScreen.alpha           = 0f;
+        mainScreen.interactable    = false;
+        mainScreen.blocksRaycasts  = false;
+
         RefreshRendererIcon(terrainRenderImage, terrainEnabled.Value);
         RefreshRendererIcon(debugRenderImage,   debugEnabled.Value);
         OnZoomLevelChanged();
@@ -106,6 +119,27 @@ public class UIManager : MonoBehaviour
 
     private void OnTerrainEnabledChanged(bool _enabled) => RefreshRendererIcon(terrainRenderImage, _enabled);
     private void OnDebugEnabledChanged(bool   _enabled) => RefreshRendererIcon(debugRenderImage,   _enabled);
+
+    #region Screens
+
+    public void OnStartScreenClicked()
+    {
+
+        startScreen.DOFade(0f, 0.5f).OnComplete(() =>
+        {
+            startScreen.interactable   = false;
+            startScreen.blocksRaycasts = false;
+        });
+        mainScreen.DOFade(1f, 1f).SetDelay(1f).OnComplete(() =>
+        {
+            mainScreen.interactable   = true;
+            mainScreen.blocksRaycasts = true;
+        });
+        
+        cameraController.StartAnimation();
+    }
+
+    #endregion
 
     #region Renderer
 
