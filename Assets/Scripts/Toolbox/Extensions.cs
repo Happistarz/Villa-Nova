@@ -38,11 +38,12 @@ namespace Core.Extensions
         #region COLLECTIONS
 
         /// <summary>Returns a random element from the list</summary>
-        public static T RandomItem<T>(this IList<T> _list)
+        public static T RandomItem<T>(this IList<T> _list, System.Random _rng = null)
         {
+            var index = _rng?.Range(0, _list.Count) ?? Random.Range(0, _list.Count);
             return _list.Count == 0
                 ? throw new System.IndexOutOfRangeException("Can't select a random item from an empty list")
-                : _list[Random.Range(0, _list.Count)];
+                : _list[index];
         }
 
         /// <summary>Shuffles the list in place</summary>

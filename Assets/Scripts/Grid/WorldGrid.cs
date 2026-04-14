@@ -29,6 +29,12 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         // Urbanity level from 0 to 1 (rural to urban)
         public float UrbanityLevel;
 
+        // Computed distance fields
+        public float DistanceToWater;
+        public float DistanceToRoad;
+        public float DistanceToCityCenter;
+        public float DistanceToHouse;
+
         // For road cells, indicates the tier of the road (HIGHWAY, MAIN, ALLEY...)
         public int RoadTier;
 
@@ -67,7 +73,7 @@ public class WorldGrid : MonoSingleton<WorldGrid>
     // Shared buffer for storing cells within a radius during generation and validation
     private static Cell[] _TileBuffer = new Cell[256];
 
-    /// Number of valid cells currently in the tile buffer after calling FillTileBuffer
+    // Number of valid cells currently in the tile buffer after calling FillTileBuffer
     public static int TileBufferCount { get; private set; }
 
     public static Cell[] TileBuffer => _TileBuffer;

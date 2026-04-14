@@ -10,6 +10,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 {
     public string Name => "City";
 
+    public HouseGenerator houseGenerator;
+    
     [Header("Settings")]
     public float settlerSearchRadius = 5f;
 
@@ -49,6 +51,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     {
         _placedPOIPositions.Clear();
         UrbanityHelper.Reset();
+        DistanceFieldHelper.Reset();
 
         if (cityRenderer)
             cityRenderer.Clear();
@@ -96,58 +99,23 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
         yield return StartCoroutine(UrbanityHelper.Compute(_grid, bestHomePoint, urbanityConfig));
 
-        yield return StartCoroutine(PlaceHousesCoroutine());
-
         if (debugRenderer)
             debugRenderer.BuildMesh();
-        
-        if (cityRenderer)
-            cityRenderer.BakeBatches();
 
         IsGenerating = false;
         OnGenerationComplete?.Invoke();
     }
 
-    private IEnumerator PlaceHousesCoroutine()
+    public IEnumerator PlaceHouses(WorldGrid _generationGrid)
     {
-        var buildingList = GameManager.Instance.Config.GetHousesData();
-        if (buildingList == null || buildingList.Length == 0)
-            yield break;
+        _grid = _generationGrid;
 
-        var rng       = GameManager.Instance.RandomEngine;
-        var gridSize  = _grid.size;
-        var processed = 0;
+        yield return StartCoroutine(DistanceFieldHelper.Compute(_grid, CityCenter));
 
-        for (var x = 0; x < gridSize; x++)
-        {
-            for (var y = 0; y < gridSize; y++)
-            {
-                var cell = _grid.Cells[x, y];
+        yield return StartCoroutine(houseGenerator.PlaceHousesCoroutine());
 
-                if (!BuildingAreaHelper.IsCellValidForBuilding(cell)) continue;
-
-                if (rng.Range(0f, 1f) > cell.UrbanityLevel) continue;
-
-                var pos = new Vector2Int(x, y);
-
-                var buildingData = buildingList[rng.Next(0, buildingList.Length)];
-                if (!buildingData) continue;
-
-                var rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
-                if (rotation < 0) continue;
-
-                BuildingAreaHelper.FlattenArea(buildingData, pos, rotation, _grid, MapGenerator.Instance.heightStep);
-                BuildingAreaHelper.MarkAreaAsHouse(buildingData, pos, rotation, _grid);
-
-                if (cityRenderer)
-                    cityRenderer.AddBuilding(
-                        BuildingAreaHelper.GetAreaCenter(buildingData, pos, rotation, _grid),
-                        rotation, buildingData);
-
-                if (++processed % 10 == 0)
-                    yield return null;
-            }
-        }
+        if (cityRenderer)
+            cityRenderer.BakeBatches();
     }
 
     private IEnumerator PlacePOIsCoroutine(Vector2Int _cityCenter)

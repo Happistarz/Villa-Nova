@@ -62,6 +62,8 @@ public class GenerationPipeline : MonoSingleton<GenerationPipeline>
             yield return StartCoroutine(generator.Generate(grid));
         }
 
+        yield return StartCoroutine(CityGenerator.Instance.PlaceHouses(grid));
+
         MapGenerator.IsGenerating = false;
         IsAnyGenerating           = false;
 

@@ -119,6 +119,31 @@ public static class BuildingAreaHelper
     }
 
     /// <summary>
+    /// Returns true if at least one cell adjacent to the building footprint is a road.
+    /// Useful for preferring rotations that face a road.
+    /// </summary>
+    public static bool IsAdjacentToRoad(BuildingData _data, Vector2Int _position, int _rotation, WorldGrid _grid)
+    {
+        var directions = new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right };
+
+        foreach (var offset in _data.buildingArea)
+        {
+            var rotated  = RotateOffset(offset, _rotation);
+            var cellPos  = _position + rotated;
+
+            foreach (var dir in directions)
+            {
+                var neighbor = cellPos + dir;
+                var cell     = _grid.GetCell(neighbor);
+                if (cell != null && cell.Value.Is(WorldGrid.CellType.ROAD, WorldGrid.CellType.BRIDGE))
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
     /// Computes the height variance of the cells under the building footprint at the given position and rotation
     /// </summary>
     private static float ComputeHeightVariance(BuildingData _data, Vector2Int _position, int _rotation, WorldGrid _grid)
