@@ -3201,7 +3201,9 @@ MonoBehaviour:
   dontDestroyOnLoad: 1
   bgmSource: {fileID: 1534638224}
   sfxSource: {fileID: 1534638223}
-  bgmClip: {fileID: 8300000, guid: 9f5ff77751e49bf4f83bcb4b43cc326d, type: 3}
+  bgmClips:
+  - {fileID: 8300000, guid: 9f5ff77751e49bf4f83bcb4b43cc326d, type: 3}
+  - {fileID: 8300000, guid: 1d423c9c3c7eee54581f725d390d5954, type: 3}
   bgmVolume: 0.1
   sfxLibrary:
   - key: button_click
@@ -3350,8 +3352,8 @@ MonoBehaviour:
   mainConfig:
     zoomSpeed: 1300
     minRadius: 45
-    maxRadius: 200
-    pitchBounds: {x: 30, y: 15}
+    maxRadius: 230
+    pitchBounds: {x: 60, y: 40}
     rotateSpeed: 0.5
     autoRotateSpeed: 2
     orthographic: 0

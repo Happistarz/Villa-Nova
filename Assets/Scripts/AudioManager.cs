@@ -20,7 +20,7 @@ public class AudioManager : MonoSingleton<AudioManager>
     public AudioSource sfxSource;
 
     [Header("BGM")]
-    public AudioClip bgmClip;
+    public AudioClip[] bgmClips;
     [Range(0f, 1f)]
     public float bgmVolume = 1f;
 
@@ -69,9 +69,10 @@ public class AudioManager : MonoSingleton<AudioManager>
 
     public void PlayBGM()
     {
-        if (!bgmClip) return;
+        if (bgmClips.Length <= 0) return;
 
-        bgmSource.clip   = bgmClip;
+        var index = UnityEngine.Random.Range(0, bgmClips.Length);
+        bgmSource.clip   = bgmClips[index];
         bgmSource.volume = bgmVolume;
         bgmSource.Play();
     }

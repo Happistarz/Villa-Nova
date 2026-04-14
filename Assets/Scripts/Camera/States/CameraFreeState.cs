@@ -121,7 +121,7 @@ public class CameraFreeState : State<CameraController>
         if (input.sqrMagnitude < 0.001f) return;
 
         var t         = Context.camera.transform;
-        var direction = (t.forward * input.y + t.right * input.x).normalized;
+        var direction = (t.forward * -input.y + t.right * -input.x).normalized;
         var nextPos   = t.position + direction * (Context.freeMoveSpeed * Time.deltaTime);
 
         if (Context.freeBounds.size.sqrMagnitude > 0f)
