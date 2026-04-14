@@ -47,6 +47,7 @@ public class DebugRenderer : AbstractRenderer
                         WorldGrid.CellType.CITY   => p.debugCityColor,
                         WorldGrid.CellType.ROAD   => p.debugRoadColor,
                         WorldGrid.CellType.BRIDGE => p.debugBridgeColor,
+                        WorldGrid.CellType.HOUSE  => p.debugHouseColor,
                         _                         => new Color(1f, 0f, 1f, 0.5f)
                     };
 

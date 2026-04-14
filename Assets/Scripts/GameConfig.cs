@@ -4,6 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "GameConfig", menuName = "Game Config", order = 0)]
 public class GameConfig : ScriptableObject
 {
+    [Header("Building Registry")]
+    public BuildingData[] buildingDataList;
+    
+    public BuildingData[] GetHousesData() => System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.HOUSE);
+    
     [System.Serializable]
     public struct BiomeColorConfig
     {
@@ -22,6 +27,9 @@ public class GameConfig : ScriptableObject
 
         public Color bridgeColor;
 
+        [Header("Buildings")]
+        public Color houseColor;
+
         [Header("Walls / Borders")]
         public Color wallColor;
 
@@ -33,6 +41,7 @@ public class GameConfig : ScriptableObject
         public Color debugRoadColor;
         public Color debugBridgeColor;
         public Color debugCityColor;
+        public Color debugHouseColor;
 
         public static BiomeColorConfig Default => new()
         {
@@ -42,6 +51,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.1f,  0.3f,  0.7f),
             roadColor   = new Color(0.55f, 0.5f,  0.4f),
             bridgeColor = new Color(0.6f,  0.45f, 0.25f),
+            houseColor  = new Color(0.75f, 0.55f, 0.35f),
             wallColor   = new Color(0.45f, 0.3f,  0.1f),
 
             debugPlainColor  = new Color(0.3f, 0.8f,  0.3f,   0.5f),
@@ -49,7 +59,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f, 0.3f,  0.7f,   0.5f),
             debugRoadColor   = new Color(0.5f, 0.5f,  0.5f,   0.5f),
             debugBridgeColor = new Color(0.6f, 0.45f, 0.25f,  0.5f),
-            debugCityColor   = new Color(1f,   0.92f, 0.016f, 1f)
+            debugCityColor   = new Color(1f,   0.92f, 0.016f, 1f),
+            debugHouseColor  = new Color(0.75f, 0.55f, 0.35f, 0.7f)
         };
     }
 
@@ -67,6 +78,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.1f,  0.28f, 0.55f),
             roadColor   = new Color(0.65f, 0.55f, 0.35f),
             bridgeColor = new Color(0.7f,  0.55f, 0.3f),
+            houseColor  = new Color(0.85f, 0.7f,  0.45f),
             wallColor   = new Color(0.6f,  0.45f, 0.2f),
 
             debugPlainColor  = new Color(0.82f, 0.75f, 0.5f,  0.5f),
@@ -74,7 +86,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f,  0.28f, 0.55f, 0.5f),
             debugRoadColor   = new Color(0.65f, 0.55f, 0.35f, 0.5f),
             debugBridgeColor = new Color(0.7f,  0.55f, 0.3f,  0.5f),
-            debugCityColor   = new Color(1f,    0.85f, 0.3f,  1f)
+            debugCityColor   = new Color(1f,    0.85f, 0.3f,  1f),
+            debugHouseColor  = new Color(0.85f, 0.7f,  0.45f, 0.7f)
         },
 
         // Taiga
@@ -86,6 +99,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.12f, 0.25f, 0.5f),
             roadColor   = new Color(0.45f, 0.42f, 0.38f),
             bridgeColor = new Color(0.5f,  0.4f,  0.25f),
+            houseColor  = new Color(0.6f,  0.5f,  0.35f),
             wallColor   = new Color(0.4f,  0.35f, 0.25f),
 
             debugPlainColor  = new Color(0.3f,  0.5f,  0.3f,  0.5f),
@@ -93,7 +107,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.12f, 0.25f, 0.5f,  0.5f),
             debugRoadColor   = new Color(0.45f, 0.42f, 0.38f, 0.5f),
             debugBridgeColor = new Color(0.5f,  0.4f,  0.25f, 0.5f),
-            debugCityColor   = new Color(0.9f,  0.85f, 0.6f,  1f)
+            debugCityColor   = new Color(0.9f,  0.85f, 0.6f,  1f),
+            debugHouseColor  = new Color(0.6f,  0.5f,  0.35f, 0.7f)
         },
 
         // Harvest
@@ -105,6 +120,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.12f, 0.3f,  0.58f),
             roadColor   = new Color(0.5f,  0.42f, 0.3f),
             bridgeColor = new Color(0.55f, 0.4f,  0.22f),
+            houseColor  = new Color(0.7f,  0.58f, 0.35f),
             wallColor   = new Color(0.5f,  0.35f, 0.15f),
 
             debugPlainColor  = new Color(0.6f,  0.65f, 0.25f, 0.5f),
@@ -112,7 +128,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.12f, 0.3f,  0.58f, 0.5f),
             debugRoadColor   = new Color(0.5f,  0.42f, 0.3f,  0.5f),
             debugBridgeColor = new Color(0.55f, 0.4f,  0.22f, 0.5f),
-            debugCityColor   = new Color(0.95f, 0.8f,  0.3f,  1f)
+            debugCityColor   = new Color(0.95f, 0.8f,  0.3f,  1f),
+            debugHouseColor  = new Color(0.7f,  0.58f, 0.35f, 0.7f)
         },
 
         // Marshland
@@ -124,6 +141,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.1f,  0.25f, 0.3f),
             roadColor   = new Color(0.4f,  0.38f, 0.3f),
             bridgeColor = new Color(0.45f, 0.38f, 0.2f),
+            houseColor  = new Color(0.55f, 0.45f, 0.3f),
             wallColor   = new Color(0.35f, 0.3f,  0.18f),
 
             debugPlainColor  = new Color(0.28f, 0.45f, 0.22f, 0.5f),
@@ -131,7 +149,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.1f,  0.25f, 0.3f,  0.5f),
             debugRoadColor   = new Color(0.4f,  0.38f, 0.3f,  0.5f),
             debugBridgeColor = new Color(0.45f, 0.38f, 0.2f,  0.5f),
-            debugCityColor   = new Color(0.7f,  0.65f, 0.4f,  1f)
+            debugCityColor   = new Color(0.7f,  0.65f, 0.4f,  1f),
+            debugHouseColor  = new Color(0.55f, 0.45f, 0.3f,  0.7f)
         },
 
         // Winter
@@ -143,6 +162,7 @@ public class GameConfig : ScriptableObject
             riverColor  = new Color(0.15f, 0.3f,  0.5f),
             roadColor   = new Color(0.6f,  0.58f, 0.55f),
             bridgeColor = new Color(0.55f, 0.48f, 0.35f),
+            houseColor  = new Color(0.7f,  0.65f, 0.55f),
             wallColor   = new Color(0.5f,  0.48f, 0.42f),
 
             debugPlainColor  = new Color(0.85f, 0.88f, 0.92f, 0.5f),
@@ -150,7 +170,8 @@ public class GameConfig : ScriptableObject
             debugRiverColor  = new Color(0.15f, 0.3f,  0.5f,  0.5f),
             debugRoadColor   = new Color(0.6f,  0.58f, 0.55f, 0.5f),
             debugBridgeColor = new Color(0.55f, 0.48f, 0.35f, 0.5f),
-            debugCityColor   = new Color(0.8f,  0.75f, 0.6f,  1f)
+            debugCityColor   = new Color(0.8f,  0.75f, 0.6f,  1f),
+            debugHouseColor  = new Color(0.7f,  0.65f, 0.55f, 0.7f)
         }
     };
 

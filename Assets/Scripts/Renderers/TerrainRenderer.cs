@@ -11,9 +11,12 @@ public class TerrainRenderer : AbstractRenderer
 
     private void Awake()
     {
-        OnRenderToggled += () => { CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value; };
-
-        CityGenerator.Instance.cityRenderer.enabled = renderEnabled.Value;
+        var cr = CityGenerator.Instance.cityRenderer;
+        if (cr)
+        {
+            OnRenderToggled += () => { cr.enabled = renderEnabled.Value; };
+            cr.enabled = renderEnabled.Value;
+        }
 
         MapGenerator.Instance.OnGenerationComplete += () =>
         {
@@ -59,6 +62,7 @@ public class TerrainRenderer : AbstractRenderer
                         WorldGrid.CellType.CITY   => _colorConfig.cityColor,
                         WorldGrid.CellType.ROAD   => _colorConfig.roadColor,
                         WorldGrid.CellType.BRIDGE => _colorConfig.bridgeColor,
+                        WorldGrid.CellType.HOUSE  => _colorConfig.houseColor,
                         _                         => Color.magenta
                     };
 

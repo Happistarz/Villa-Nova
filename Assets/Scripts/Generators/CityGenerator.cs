@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Core.Extensions;
 using Core.Patterns;
+using Generators;
 using UnityEngine;
 
 public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
@@ -14,9 +15,11 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     public Transform cityCenterMarker;
 
+    [Header("Urbanity")]
+    public UrbanityConfig urbanityConfig;
+
     [Header("Renderers")]
     public CityRenderer cityRenderer;
-
     public DebugRenderer debugRenderer;
 
     [Header("POI")]
@@ -44,8 +47,11 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     private void NewGenerationStarted()
     {
-        cityRenderer.ClearCity();
         _placedPOIPositions.Clear();
+        UrbanityHelper.Reset();
+
+        if (cityRenderer)
+            cityRenderer.Clear();
 
         if (nearbyCityPool)
             nearbyCityPool.ReleaseAll();
@@ -63,7 +69,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     {
         _grid        = _generationGrid;
         IsGenerating = true;
-        
+
         var bestHomePoint = Vector2Int.zero;
         yield return StartCoroutine(
             CityGenerationJobRunner
@@ -85,17 +91,63 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         var tempCell = cell.Value;
         tempCell.Type = WorldGrid.CellType.CITY;
         _grid.UpdateCell(bestHomePoint, tempCell);
-        
+
         yield return StartCoroutine(PlacePOIsCoroutine(bestHomePoint));
 
-        // Rebuild meshes with POIs before placing houses
-        if (debugRenderer && debugRenderer.renderEnabled.Value)
-            debugRenderer.BuildMesh();
+        yield return StartCoroutine(UrbanityHelper.Compute(_grid, bestHomePoint, urbanityConfig));
 
-        cityRenderer.BakeBatches();
+        yield return StartCoroutine(PlaceHousesCoroutine());
+
+        if (debugRenderer)
+            debugRenderer.BuildMesh();
+        
+        if (cityRenderer)
+            cityRenderer.BakeBatches();
 
         IsGenerating = false;
         OnGenerationComplete?.Invoke();
+    }
+
+    private IEnumerator PlaceHousesCoroutine()
+    {
+        var buildingList = GameManager.Instance.Config.GetHousesData();
+        if (buildingList == null || buildingList.Length == 0)
+            yield break;
+
+        var rng       = GameManager.Instance.RandomEngine;
+        var gridSize  = _grid.size;
+        var processed = 0;
+
+        for (var x = 0; x < gridSize; x++)
+        {
+            for (var y = 0; y < gridSize; y++)
+            {
+                var cell = _grid.Cells[x, y];
+
+                if (!BuildingAreaHelper.IsCellValidForBuilding(cell)) continue;
+
+                if (rng.Range(0f, 1f) > cell.UrbanityLevel) continue;
+
+                var pos = new Vector2Int(x, y);
+
+                var buildingData = buildingList[rng.Next(0, buildingList.Length)];
+                if (!buildingData) continue;
+
+                var rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
+                if (rotation < 0) continue;
+
+                BuildingAreaHelper.FlattenArea(buildingData, pos, rotation, _grid, MapGenerator.Instance.heightStep);
+                BuildingAreaHelper.MarkAreaAsHouse(buildingData, pos, rotation, _grid);
+
+                if (cityRenderer)
+                    cityRenderer.AddBuilding(
+                        BuildingAreaHelper.GetAreaCenter(buildingData, pos, rotation, _grid),
+                        rotation, buildingData);
+
+                if (++processed % 10 == 0)
+                    yield return null;
+            }
+        }
     }
 
     private IEnumerator PlacePOIsCoroutine(Vector2Int _cityCenter)
@@ -152,6 +204,11 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 {
                     BuildingAreaHelper.FlattenArea(buildingData, bestPos, bestRotation, _grid, heightStep);
                     BuildingAreaHelper.MarkAreaAsPoi(buildingData, bestPos, bestRotation, _grid, poiData);
+
+                    if (cityRenderer)
+                        cityRenderer.AddBuilding(
+                            BuildingAreaHelper.GetAreaCenter(buildingData, bestPos, bestRotation, _grid),
+                            bestRotation, buildingData);
                 }
                 else
                 {

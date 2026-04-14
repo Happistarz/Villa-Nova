@@ -12,14 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba41507221fb45d6bcad5204e5b78ddf, type: 3}
   m_Name: WellData
   m_EditorClassIdentifier: Assembly-CSharp::POIData
-  Type: 3
-  DebugColor: {r: 0.2352941, g: 0.7019608, b: 0.4431373, a: 1}
-  SpawnRange: {x: 1, y: 1}
-  Rules:
+  type: 3
+  debugColor: {r: 0.2352941, g: 0.7019608, b: 0.4431373, a: 1}
+  spawnRange: {x: 1, y: 1}
+  rules:
   - rule: 0
     value: 30
     scoreWeight: 0.5
   - rule: 2
     value: 15
     scoreWeight: 5
-  BuildingData: {fileID: 11400000, guid: 9e4229ec96675e449a6d648fdd16086c, type: 2}
+  buildingData: {fileID: 11400000, guid: cf826a4c6ca807846a49f6b03d5af0d7, type: 2}

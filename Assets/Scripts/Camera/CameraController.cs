@@ -29,8 +29,8 @@ public class CameraController : MonoBehaviour
     [Header("Free Mode")]
     public float freeMoveSpeed = 30f;
 
-    public float  freeLookSensitivity = 0.3f;
-    public Bounds freeBounds          = new(Vector3.zero, Vector3.one * 400f);
+    public float   freeLookSensitivity = 0.3f;
+    public Vector3 freeBounds          = Vector3.one * 400f;
 
     [Header("Start Mode")]
     public float duration = 2f;
@@ -210,10 +210,10 @@ public class CameraController : MonoBehaviour
         Gizmos.color = new Color(0f, 1f, 1f, 0.5f);
         Gizmos.DrawLine(pivot, transform.position);
 
-        if (!(freeBounds.size.sqrMagnitude > 0f)) return;
+        if (!(freeBounds.sqrMagnitude > 0f)) return;
 
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.15f);
-        Gizmos.DrawWireCube(freeBounds.center, freeBounds.size);
+        Gizmos.DrawWireCube(MapCenter, freeBounds);
     }
 
     #endregion

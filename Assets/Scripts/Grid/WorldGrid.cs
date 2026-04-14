@@ -12,7 +12,8 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         WATER,
         RIVER,
         ROAD,
-        BRIDGE
+        BRIDGE,
+        HOUSE
     }
 
     /// <summary>

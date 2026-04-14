@@ -3,73 +3,86 @@ using UnityEngine;
 
 public class CityRenderer : MonoBehaviour
 {
-    private const int _INSTANCED_BATCH_SIZE = 1023;
+    private const int _BATCH_SIZE = 1023;
 
-    [System.Serializable]
-    public struct LodLevel
-    {
-        public Mesh   mesh;
-        public float  maxDistance;
-    }
+    public Material defaultMaterial;
 
-    public Material material;
-    public Vector3  eulerRotation = new(-90, 0, 0);
-    public Vector3  scale         = Vector3.one;
 
     [Header("LOD")]
-    public LodLevel[] lodLevels;
     public float lodRebakeThreshold = 5f;
 
-    private readonly List<Vector3>    _positions  = new();
-    private readonly List<Matrix4x4>  _matrices   = new();
+    /// <summary>One instance of a building placed in the world</summary>
+    private struct BuildingInstance
+    {
+        public Vector3   Position;
+        public Matrix4x4 Matrix;
+    }
 
-    private List<Matrix4x4[]>[] _lodBatches;
+    /// <summary>All instances that share the same BuildingData</summary>
+    private class BuildingGroup
+    {
+        public BuildingData                Data;
+        public readonly List<BuildingInstance> Instances = new();
 
-    private Camera   _cam;
-    private Vector3  _lastCamPos = Vector3.positiveInfinity;
-    private bool     _baked;
+        // One batch list per LOD level
+        public List<Matrix4x4[]>[] LodBatches;
+    }
+
+    private readonly Dictionary<BuildingData, BuildingGroup> _groups = new();
+
+    private Camera  _cam;
+    private Vector3 _lastCamPos = Vector3.positiveInfinity;
+    private bool    _baked;
 
     private void Awake()
     {
         _cam = Camera.main;
     }
-
-    public void AddHouse(Vector3 _position)
+    
+    /// <summary>Registers a building instance for rendering</summary>
+    public void AddBuilding(Vector3 _position, int _rotation, BuildingData _data)
     {
-        var matrix = Matrix4x4.TRS(_position, Quaternion.Euler(eulerRotation), scale);
-        _positions.Add(_position);
-        _matrices.Add(matrix);
+        if (!_data || _data.lods == null || _data.lods.Count == 0) return;
+
+        if (!_groups.TryGetValue(_data, out var group))
+        {
+            group = new BuildingGroup { Data = _data };
+            _groups[_data] = group;
+        }
+
+        var baseRot  = Quaternion.Euler(_data.meshRotation);
+        var gridRot  = Quaternion.Euler(0, _rotation * 90f, 0);
+        var matrix   = Matrix4x4.TRS(_position, gridRot * baseRot, _data.meshScale);
+
+        group.Instances.Add(new BuildingInstance { Position = _position, Matrix = matrix });
     }
 
+    /// <summary>Bakes all groups into GPU-ready batches</summary>
     public void BakeBatches()
     {
-        if (lodLevels == null || lodLevels.Length == 0) return;
+        foreach (var group in _groups.Values)
+        {
+            var lodCount = group.Data.lods.Count;
+            group.LodBatches = new List<Matrix4x4[]>[lodCount];
 
-        _lodBatches = new List<Matrix4x4[]>[lodLevels.Length];
-        for (var i = 0; i < lodLevels.Length; i++)
-            _lodBatches[i] = new List<Matrix4x4[]>();
+            for (var i = 0; i < lodCount; i++)
+                group.LodBatches[i] = new List<Matrix4x4[]>();
+        }
 
-        _lastCamPos = Vector3.positiveInfinity; // force immediate bake
+        _lastCamPos = Vector3.positiveInfinity;
         _baked = true;
         RebakeLodBatches();
     }
-    
-    public void ClearCity()
-    {
-        ClearHouses();
-    }
 
-    public void ClearHouses()
+    public void Clear()
     {
-        _positions.Clear();
-        _matrices.Clear();
-        _lodBatches = null;
+        _groups.Clear();
         _baked = false;
     }
 
     private void Update()
     {
-        if (!_baked || _lodBatches == null) return;
+        if (!_baked || _groups.Count == 0) return;
 
         if (_cam)
         {
@@ -81,50 +94,66 @@ public class CityRenderer : MonoBehaviour
             }
         }
 
-        for (var lod = 0; lod < lodLevels.Length; lod++)
+        var mat = defaultMaterial;
+
+        foreach (var group in _groups.Values)
         {
-            if (!lodLevels[lod].mesh) continue;
-            foreach (var batch in _lodBatches[lod])
-                Graphics.DrawMeshInstanced(lodLevels[lod].mesh, 0, material, batch);
+            if (group.LodBatches == null) continue;
+
+            for (var lod = 0; lod < group.Data.lods.Count; lod++)
+            {
+                var mesh = group.Data.lods[lod].mesh;
+                if (!mesh) continue;
+
+                foreach (var batch in group.LodBatches[lod])
+                    Graphics.DrawMeshInstanced(mesh, 0, mat, batch);
+            }
         }
     }
 
     private void RebakeLodBatches()
     {
-        foreach (var bucket in _lodBatches)
-            bucket.Clear();
-
-        var accumulators = new List<Matrix4x4>[lodLevels.Length];
-        for (var i = 0; i < lodLevels.Length; i++)
-            accumulators[i] = new List<Matrix4x4>();
-
         var camPos = _cam ? _cam.transform.position : Vector3.zero;
 
-        for (var i = 0; i < _positions.Count; i++)
+        foreach (var group in _groups.Values)
         {
-            var dist = Vector3.Distance(_positions[i], camPos);
-            var lod  = ResolveLod(dist);
-            accumulators[lod].Add(_matrices[i]);
-        }
+            var lodCount = group.Data.lods.Count;
 
-        for (var lod = 0; lod < lodLevels.Length; lod++)
-            SplitIntoBatches(accumulators[lod], _lodBatches[lod]);
+            // Clear existing batches
+            foreach (var bucket in group.LodBatches)
+                bucket.Clear();
+
+            // Accumulate per-LOD
+            var accumulators = new List<Matrix4x4>[lodCount];
+            for (var i = 0; i < lodCount; i++)
+                accumulators[i] = new List<Matrix4x4>();
+
+            foreach (var inst in group.Instances)
+            {
+                var dist = Vector3.Distance(inst.Position, camPos);
+                var lod  = ResolveLod(group.Data, dist);
+                accumulators[lod].Add(inst.Matrix);
+            }
+
+            for (var lod = 0; lod < lodCount; lod++)
+                SplitIntoBatches(accumulators[lod], group.LodBatches[lod]);
+        }
     }
 
-    private int ResolveLod(float _distance)
+    private static int ResolveLod(BuildingData _data, float _distance)
     {
-        for (var i = 0; i < lodLevels.Length - 1; i++)
-            if (_distance <= lodLevels[i].maxDistance)
+        for (var i = 0; i < _data.lods.Count - 1; i++)
+            if (_distance <= _data.lods[i].distanceThreshold)
                 return i;
 
-        return lodLevels.Length - 1; // farthest LOD
+        return _data.lods.Count - 1;
     }
 
     private static void SplitIntoBatches(List<Matrix4x4> _src, List<Matrix4x4[]> _dest)
     {
-        for (var i = 0; i < _src.Count; i += _INSTANCED_BATCH_SIZE)
+        for (var i = 0; i < _src.Count; i += _BATCH_SIZE)
         {
-            var count = Mathf.Min(_INSTANCED_BATCH_SIZE, _src.Count - i);
+            var count = Mathf.Min(_BATCH_SIZE, _src.Count - i);
             var batch = new Matrix4x4[count];
             _src.CopyTo(i, batch, 0, count);
             _dest.Add(batch);

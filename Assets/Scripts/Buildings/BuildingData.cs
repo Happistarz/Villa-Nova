@@ -5,13 +5,23 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BuildingData", menuName = "Building Data", order = 0)]
 public class BuildingData : ScriptableObject
 {
+    public enum BuildingType
+    {
+        POI,
+        HOUSE
+    }
+    
     [Header("General")]
     public int buildingSize = 3;
-    
+    public BuildingType buildingType = BuildingType.HOUSE;
     public List<Vector2Int> buildingArea;
 
     [Header("Terrain")]
     public float flatTolerance = 0.1f;
+
+    [Header("Mesh Placement")]
+    public Vector3 meshRotation = Vector3.right * 90;
+    public Vector3 meshScale    = Vector3.one * 90;
 
     [Serializable]
     public class BuildingLOD

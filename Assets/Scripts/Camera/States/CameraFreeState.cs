@@ -17,6 +17,7 @@ public class CameraFreeState : State<CameraController>
     private bool       _initialized;
     private Vector3    _savedPosition;
     private Quaternion _savedRotation;
+    private Bounds     _freeBounds;
 
     public CameraFreeState(CameraController _context) : base(_context)
     {
@@ -82,6 +83,9 @@ public class CameraFreeState : State<CameraController>
                 return;
             }
         }
+        
+        _freeBounds.center = Context.MapCenter;
+        _freeBounds.size = Context.freeBounds;
 
         UpdateDragState();
         HandleLook();
@@ -124,8 +128,8 @@ public class CameraFreeState : State<CameraController>
         var direction = (t.forward * -input.y + t.right * -input.x).normalized;
         var nextPos   = t.position + direction * (Context.freeMoveSpeed * Time.deltaTime);
 
-        if (Context.freeBounds.size.sqrMagnitude > 0f)
-            nextPos = Context.freeBounds.ClosestPoint(nextPos);
+        if (Context.freeBounds.sqrMagnitude > 0f)
+            nextPos = _freeBounds.ClosestPoint(nextPos);
 
         t.position = nextPos;
     }

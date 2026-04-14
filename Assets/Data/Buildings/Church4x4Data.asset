@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Church4x4Data
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   buildingSize: 4
+  buildingType: 0
   buildingArea:
   - {x: -2, y: -2}
   - {x: -1, y: -2}
@@ -31,7 +32,13 @@ MonoBehaviour:
   - {x: -1, y: 1}
   - {x: -2, y: 1}
   flatTolerance: 0.5
+  meshRotation: {x: 0, y: 0, z: 0}
+  meshScale: {x: 8, y: 4, z: 2}
   lods:
-  - mesh: {fileID: 5330227900271839391, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
-    distanceThreshold: 1
+  - mesh: {fileID: -2636318077302972135, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+    distanceThreshold: 11
+  - mesh: {fileID: 1912046982343959720, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+    distanceThreshold: 23
+  - mesh: {fileID: 8954308101839472443, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+    distanceThreshold: 300
   debugColor: {r: 1, g: 0, b: 0, a: 1}

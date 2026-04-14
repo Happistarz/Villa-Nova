@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Core.Extensions;
 using Core.Patterns;
 using Generators;
-using Unity.Collections;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -33,7 +32,7 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
         var poiPositions = CityGenerator.Instance.PlacedPOIPositions;
         var nearCities   = WorldGrid.Instance.NearCities;
 
-        yield return StartCoroutine(ComputeUrbanity(_grid, cityCenter));
+        yield return StartCoroutine(UrbanityHelper.Compute(_grid, cityCenter, urbanityConfig));
 
         var graph = RoadGraph.Build(_grid, cityCenter, poiPositions, nearCities);
 
@@ -103,61 +102,5 @@ public class RoadGenerator : MonoSingleton<RoadGenerator>, IGenerator
 
         IsGenerating = false;
         OnGenerationComplete?.Invoke();
-    }
-
-    /// <summary>
-    /// Computes an urbanity level for each cell in the grid based on distance from city center and noise
-    /// </summary>
-    private IEnumerator ComputeUrbanity(WorldGrid _grid, Vector2Int _cityCenter)
-    {
-        if (!urbanityConfig)
-        {
-            SetDefaultUrbanity(_grid);
-            yield break;
-        }
-
-        var totalCells = _grid.size * _grid.size;
-        var results    = new NativeArray<float>(totalCells, Allocator.Persistent);
-
-        var job = new UrbanityJob
-        {
-            GridSize       = _grid.size,
-            CitySettlePos  = new int2(_cityCenter.x, _cityCenter.y),
-            MaxRadius      = urbanityConfig.maxRadius,
-            NoiseScale     = urbanityConfig.noiseScale,
-            NoiseAmplitude = urbanityConfig.noiseAmplitude,
-            Results        = results,
-            Seed           = GameManager.Instance.RandomEngine.Next()
-        };
-
-        yield return GenerationJobManager.Instance.StartCoroutine(
-            GenerationJobManager.DispatchJob(job, totalCells, 64,
-                                             _completed => ApplyUrbanityResults(_completed, _grid, totalCells),
-                                             results));
-    }
-
-    private static void ApplyUrbanityResults(UrbanityJob _job, WorldGrid _grid, int _totalCells)
-    {
-        for (var i = 0; i < _totalCells; i++)
-        {
-            var x    = i % _grid.size;
-            var y    = i / _grid.size;
-            var cell = _grid.Cells[x, y];
-            cell.UrbanityLevel = _job.Results[i];
-            _grid.Cells[x, y]  = cell;
-        }
-    }
-
-    private static void SetDefaultUrbanity(WorldGrid _grid)
-    {
-        for (var x = 0; x < _grid.size; x++)
-        {
-            for (var y = 0; y < _grid.size; y++)
-            {
-                var cell = _grid.Cells[x, y];
-                cell.UrbanityLevel = 1f;
-                _grid.Cells[x, y]  = cell;
-            }
-        }
     }
 }

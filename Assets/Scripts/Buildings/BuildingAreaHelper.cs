@@ -2,6 +2,12 @@
 
 public static class BuildingAreaHelper
 {
+    /// <summary>Checks if the cell is a valid starting point for placing a building</summary>
+    public static bool IsCellValidForBuilding(WorldGrid.Cell _cell)
+    {
+        return _cell.Is(WorldGrid.CellType.PLAIN, WorldGrid.CellType.CITY) && !_cell.IsOccupied;
+    }
+    
     /// <summary>
     /// Returns true if the building fits at the position and rotation
     /// Checks that all cells are empty and height difference is within tolerance
@@ -18,13 +24,13 @@ public static class BuildingAreaHelper
             var rotatedOffset = RotateOffset(offset, _rotation);
             var cellPosition  = _position + rotatedOffset;
 
-            if (!_grid.IsCellEmpty(cellPosition))
+            var cell = _grid.GetCell(cellPosition);
+            if (cell == null) return false;
+
+            if (!IsCellValidForBuilding(cell.Value))
                 return false;
 
             if (_data.flatTolerance <= 0) continue;
-
-            var cell = _grid.GetCell(cellPosition);
-            if (cell == null) return false;
 
             if (Mathf.Abs(cell.Value.Height - originHeight) > _data.flatTolerance)
                 return false;
@@ -45,6 +51,22 @@ public static class BuildingAreaHelper
 
             var cell        = _grid.Cells[cellPosition.x, cellPosition.y];
             cell.POI        = _poiData;
+            cell.IsOccupied = true;
+            _grid.Cells[cellPosition.x, cellPosition.y] = cell;
+        }
+    }
+
+    /// <summary>Marks all cells under the building footprint as HOUSE and occupied</summary>
+    public static void MarkAreaAsHouse(BuildingData _data, Vector2Int _position, int _rotation, WorldGrid _grid)
+    {
+        foreach (var offset in _data.buildingArea)
+        {
+            var rotatedOffset = RotateOffset(offset, _rotation);
+            var cellPosition  = _position + rotatedOffset;
+            if (!_grid.IsInBounds(cellPosition)) continue;
+
+            var cell        = _grid.Cells[cellPosition.x, cellPosition.y];
+            cell.Type       = WorldGrid.CellType.HOUSE;
             cell.IsOccupied = true;
             _grid.Cells[cellPosition.x, cellPosition.y] = cell;
         }
@@ -130,5 +152,28 @@ public static class BuildingAreaHelper
             3 => new Vector2Int(_offset.y, -_offset.x),
             _ => _offset
         };
+    }
+
+    /// <summary>
+    /// Returns the world-space center of the building footprint at the given grid position and rotation.
+    /// Averages all rotated cell positions to find the geometric center.
+    /// </summary>
+    public static Vector3 GetAreaCenter(BuildingData _data, Vector2Int _position, int _rotation, WorldGrid _grid)
+    {
+        if (_data.buildingArea == null || _data.buildingArea.Count == 0)
+            return _grid.CellToWorld(_position);
+
+        var sum   = Vector3.zero;
+        var count = 0;
+
+        foreach (var offset in _data.buildingArea)
+        {
+            var rotated  = RotateOffset(offset, _rotation);
+            var cellPos  = _position + rotated;
+            sum += _grid.CellToWorld(cellPos);
+            count++;
+        }
+
+        return sum / count;
     }
 }

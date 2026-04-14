@@ -15,10 +15,9 @@ MonoBehaviour:
   buildingSize: 1
   buildingArea:
   - {x: 0, y: 0}
-  randomizeRotation: 0
-  rotation: 0
   flatTolerance: 0.1
-  material: {fileID: 2100000, guid: f28f57eb6a2ed2b4f94ed9a2759d326c, type: 2}
+  meshRotation: {x: 90, y: 0, z: 0}
+  meshScale: {x: 90, y: 90, z: 90}
   lods:
   - mesh: {fileID: 5330227900271839391, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
     distanceThreshold: 1
