@@ -12,8 +12,10 @@ public static class RoadBuilder
     public static void StampRoad(List<Vector2Int>   _path, int _width, WorldGrid _grid, int _maxBridgeLength,
                                  RoadGraph.EdgeType _roadTier)
     {
-        var bridgeCells  = new HashSet<Vector2Int>();
+        var bridgeCells = new HashSet<Vector2Int>();
         CollectBridgeCells(_path, _grid, _maxBridgeLength, bridgeCells);
+
+        var bridgeHeights = ComputeBridgeHeights(_path, _grid, bridgeCells);
 
         var half = _width / 2;
 
@@ -34,21 +36,78 @@ public static class RoadBuilder
                         if (cell.Is(WorldGrid.CellType.BRIDGE)) continue;
 
                         cell.Type = WorldGrid.CellType.BRIDGE;
+                        if (bridgeHeights.TryGetValue(center, out var bh))
+                            cell.Height = bh;
                         _grid.UpdateCell(pos, cell);
                         continue;
                     }
 
                     if (!CanPlaceRoad(pos, _grid)) continue;
                     if (cell.Is(WorldGrid.CellType.ROAD)) continue;
-                    
+
                     if (cell.RoadTier > 0 && cell.RoadTier < (byte)_roadTier) continue;
 
                     cell.RoadTier = (byte)_roadTier;
-                    cell.Type = WorldGrid.CellType.ROAD;
+                    cell.Type     = WorldGrid.CellType.ROAD;
                     _grid.UpdateCell(pos, cell);
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Computes interpolated heights for bridge cells based on the shore endpoints on each side
+    /// </summary>
+    private static Dictionary<Vector2Int, float> ComputeBridgeHeights(List<Vector2Int>    _path, WorldGrid _grid,
+                                                                      HashSet<Vector2Int> _bridgeCells)
+    {
+        var heights = new Dictionary<Vector2Int, float>();
+        var i       = 0;
+
+        while (i < _path.Count)
+        {
+            if (!_bridgeCells.Contains(_path[i]))
+            {
+                i++;
+                continue;
+            }
+
+            var runStart = i;
+
+            var startHeight = 0f;
+            for (var b = runStart - 1; b >= 0; b--)
+            {
+                var p = _path[b];
+                if (!_grid.IsInBounds(p) ||
+                    _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER)) continue;
+
+                startHeight = _grid.Cells[p.x, p.y].Height;
+                break;
+            }
+
+            while (i < _path.Count && _bridgeCells.Contains(_path[i])) i++;
+            var runEnd = i - 1;
+
+            var endHeight = startHeight;
+            for (var a = runEnd + 1; a < _path.Count; a++)
+            {
+                var p = _path[a];
+                if (!_grid.IsInBounds(p) ||
+                    _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.WATER, WorldGrid.CellType.RIVER)) continue;
+
+                endHeight = _grid.Cells[p.x, p.y].Height;
+                break;
+            }
+
+            var runLength = runEnd - runStart;
+            for (var j = runStart; j <= runEnd; j++)
+            {
+                var t = runLength > 0 ? (float)(j - runStart) / runLength : 0.5f;
+                heights[_path[j]] = Mathf.Lerp(startHeight, endHeight, t);
+            }
+        }
+
+        return heights;
     }
 
     /// <summary>

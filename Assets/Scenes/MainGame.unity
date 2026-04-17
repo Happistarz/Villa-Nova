@@ -867,6 +867,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HouseGenerator
   cityGenerator: {fileID: 1327768806}
   config: {fileID: 11400000, guid: 1c868c7f19ebce743997ccc1d797c125, type: 2}
+  placementPasses: 3
 --- !u!4 &264765998
 Transform:
   m_ObjectHideFlags: 0
@@ -2307,11 +2308,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapGenerator
   dontDestroyOnLoad: 0
-  noiseScale: 20
   elevationNoiseScale: 40
-  elevationScale: 1
+  elevationScale: 20
   heightStep: 0.5
-  terrainOctaves: 4
+  elevationAmplitude: 8
+  elevationFrequency: 1.5
+  terrainOctaves: 5
+  hillWeight: 0.962
+  ridgeWeight: 0.276
+  hillNoiseScale: 80.3
+  ridgeNoiseScale: 76.5
+  domainWarpStrength: 9.9
+  domainWarpScale: 73.3
   maxCoastPatches: 8
   coastMinLength: 15
   coastMaxLength: 74
@@ -2320,6 +2328,7 @@ MonoBehaviour:
   maxLakes: 5
   lakeMinRadius: 3
   lakeMaxRadius: 8
+  waterDepthOffset: 1.3
   maxRivers: 3
   riverNoiseScale: 7.4
   riverAmplitude: 0.078

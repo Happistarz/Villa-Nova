@@ -15,13 +15,24 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     public event Action OnGenerationComplete;
 
     [Header("Terrain")]
-    [Range(1f, 50f)] public float noiseScale = 20f;
+    [Range(1f, 100f)] public float elevationNoiseScale = 40f;
 
-    [Range(1f,    100f)] public float elevationNoiseScale = 40f;
-    [Range(0f,    5f)]   public float elevationScale      = 1f;
-    [Range(0.01f, 1f)]   public float heightStep          = 0.5f;
+    [Range(0f,    500f)] public float elevationScale = 1f;
+    [Range(0.01f, 1f)]   public float heightStep     = 0.5f;
+
+    [Min(0f)] public float elevationAmplitude = 20f;
+    [Min(0f)] public float elevationFrequency = 1f;
 
     [Range(1, 6)] public int terrainOctaves = 4;
+
+    [Header("Terrain Variation")]
+    [Range(0f, 1f)] public float hillWeight = 0.3f;
+
+    [Range(0f, 1f)]   public float ridgeWeight        = 0.2f;
+    [Range(1f, 100f)] public float hillNoiseScale     = 15f;
+    [Range(1f, 100f)] public float ridgeNoiseScale    = 25f;
+    [Range(0f, 50f)]  public float domainWarpStrength = 8f;
+    [Range(1f, 100f)] public float domainWarpScale    = 30f;
 
     [Header("Coasts")]
     [Range(0, 8)] public int maxCoastPatches = 8;
@@ -38,6 +49,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
     [Range(3, 20)] public int lakeMaxRadius = 8;
 
     [Header("River")]
+    [Range(0f, 2f)] public float waterDepthOffset = 0.3f;
+
     [Range(0, 5)] public int maxRivers = 3;
 
     [Range(1f, 20f)] public float riverNoiseScale = 7.4f;
@@ -84,14 +97,32 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
 
         var elevationOffsetX = rng.Range(0f, 1000f);
         var elevationOffsetY = rng.Range(0f, 1000f);
+        var hillOffsetX      = rng.Range(0f, 1000f);
+        var hillOffsetY      = rng.Range(0f, 1000f);
+        var ridgeOffsetX     = rng.Range(0f, 1000f);
+        var ridgeOffsetY     = rng.Range(0f, 1000f);
+
+        var baseWeight = 1f - hillWeight - ridgeWeight;
 
         for (var x = 0; x < size; x++)
         {
             for (var y = 0; y < size; y++)
             {
-                var noiseVal = MathHelper.FBm((x + elevationOffsetX) / elevationNoiseScale,
-                                              (y + elevationOffsetY) / elevationNoiseScale, terrainOctaves);
-                var height = MathHelper.Quantize(noiseVal * elevationScale, heightStep);
+                var warped = MathHelper.DomainWarp(x + elevationOffsetX, y + elevationOffsetY,
+                                                   domainWarpScale, domainWarpStrength);
+
+                var baseNoise = MathHelper.FBm(warped.x / elevationNoiseScale,
+                                               warped.y / elevationNoiseScale, terrainOctaves,
+                                               elevationAmplitude, elevationFrequency);
+
+                var hillNoise = MathHelper.FBm((x + hillOffsetX) / hillNoiseScale,
+                                               (y + hillOffsetY) / hillNoiseScale, 3);
+
+                var ridgeNoise = MathHelper.RidgedFBm((x + ridgeOffsetX) / ridgeNoiseScale,
+                                                      (y + ridgeOffsetY) / ridgeNoiseScale, 4);
+
+                var combined = baseNoise * baseWeight + hillNoise * hillWeight + ridgeNoise * ridgeWeight;
+                var height   = MathHelper.Quantize(combined * elevationScale, heightStep);
 
                 _grid.Cells[x, y] = new WorldGrid.Cell
                 {
@@ -159,8 +190,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
                     var pos = new Vector2Int(x, y);
                     if (!_grid.IsInBounds(pos)) continue;
 
-                    _grid.Cells[x, y].Type   = WorldGrid.CellType.WATER;
-                    _grid.Cells[x, y].Height = -0.5f;
+                    _grid.Cells[x, y].Type   =  WorldGrid.CellType.WATER;
+                    _grid.Cells[x, y].Height -= waterDepthOffset;
                 }
             }
         }
@@ -198,8 +229,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
                 if (normalizedDist > 0.6f + edgeNoise * 0.4f) continue;
                 if (!_grid.IsInBounds(p)) continue;
 
-                _grid.Cells[p.x, p.y].Type   = WorldGrid.CellType.WATER;
-                _grid.Cells[p.x, p.y].Height = -0.5f;
+                _grid.Cells[p.x, p.y].Type   =  WorldGrid.CellType.WATER;
+                _grid.Cells[p.x, p.y].Height -= waterDepthOffset;
             }
         }
     }
@@ -213,8 +244,8 @@ public class MapGenerator : MonoSingleton<MapGenerator>, IGenerator
             if (!_grid.IsInBounds(p) || _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.RIVER) ||
                 _grid.Cells[p.x, p.y].Is(WorldGrid.CellType.WATER)) continue;
 
-            _grid.Cells[p.x, p.y].Type   = WorldGrid.CellType.RIVER;
-            _grid.Cells[p.x, p.y].Height = -0.5f;
+            _grid.Cells[p.x, p.y].Type   =  WorldGrid.CellType.RIVER;
+            _grid.Cells[p.x, p.y].Height -= waterDepthOffset;
             _count++;
         }
     }

@@ -4,22 +4,50 @@ using UnityEngine;
 public static class MathHelper
 {
     /// <summary>Fractal Brownian Motion using Perlin noise</summary>
-    public static float FBm(float _x, float _y, int _octaves)
+    public static float FBm(float _x, float _y, int _octaves, float _amplitude = 1f, float _frequency = 1f)
     {
-        var value     = 0f;
-        var amplitude = 1f;
-        var frequency = 1f;
-        var max       = 0f;
+        var value = 0f;
+        var max   = 0f;
 
         for (var i = 0; i < _octaves; i++)
         {
-            value     += Mathf.PerlinNoise(_x * frequency, _y * frequency) * amplitude;
-            max       += amplitude;
-            amplitude *= 0.5f;
-            frequency *= 2f;
+            value      += Mathf.PerlinNoise(_x * _frequency, _y * _frequency) * _amplitude;
+            max        += _amplitude;
+            _amplitude *= 0.5f;
+            _frequency *= 2f;
         }
 
+        if (max == 0f) return 0f;
+
         return value / max;
+    }
+
+    /// <summary>Ridged Fractal Brownian Motion</summary>
+    public static float RidgedFBm(float _x, float _y, int _octaves, float _amplitude = 1f, float _frequency = 1f)
+    {
+        var value = 0f;
+        var max   = 0f;
+
+        for (var i = 0; i < _octaves; i++)
+        {
+            var n = Mathf.PerlinNoise(_x   * _frequency, _y * _frequency);
+            n          =  1f - Mathf.Abs(n * 2f - 1f);
+            n          *= n;
+            value      += n * _amplitude;
+            max        += _amplitude;
+            _amplitude *= 0.5f;
+            _frequency *= 2f;
+        }
+
+        return max == 0f ? 0f : value / max;
+    }
+
+    /// <summary>Domain warping</summary>
+    public static Vector2 DomainWarp(float _x, float _y, float _warpScale, float _warpStrength)
+    {
+        var wx = FBm(_x / _warpScale, _y / _warpScale + 100f, 3);
+        var wy = FBm(_x                  / _warpScale + 200f, _y / _warpScale, 3);
+        return new Vector2(_x + (wx                   - 0.5f) * _warpStrength, _y + (wy - 0.5f) * _warpStrength);
     }
 
     /// <summary>Remaps a value from one range to another</summary>
@@ -77,7 +105,7 @@ public static class MathHelper
         var sx  = x0 < x1 ? 1 : -1;
         var sy  = y0 < y1 ? 1 : -1;
         var err = dx - dy;
-        
+
         while (true)
         {
             yield return new Vector2Int(x0, y0);
@@ -103,7 +131,7 @@ public static class MathHelper
     {
         if (_rx == 0 || _ry == 0) return float.MaxValue;
         if (_dx == 0 && _dy == 0) return 0f;
-        
+
         return Mathf.Sqrt(_dx * _dx / (_rx * _rx) + _dy * _dy / (_ry * _ry));
     }
 

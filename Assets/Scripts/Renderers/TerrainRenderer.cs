@@ -15,7 +15,7 @@ public class TerrainRenderer : AbstractRenderer
         if (cr)
         {
             OnRenderToggled += () => { cr.enabled = renderEnabled.Value; };
-            cr.enabled = renderEnabled.Value;
+            cr.enabled      =  renderEnabled.Value;
         }
 
         MapGenerator.Instance.OnGenerationComplete += () =>
@@ -30,7 +30,6 @@ public class TerrainRenderer : AbstractRenderer
 
     public override void BuildMesh()
     {
-
         if (!_mesh)
         {
             _mesh = new Mesh { name = "WorldGridMesh", indexFormat = IndexFormat.UInt32 };
@@ -138,6 +137,7 @@ public class TerrainRenderer : AbstractRenderer
             {
                 WorldGrid.CellType.ROAD   => _p.roadColor,
                 WorldGrid.CellType.BRIDGE => _p.bridgeColor,
+                WorldGrid.CellType.WATER  => _p.waterColor,
                 _                         => _p.wallColor
             };
 
