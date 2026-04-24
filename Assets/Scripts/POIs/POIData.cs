@@ -17,7 +17,8 @@ public class POIData : ScriptableObject
         NEAR_CITY,
         NEAR_WATER,
         POI_DISTANCE,
-        NEAR_ROAD
+        NEAR_ROAD,
+        HIGH_ELEVATION,
     }
 
     [System.Serializable]

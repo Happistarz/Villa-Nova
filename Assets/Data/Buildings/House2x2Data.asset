@@ -20,7 +20,7 @@ MonoBehaviour:
   - {x: -1, y: 0}
   flatTolerance: 0.1
   meshRotation: {x: 0, y: 0, z: 0}
-  meshScale: {x: 2.2, y: 2.2, z: 2.2}
+  meshScale: {x: 1, y: 1, z: 1}
   meshOffset: {x: 0, y: 0, z: 0}
   lods:
   - mesh: {fileID: 6240902819992138870, guid: 6a45de70d77ece6468009d25fb4714c6, type: 3}

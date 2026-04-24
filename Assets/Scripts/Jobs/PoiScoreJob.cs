@@ -79,6 +79,11 @@ public struct PoiScoreJob : IJobParallelFor
                     else
                         ruleScore = 1f;
                     break;
+                
+                case POIData.POIRule.HIGH_ELEVATION:
+                    ruleScore = cell.Height / rule.Value;
+                    break;
+                
                 default:
                     throw new ArgumentOutOfRangeException();
             }

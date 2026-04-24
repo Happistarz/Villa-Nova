@@ -22,4 +22,7 @@ MonoBehaviour:
   - rule: 2
     value: 25
     scoreWeight: 2
+  - rule: 4
+    value: 10
+    scoreWeight: 3
   buildingData: {fileID: 11400000, guid: ce3a6cdaa4e54984a9f89521e18ef40a, type: 2}
