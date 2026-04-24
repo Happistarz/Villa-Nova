@@ -23,6 +23,9 @@
             #pragma vertex vert
             #pragma fragment frag
 
+            #pragma multi_compile _ _MAIN_LIGHT_SHADOWS _MAIN_LIGHT_SHADOWS_CASCADE _MAIN_LIGHT_SHADOWS_SCREEN
+            #pragma multi_compile _ _SHADOWS_SOFT
+
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Lighting.hlsl"
 
@@ -48,23 +51,23 @@
                 float4 color       : COLOR;
                 float3 normalWS    : TEXCOORD0;
                 float  revealT     : TEXCOORD1;
+                float4 shadowCoord : TEXCOORD2; 
             };
 
             Varyings vert(Attributes input)
             {
                 Varyings output;
-
                 float3 worldPos = TransformObjectToWorld(input.positionOS.xyz);
 
-                float dist = distance(worldPos.xz, _RevealCenter.xz);
+                float2 worldRelXZ  = worldPos.xz - _WorldSpaceCameraPos.xz;
+                float2 centerRelXZ = _RevealCenter.xz - _WorldSpaceCameraPos.xz;
+                float dist = distance(worldRelXZ, centerRelXZ);
 
                 float t = saturate((_RevealRadius - dist) / max(_RevealWidth, 0.001));
-
                 t = t * t * (3.0 - 2.0 * t);
 
                 float bouncePhase = saturate(1.0 - abs(t - 0.75) * 4.0);
                 float bounce = _BounceStrength * sin(bouncePhase * 3.14159) * (1.0 - t * 0.5);
-
                 float yOffset = lerp(_DropHeight, 0.0, t) + bounce;
 
                 worldPos.y += yOffset;
@@ -73,6 +76,8 @@
                 output.normalWS   = TransformObjectToWorldNormal(input.normalOS);
                 output.color      = input.color;
                 output.revealT    = t;
+
+                output.shadowCoord = TransformWorldToShadowCoord(worldPos);
 
                 return output;
             }
@@ -83,14 +88,14 @@
 
                 float3 normal = normalize(input.normalWS);
 
-                Light mainLight = GetMainLight();
+                Light mainLight = GetMainLight(input.shadowCoord);
+
                 float NdotL     = saturate(dot(normal, mainLight.direction));
-                float3 diffuse  = mainLight.color * NdotL;
+                float3 diffuse  = mainLight.color * NdotL * mainLight.shadowAttenuation;
 
                 float3 ambient = SampleSH(normal);
 
                 float3 lighting = ambient + diffuse;
-
                 float colorMul = lerp(_ColorDarkness, 1.0, input.revealT);
 
                 return half4(input.color.rgb * lighting * colorMul, 1.0);
@@ -99,4 +104,3 @@
         }
     }
 }
-
