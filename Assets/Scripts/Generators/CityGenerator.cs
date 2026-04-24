@@ -138,7 +138,10 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                                                 _result => candidates = _result));
 
                 if (candidates == null || candidates.Count == 0)
+                {
+                    Debug.LogWarning($"[POI] {poiData.type}: No candidates found (job returned 0 valid cells)");
                     continue;
+                }
 
                 var found        = false;
                 var bestPos      = Vector2Int.zero;
@@ -147,7 +150,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 var checksCount = 0;
                 foreach (var (pos, _) in candidates)
                 {
-                    if (checksCount++ > 100) break;
+                    if (checksCount++ > 500) break;
 
                     var rotation = 0;
 
@@ -164,7 +167,26 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                     break;
                 }
 
-                if (!found) continue;
+                if (!found)
+                {
+                    var needSpawn = poiData.spawnRange.x > 0;
+                    if (needSpawn && buildingData && buildingData.buildingArea is { Count: > 0 } && candidates.Count > 0)
+                    {
+                        Debug.Log($"[POI] {poiData.type}: Force-flattening best candidate for mandatory POI");
+                        bestPos = candidates[0].pos;
+                        
+                        var heightStep2 = MapGenerator.Instance.heightStep;
+                        BuildingAreaHelper.FlattenArea(buildingData, bestPos, 0, _grid, heightStep2);
+                        
+                        bestRotation = BuildingAreaHelper.FindBestRotation(buildingData, bestPos, _grid);
+                        if (bestRotation < 0) bestRotation = 0;
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"[POI] {poiData.type}: {candidates.Count} candidates but none passed CanPlace (checked {checksCount}). BuildingSize={buildingData?.buildingSize}, FlatTolerance={buildingData?.flatTolerance}");
+                        continue;
+                    }
+                }
 
                 var heightStep = MapGenerator.Instance.heightStep;
 

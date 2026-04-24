@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e509e33cc964792b42868a060d3cf5a, type: 3}
+  m_Name: TownHall5x5Data
+  m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  buildingSize: 5
+  buildingType: 0
+  buildingArea:
+  - {x: -2, y: -2}
+  - {x: -1, y: -2}
+  - {x: -1, y: -1}
+  - {x: -2, y: -1}
+  - {x: -2, y: 0}
+  - {x: -1, y: 0}
+  - {x: -1, y: 1}
+  - {x: -2, y: 1}
+  - {x: 0, y: -2}
+  - {x: 1, y: -2}
+  - {x: 2, y: -2}
+  - {x: 2, y: -1}
+  - {x: 1, y: -1}
+  - {x: 0, y: -1}
+  - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: -1, y: 2}
+  - {x: -2, y: 2}
+  - {x: 0, y: 2}
+  - {x: 1, y: 2}
+  - {x: 1, y: 1}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}
+  flatTolerance: 5
+  meshRotation: {x: 0, y: 0, z: 0}
+  meshScale: {x: 0.19, y: 0.19, z: 0.19}
+  meshOffset: {x: 0, y: 0, z: 0}
+  lods:
+  - mesh: {fileID: -1565262382180253264, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+    distanceThreshold: 100
+  - mesh: {fileID: 7440895014502862300, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+    distanceThreshold: 200
+  - mesh: {fileID: 8540925214684591407, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+    distanceThreshold: 2500
+  debugColor: {r: 1, g: 0, b: 0, a: 1}

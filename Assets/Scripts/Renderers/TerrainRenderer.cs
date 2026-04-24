@@ -64,6 +64,7 @@ public class TerrainRenderer : AbstractRenderer
                         WorldGrid.CellType.HOUSE  => _colorConfig.houseColor,
                         _                         => Color.magenta
                     };
+                color.a = 1f;
 
                 var cellHeight = cell.Height;
 
@@ -101,6 +102,7 @@ public class TerrainRenderer : AbstractRenderer
         _mesh.colors    = colors.ToArray();
         _mesh.normals   = normals.ToArray();
         _mesh.RecalculateBounds();
+        _mesh.RecalculateNormals();
 
         var bounds = _mesh.bounds;
         bounds.Expand(new Vector3(0f, 20f, 0f));
@@ -138,6 +140,7 @@ public class TerrainRenderer : AbstractRenderer
                 WorldGrid.CellType.ROAD   => _p.roadColor,
                 WorldGrid.CellType.BRIDGE => _p.bridgeColor,
                 WorldGrid.CellType.WATER  => _p.waterColor,
+                WorldGrid.CellType.RIVER  => _p.riverColor,
                 _                         => _p.wallColor
             };
 

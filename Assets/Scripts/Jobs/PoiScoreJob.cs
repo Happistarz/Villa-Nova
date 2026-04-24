@@ -32,16 +32,18 @@ public struct PoiScoreJob : IJobParallelFor
         var cell = GridCells[_index];
         var pos  = new float2(x, y);
 
+        var heightPenalty = 0f;
+
         if (cell.IsOccupied || cell.HasPoi
                             || cell.Type == WorldGrid.CellType.WATER
-                            || cell.Type == WorldGrid.CellType.RIVER || BuildingSize > 1
-                            && !CanFitInArea(x, y, cell.Height))
+                            || cell.Type == WorldGrid.CellType.RIVER
+                            || (BuildingSize > 1 && !CanFitInArea(x, y, cell.Height, out heightPenalty)))
         {
             Results[_index] = float.MinValue;
             return;
         }
 
-        var score = 0f;
+        var score = -heightPenalty;
 
         foreach (var rule in Rules)
         {
@@ -146,9 +148,10 @@ public struct PoiScoreJob : IJobParallelFor
     /// <summary>
     /// Checks if a building of the specified size can fit in the area without overlapping occupied cells
     /// </summary>
-    private bool CanFitInArea(int _cx, int _cy, float _originHeight)
+    private bool CanFitInArea(int _cx, int _cy, float _originHeight, out float _heightPenalty)
     {
         var half = BuildingSize / 2;
+        _heightPenalty = 0f;
         
         for (var dx = -half; dx < BuildingSize - half; dx++)
         {
@@ -168,8 +171,9 @@ public struct PoiScoreJob : IJobParallelFor
                 if (neighbor.Type is WorldGrid.CellType.WATER or WorldGrid.CellType.RIVER)
                     return false;
 
-                if (FlatTolerance > 0 && math.abs(neighbor.Height - _originHeight) > FlatTolerance)
-                    return false;
+                var diff = math.abs(neighbor.Height - _originHeight);
+                if (FlatTolerance > 0 && diff > FlatTolerance)
+                    _heightPenalty += diff - FlatTolerance;
             }
         }
 

@@ -24,11 +24,12 @@ public static class CityGenerationJobRunner
 
         yield return GenerationJobManager.Instance.StartCoroutine(
             GenerationJobManager.DispatchJob(job, totalCells, 64,
-                _completed => ProcessSettleResults(_completed, _grid, totalCells, _onComplete),
-                gridData, scores));
+                                             _completed =>
+                                                 ProcessSettleResults(_completed, _grid, totalCells, _onComplete),
+                                             gridData, scores));
     }
 
-    private static void ProcessSettleResults(SettleScoreJob _job, WorldGrid _grid, int _totalCells,
+    private static void ProcessSettleResults(SettleScoreJob     _job, WorldGrid _grid, int _totalCells,
                                              Action<Vector2Int> _onComplete)
     {
         var bestScore = float.MinValue;
@@ -45,8 +46,8 @@ public static class CityGenerationJobRunner
     }
 
     /// <summary>Computes A* paths for a batch of path requests using jobs</summary>
-    public static IEnumerator ComputePaths(WorldGrid _grid, List<PathRequest> _requests,
-                                           RoadSettings _settings,
+    public static IEnumerator ComputePaths(WorldGrid                      _grid, List<PathRequest> _requests,
+                                           RoadSettings                   _settings,
                                            Action<List<List<Vector2Int>>> _onComplete)
     {
         if (_requests.Count == 0)
@@ -57,9 +58,10 @@ public static class CityGenerationJobRunner
 
         // Flatten grid, convert requests and allocate result arrays
         // The job is a bit time-consuming, so we need to ensure datas stays valid across multiple frames
-        var gridData    = GridJobUtilities.GetFlatGridData(_grid, Allocator.Persistent);
-        var requests    = new NativeArray<PathRequest>(_requests.Count, Allocator.Persistent);
-        var allPaths    = new NativeArray<int2>(_requests.Count * PathfindingProcessJob.MAX_PATH_LENGTH, Allocator.Persistent);
+        var gridData = GridJobUtilities.GetFlatGridData(_grid, Allocator.Persistent);
+        var requests = new NativeArray<PathRequest>(_requests.Count, Allocator.Persistent);
+        var allPaths =
+            new NativeArray<int2>(_requests.Count * PathfindingProcessJob.MAX_PATH_LENGTH, Allocator.Persistent);
         var pathLengths = new NativeArray<int>(_requests.Count, Allocator.Persistent);
 
         for (var i = 0; i < _requests.Count; i++)
@@ -81,17 +83,17 @@ public static class CityGenerationJobRunner
 
         yield return GenerationJobManager.Instance.StartCoroutine(
             GenerationJobManager.DispatchJob(job, _requests.Count, 1,
-                _completed =>
-                {
-                    _onComplete?.Invoke(ExtractPaths(_completed, _requests.Count));
-                },
-                gridData, requests, allPaths, pathLengths));
+                                             _completed =>
+                                             {
+                                                 _onComplete?.Invoke(ExtractPaths(_completed, _requests.Count));
+                                             },
+                                             gridData, requests, allPaths, pathLengths));
     }
 
     /// <summary>Scores all grid cells for POI placement and returns sorted candidates</summary>
-    public static IEnumerator FindBestPoiLocation(WorldGrid _grid, POIData _poiData,
-                                                  List<Vector2Int> _existingPois,
-                                                  Vector2Int _cityCenter,
+    public static IEnumerator FindBestPoiLocation(WorldGrid                         _grid, POIData _poiData,
+                                                  List<Vector2Int>                  _existingPois,
+                                                  Vector2Int                        _cityCenter,
                                                   Action<List<(Vector2Int, float)>> _onComplete)
     {
         var totalCells   = _grid.size * _grid.size;
@@ -115,7 +117,7 @@ public static class CityGenerationJobRunner
 
         var buildingData  = _poiData.buildingData;
         var buildingSize  = buildingData && buildingData.buildingArea is { Count: > 0 } ? buildingData.buildingSize : 1;
-        var flatTolerance = buildingData ? buildingData.flatTolerance : 0f;
+        var flatTolerance = buildingData?.flatTolerance ?? 0f;
 
         var job = new PoiScoreJob
         {
@@ -131,11 +133,12 @@ public static class CityGenerationJobRunner
 
         yield return GenerationJobManager.Instance.StartCoroutine(
             GenerationJobManager.DispatchJob(job, totalCells, 64,
-                _completed =>
-                {
-                    _onComplete?.Invoke(ExtractPoiCandidates(_completed, _grid.size, totalCells));
-                },
-                gridData, scores, rules, existingPois));
+                                             _completed =>
+                                             {
+                                                 _onComplete?.Invoke(
+                                                     ExtractPoiCandidates(_completed, _grid.size, totalCells));
+                                             },
+                                             gridData, scores, rules, existingPois));
     }
 
     private static List<List<Vector2Int>> ExtractPaths(PathfindingProcessJob _job, int _count)
@@ -165,7 +168,7 @@ public static class CityGenerationJobRunner
     }
 
     private static List<(Vector2Int, float)> ExtractPoiCandidates(PoiScoreJob _job, int _gridSize,
-                                                                   int _totalCells)
+                                                                  int         _totalCells)
     {
         var candidates = new List<(Vector2Int, float)>();
 

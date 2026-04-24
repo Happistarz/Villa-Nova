@@ -35,13 +35,19 @@ public class CameraMainState : State<CameraController>
         _orbitRadius       = Mathf.Clamp(flat.magnitude, cfg.minRadius, cfg.maxRadius);
         _targetOrbitRadius = _orbitRadius;
 
-        _orbitHeight       = toCamera.y;
+        if (_orbitHeight <= 0f)
+            _orbitHeight = toCamera.y;
+        
         _targetOrbitHeight = _orbitHeight;
 
         _yaw       = cam.transform.eulerAngles.y;
         _targetYaw = _yaw;
 
         _pitch = cam.transform.eulerAngles.x;
+
+        var rotation  = Quaternion.Euler(_pitch, _yaw, 0f);
+        var flatRot   = Quaternion.Euler(0f,     _yaw, 0f);
+        var targetPos = Context.MapCenter + flatRot * new Vector3(0f, 0f, -_orbitRadius) + Vector3.up * _orbitHeight;
 
         if (_skipTransition)
         {
@@ -50,10 +56,11 @@ public class CameraMainState : State<CameraController>
         }
         else
         {
-            _transitionStartPos = cam.transform.position;
-            _transitionStartRot = cam.transform.rotation;
-            _transitionTimer    = 0f;
-            _transitioning      = true;
+            var t = Mathf.SmoothStep(0f, 1f, _transitionTimer);
+            Context.camera.transform.position = Vector3.Lerp(_transitionStartPos, targetPos, t);
+            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, rotation, t);
+            _transitionTimer                  = 0f;
+            _transitioning                    = true;
         }
 
         _orbitRadiusVelocity = 0f;

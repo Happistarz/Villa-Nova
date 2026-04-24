@@ -52,7 +52,7 @@ public class CityRenderer : MonoBehaviour
 
         var baseRot  = Quaternion.Euler(_data.meshRotation);
         var gridRot  = Quaternion.Euler(0, _rotation * 90f, 0);
-        var matrix   = Matrix4x4.TRS(_position, gridRot * baseRot, _data.meshScale);
+        var matrix   = Matrix4x4.TRS(_position + _data.meshOffset, gridRot * baseRot, _data.meshScale);
 
         group.Instances.Add(new BuildingInstance { Position = _position, Matrix = matrix });
     }

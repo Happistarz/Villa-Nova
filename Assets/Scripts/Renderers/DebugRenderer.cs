@@ -30,6 +30,15 @@ public class DebugRenderer : AbstractRenderer
 
         const float HALF = Constants.CELL_SIZE * 0.5f;
 
+        var maxHeight = 0f;
+        for (var x = 0; x < WorldGrid.Instance.size; x++)
+            for (var y = 0; y < WorldGrid.Instance.size; y++)
+            {
+                var cell = WorldGrid.Instance.Cells[x, y];
+                if (cell.Height > maxHeight)
+                    maxHeight = cell.Height;
+            }
+
         for (var x = 0; x < WorldGrid.Instance.size; x++)
             for (var y = 0; y < WorldGrid.Instance.size; y++)
             {
@@ -50,6 +59,12 @@ public class DebugRenderer : AbstractRenderer
                         WorldGrid.CellType.HOUSE  => p.debugHouseColor,
                         _                         => new Color(1f, 0f, 1f, 0.5f)
                     };
+
+                if (cell.Type == WorldGrid.CellType.PLAIN)
+                {
+                    var heightFactor = cell.Height / maxHeight;
+                    color *= Color.Lerp(color * 0.5f, Color.white, heightFactor);
+                }
 
                 var cx = x + HALF;
                 var cz = y + HALF;
