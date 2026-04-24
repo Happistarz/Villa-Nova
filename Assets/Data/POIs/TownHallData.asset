@@ -17,7 +17,7 @@ MonoBehaviour:
   spawnRange: {x: 1, y: 1}
   rules:
   - rule: 0
-    value: 8
+    value: 30
     scoreWeight: 3
   - rule: 2
     value: 20

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::POIData
   type: 3
   debugColor: {r: 0.2352941, g: 0.7019608, b: 0.4431373, a: 1}
-  spawnRange: {x: 1, y: 1}
+  spawnRange: {x: 0, y: 8}
   rules:
   - rule: 0
     value: 30

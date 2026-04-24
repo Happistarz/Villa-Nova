@@ -12,21 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e509e33cc964792b42868a060d3cf5a, type: 3}
   m_Name: Well3x3Data
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
-  buildingSize: 4
+  buildingSize: 3
   buildingType: 0
   buildingArea:
-  - {x: -1, y: 0}
-  - {x: -2, y: -1}
-  - {x: -2, y: 0}
-  - {x: -2, y: -2}
-  - {x: -1, y: -2}
-  - {x: 0, y: -2}
   - {x: -1, y: -1}
   - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: -1, y: 0}
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: -1, y: 1}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
   flatTolerance: 0.5
   meshRotation: {x: 90, y: 0, z: 0}
   meshScale: {x: 90, y: 90, z: 90}
+  meshOffset: {x: 0, y: 0, z: 0}
   lods:
   - mesh: {fileID: 5330227900271839391, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
     distanceThreshold: 1

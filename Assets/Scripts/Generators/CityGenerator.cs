@@ -11,7 +11,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     public string Name => "City";
 
     public HouseGenerator houseGenerator;
-    
+
     [Header("Settings")]
     public float settlerSearchRadius = 5f;
 
@@ -22,6 +22,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     [Header("Renderers")]
     public CityRenderer cityRenderer;
+
     public DebugRenderer debugRenderer;
 
     [Header("POI")]
@@ -139,7 +140,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
                 if (candidates == null || candidates.Count == 0)
                 {
-                    Debug.LogWarning($"[POI] {poiData.type}: No candidates found (job returned 0 valid cells)");
+                    Debug.LogWarning(
+                        $"[POI] {poiData.type}: No candidates found for POI placement");
                     continue;
                 }
 
@@ -170,20 +172,22 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                 if (!found)
                 {
                     var needSpawn = poiData.spawnRange.x > 0;
-                    if (needSpawn && buildingData && buildingData.buildingArea is { Count: > 0 } && candidates.Count > 0)
+                    if (needSpawn && buildingData && buildingData.buildingArea is { Count: > 0 } &&
+                        candidates.Count > 0)
                     {
                         Debug.Log($"[POI] {poiData.type}: Force-flattening best candidate for mandatory POI");
                         bestPos = candidates[0].pos;
-                        
+
                         var heightStep2 = MapGenerator.Instance.heightStep;
                         BuildingAreaHelper.FlattenArea(buildingData, bestPos, 0, _grid, heightStep2);
-                        
+
                         bestRotation = BuildingAreaHelper.FindBestRotation(buildingData, bestPos, _grid);
                         if (bestRotation < 0) bestRotation = 0;
                     }
                     else
                     {
-                        Debug.LogWarning($"[POI] {poiData.type}: {candidates.Count} candidates but none passed CanPlace (checked {checksCount}). BuildingSize={buildingData?.buildingSize}, FlatTolerance={buildingData?.flatTolerance}");
+                        Debug.LogWarning(
+                            $"[POI] {poiData.type}: {candidates.Count} candidates but none passed CanPlace");
                         continue;
                     }
                 }

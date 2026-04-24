@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::POIData
   type: 1
   debugColor: {r: 0.7803922, g: 0.08235294, b: 0.5215687, a: 1}
-  spawnRange: {x: 1, y: 1}
+  spawnRange: {x: 0, y: 1}
   rules:
   - rule: 0
-    value: 6
+    value: 30
     scoreWeight: 3
   - rule: 1
     value: 6

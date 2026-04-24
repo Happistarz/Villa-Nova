@@ -56,21 +56,21 @@ public struct PoiScoreJob : IJobParallelFor
             {
                 case POIData.POIRule.NEAR_CITY:
                     ruleScore = GetProximityScore(x, y, WorldGrid.CellType.CITY, rule.Value);
-                    if (ruleScore < 0) valid = false;
+                    if (ruleScore < 0) ruleScore = -2f;
                     break;
 
                 case POIData.POIRule.NEAR_WATER:
                     ruleScore = math.max(
                         GetProximityScore(x, y, WorldGrid.CellType.WATER, rule.Value),
                         GetProximityScore(x, y, WorldGrid.CellType.RIVER, rule.Value));
-                    if (ruleScore < 0) valid = false;
+                    if (ruleScore < 0) ruleScore = -2f;
                     break;
 
                 case POIData.POIRule.NEAR_ROAD:
                     ruleScore = math.max(
                         GetProximityScore(x, y, WorldGrid.CellType.ROAD,   rule.Value),
                         GetProximityScore(x, y, WorldGrid.CellType.BRIDGE, rule.Value));
-                    if (ruleScore < 0) valid = false;
+                    if (ruleScore < 0) ruleScore = 0f;
                     break;
 
                 case POIData.POIRule.POI_DISTANCE:
@@ -101,10 +101,10 @@ public struct PoiScoreJob : IJobParallelFor
     /// </summary>
     private float GetProximityScore(int _cx, int _cy, WorldGrid.CellType _type, float _radius)
     {
-        var radius          = (int)math.ceil(_radius);
+        var radius         = (int)math.ceil(_radius);
         var radiusSquare   = _radius * _radius;
         var baseDistSquare = float.MaxValue;
-        var found      = false;
+        var found          = false;
 
         for (var dx = -radius; dx <= radius; dx++)
         {
@@ -121,7 +121,7 @@ public struct PoiScoreJob : IJobParallelFor
                 if (!(distSquare < baseDistSquare)) continue;
 
                 baseDistSquare = distSquare;
-                found      = true;
+                found          = true;
             }
         }
 
@@ -152,7 +152,7 @@ public struct PoiScoreJob : IJobParallelFor
     {
         var half = BuildingSize / 2;
         _heightPenalty = 0f;
-        
+
         for (var dx = -half; dx < BuildingSize - half; dx++)
         {
             for (var dy = -half; dy < BuildingSize - half; dy++)
@@ -172,8 +172,12 @@ public struct PoiScoreJob : IJobParallelFor
                     return false;
 
                 var diff = math.abs(neighbor.Height - _originHeight);
-                if (FlatTolerance > 0 && diff > FlatTolerance)
-                    _heightPenalty += diff - FlatTolerance;
+
+                if (diff > 1.5f)
+                    return false;
+
+                if (FlatTolerance >= 0 && diff > FlatTolerance)
+                    _heightPenalty += (diff - FlatTolerance) * 5f;
             }
         }
 

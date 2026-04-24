@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: House1x3Data
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   buildingSize: 3
+  buildingType: 1
   buildingArea:
   - {x: 0, y: -1}
   - {x: -1, y: -1}
@@ -20,6 +21,7 @@ MonoBehaviour:
   flatTolerance: 0.1
   meshRotation: {x: 90, y: 0, z: 0}
   meshScale: {x: 90, y: 90, z: 90}
+  meshOffset: {x: 0, y: 0, z: 0}
   lods:
   - mesh: {fileID: 5330227900271839391, guid: 9693aae7cfcb87c4b9341778e5d2f77a, type: 3}
     distanceThreshold: 1
