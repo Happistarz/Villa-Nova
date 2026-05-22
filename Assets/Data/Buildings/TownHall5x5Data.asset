@@ -45,10 +45,10 @@ MonoBehaviour:
   meshScale: {x: 1.45, y: 0.15, z: 1.45}
   meshOffset: {x: 0, y: 0, z: 0}
   lods:
-  - mesh: {fileID: -1565262382180253264, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+  - mesh: {fileID: -1565262382180253264, guid: 863064ebac3fa7a4f85da3bb8a06c666, type: 3}
     distanceThreshold: 100
-  - mesh: {fileID: 7440895014502862300, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+  - mesh: {fileID: 7440895014502862300, guid: 863064ebac3fa7a4f85da3bb8a06c666, type: 3}
     distanceThreshold: 200
-  - mesh: {fileID: 8540925214684591407, guid: 9957a0ec3cb7c2949985fdcfe10b70df, type: 3}
+  - mesh: {fileID: 8540925214684591407, guid: 863064ebac3fa7a4f85da3bb8a06c666, type: 3}
     distanceThreshold: 2500
   debugColor: {r: 1, g: 0, b: 0, a: 1}

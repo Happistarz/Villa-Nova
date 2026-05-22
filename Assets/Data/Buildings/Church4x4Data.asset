@@ -34,11 +34,12 @@ MonoBehaviour:
   flatTolerance: 0.5
   meshRotation: {x: 0, y: 0, z: 0}
   meshScale: {x: 8, y: 4, z: 2}
+  meshOffset: {x: 0, y: 0, z: 0}
   lods:
-  - mesh: {fileID: -2636318077302972135, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+  - mesh: {fileID: -2636318077302972135, guid: da112349ae1e7d14aaeadebefbf17a2d, type: 3}
     distanceThreshold: 11
-  - mesh: {fileID: 1912046982343959720, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+  - mesh: {fileID: 1912046982343959720, guid: da112349ae1e7d14aaeadebefbf17a2d, type: 3}
     distanceThreshold: 23
-  - mesh: {fileID: 8954308101839472443, guid: 98cc3d85ea558ee4f874d5e74b6db548, type: 3}
+  - mesh: {fileID: 8954308101839472443, guid: da112349ae1e7d14aaeadebefbf17a2d, type: 3}
     distanceThreshold: 300
   debugColor: {r: 1, g: 0, b: 0, a: 1}

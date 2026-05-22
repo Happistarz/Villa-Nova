@@ -2596,7 +2596,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d25b3b00cf6541f8a67bf421b194ddfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CityRenderer
-  defaultMaterial: {fileID: 2100000, guid: f28f57eb6a2ed2b4f94ed9a2759d326c, type: 2}
+  defaultMaterial: {fileID: 2100000, guid: dd0ec31d5920810428fbece91247139e, type: 2}
   lodRebakeThreshold: 5
 --- !u!1 &1332070322
 GameObject:
@@ -3398,6 +3398,7 @@ MonoBehaviour:
   rotateDelta: {fileID: -1402871178121505492, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   rotateButton: {fileID: 2612019624454068222, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   moveAction: {fileID: -1680190386980627800, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  verticalMoveAction: {fileID: -6496796421846875421, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   mainConfig:
     zoomSpeed: 1300
     minRadius: 45
@@ -3416,7 +3417,10 @@ MonoBehaviour:
     autoRotateSpeed: 1
     orthographic: 1
     orthoSize: 30
-  freeMoveSpeed: -60
+  freeMoveSpeed: 60
+  freeMoveSpeedMin: 5
+  freeMoveSpeedMax: 200
+  freeMoveSpeedScroll: 5
   freeLookSensitivity: 0.3
   freeBounds: {x: 400, y: 400, z: 400}
   duration: 1.5

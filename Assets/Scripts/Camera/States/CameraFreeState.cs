@@ -1,6 +1,7 @@
 using Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 public class CameraFreeState : State<CameraController>
 {
@@ -52,6 +53,8 @@ public class CameraFreeState : State<CameraController>
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible   = true;
+
+        Context.SetFreeMoveSpeed(Context.freeMoveSpeed);
     }
 
     public override void Exit()
@@ -59,7 +62,7 @@ public class CameraFreeState : State<CameraController>
         _savedPosition = Context.camera.transform.position;
         _savedRotation = Context.camera.transform.rotation;
 
-        _isDragging          = false;
+        _isDragging      = false;
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible   = true;
     }
@@ -83,11 +86,12 @@ public class CameraFreeState : State<CameraController>
                 return;
             }
         }
-        
+
         _freeBounds.center = Context.MapCenter;
-        _freeBounds.size = Context.freeBounds;
+        _freeBounds.size   = Context.freeBounds;
 
         UpdateDragState();
+        HandleScrollSpeed();
         HandleLook();
         HandleMovement();
     }
@@ -107,6 +111,15 @@ public class CameraFreeState : State<CameraController>
         Cursor.visible   = !_isDragging;
     }
 
+    private void HandleScrollSpeed()
+    {
+        var scroll = Context.ReadScroll();
+        if (Mathf.Approximately(scroll, 0f)) return;
+
+        var next = Context.CurrentFreeMoveSpeed + Mathf.Sign(scroll) * Context.freeMoveSpeedScroll;
+        Context.SetFreeMoveSpeed(next);
+    }
+
     private void HandleLook()
     {
         if (!_isDragging) return;
@@ -121,12 +134,15 @@ public class CameraFreeState : State<CameraController>
 
     private void HandleMovement()
     {
-        var input = Context.ReadMove();
-        if (input.sqrMagnitude < 0.001f) return;
+        var input     = Context.ReadMove();
+        var vertInput = Context.ReadVerticalMove();
 
-        var t         = Context.camera.transform;
-        var direction = (t.forward * -input.y + t.right * -input.x).normalized;
-        var nextPos   = t.position + direction * (Context.freeMoveSpeed * Time.deltaTime);
+        if (input.sqrMagnitude < 0.001f && Mathf.Approximately(vertInput, 0f)) return;
+
+        var t = Context.camera.transform;
+
+        var direction = (t.forward * input.y + t.right * input.x + Vector3.up * vertInput).normalized;
+        var nextPos   = t.position + direction * (Context.CurrentFreeMoveSpeed * Time.deltaTime);
 
         if (Context.freeBounds.sqrMagnitude > 0f)
             nextPos = _freeBounds.ClosestPoint(nextPos);

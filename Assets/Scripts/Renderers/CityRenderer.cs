@@ -95,7 +95,7 @@ public class CityRenderer : MonoBehaviour
         }
 
         var mat = defaultMaterial;
-
+        
         foreach (var group in _groups.Values)
         {
             if (group.LodBatches == null) continue;

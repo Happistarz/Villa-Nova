@@ -19,6 +19,7 @@ public class CameraController : MonoBehaviour
     public InputActionReference rotateDelta;
     public InputActionReference rotateButton;
     public InputActionReference moveAction;
+    public InputActionReference verticalMoveAction;
 
     [Header("Main Mode")]
     public CameraModeConfig mainConfig = CameraModeConfig.DefaultMain;
@@ -27,7 +28,10 @@ public class CameraController : MonoBehaviour
     public CameraModeConfig closeConfig = CameraModeConfig.DefaultClose;
 
     [Header("Free Mode")]
-    public float freeMoveSpeed = 30f;
+    public float freeMoveSpeed        = 30f;
+    public float freeMoveSpeedMin     = 5f;
+    public float freeMoveSpeedMax     = 200f;
+    public float freeMoveSpeedScroll  = 5f;
 
     public float   freeLookSensitivity = 0.3f;
     public Vector3 freeBounds          = Vector3.one * 400f;
@@ -52,6 +56,15 @@ public class CameraController : MonoBehaviour
     public Vector3          CityCenter    => cityCenterMarker ? cityCenterMarker.position : Vector3.zero;
     public CameraStateType? RequestedMode { get; set; }
     public CameraStateType  ActiveMode    { get; private set; } = CameraStateType.MAIN;
+
+    public float CurrentFreeMoveSpeed { get; private set; }
+    public float FreeMoveSpeedNormalized =>
+        Mathf.InverseLerp(freeMoveSpeedMin, freeMoveSpeedMax, CurrentFreeMoveSpeed);
+
+    public void SetFreeMoveSpeed(float _speed)
+    {
+        CurrentFreeMoveSpeed = Mathf.Clamp(_speed, freeMoveSpeedMin, freeMoveSpeedMax);
+    }
 
     public event Action<CameraStateType> OnModeChanged;
 
@@ -171,6 +184,11 @@ public class CameraController : MonoBehaviour
     public bool FreeLookJustReleased()
     {
         return rotateButton?.action != null && rotateButton.action.WasReleasedThisFrame();
+    }
+    
+    public float ReadVerticalMove()
+    {
+        return verticalMoveAction?.action?.ReadValue<float>() ?? 0f;
     }
 
     #endregion

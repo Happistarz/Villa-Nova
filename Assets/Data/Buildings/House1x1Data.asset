@@ -21,6 +21,6 @@ MonoBehaviour:
   meshScale: {x: 2.2, y: 2.2, z: 2.2}
   meshOffset: {x: 0, y: 0, z: 0}
   lods:
-  - mesh: {fileID: -2494374553368465026, guid: 78b42e1bdd9da4a4a94ee1dfc775fd0e, type: 3}
+  - mesh: {fileID: -2494374553368465026, guid: 6ac6adadbed16274c9ae6f909d433530, type: 3}
     distanceThreshold: 1
   debugColor: {r: 1, g: 0, b: 0, a: 1}

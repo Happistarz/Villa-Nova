@@ -26,6 +26,9 @@ public class CameraMainState : State<CameraController>
         var cam = Context.camera;
         var cfg = Context.mainConfig;
 
+        _transitionStartPos = cam.transform.position;
+        _transitionStartRot = cam.transform.rotation;
+
         cam.orthographic = cfg.orthographic;
 
         var pivot    = Context.MapCenter;
@@ -56,11 +59,8 @@ public class CameraMainState : State<CameraController>
         }
         else
         {
-            var t = Mathf.SmoothStep(0f, 1f, _transitionTimer);
-            Context.camera.transform.position = Vector3.Lerp(_transitionStartPos, targetPos, t);
-            Context.camera.transform.rotation = Quaternion.Slerp(_transitionStartRot, rotation, t);
-            _transitionTimer                  = 0f;
-            _transitioning                    = true;
+            _transitionTimer = 0f;
+            _transitioning   = true;
         }
 
         _orbitRadiusVelocity = 0f;

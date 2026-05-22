@@ -18,6 +18,7 @@ public class UIManager : MonoBehaviour
     public Image  zoomImage;
     public Button generateButton;
     public Text   generateButtonText;
+    public Text   freeCamSpeedText;
 
     [Header("Renderer Toggles")]
     public AbstractRenderer terrainRenderer;
@@ -124,7 +125,6 @@ public class UIManager : MonoBehaviour
 
     public void OnStartScreenClicked()
     {
-
         startScreen.DOFade(0f, 0.5f).OnComplete(() =>
         {
             startScreen.interactable   = false;
@@ -135,7 +135,7 @@ public class UIManager : MonoBehaviour
             mainScreen.interactable   = true;
             mainScreen.blocksRaycasts = true;
         });
-        
+
         cameraController.StartAnimation();
         AudioManager.Instance.PlayBGM();
     }
