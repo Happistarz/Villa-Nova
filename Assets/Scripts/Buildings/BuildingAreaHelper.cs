@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public static class BuildingAreaHelper
 {
@@ -96,26 +97,37 @@ public static class BuildingAreaHelper
     }
 
     /// <summary>
-    /// Tries all 4 rotations and returns the one with the lowest height variance, returns -1 if no rotation fits
+    /// Returns the best rotation for placing a building.
+    /// Road-facing rotations are preferred; ties are broken randomly for organic variety.
+    /// Returns -1 if no rotation fits.
     /// </summary>
-    public static int FindBestRotation(BuildingData _data, Vector2Int _position, WorldGrid _grid)
+    public static int FindBestRotation(BuildingData _data, Vector2Int _position, WorldGrid _grid,
+                                       System.Random _rng = null)
     {
-        var bestRotation = -1;
+        var valid        = new List<(int rot, float variance, bool facesRoad)>();
         var bestVariance = float.MaxValue;
 
         for (var rot = 0; rot < 4; rot++)
         {
-            if (!CanPlace(_data, _position, rot, _grid))
-                continue;
+            if (!CanPlace(_data, _position, rot, _grid)) continue;
 
-            var variance = ComputeHeightVariance(_data, _position, rot, _grid);
-            if (!(variance < bestVariance)) continue;
+            var variance  = ComputeHeightVariance(_data, _position, rot, _grid);
+            var facesRoad = IsAdjacentToRoad(_data, _position, rot, _grid);
+            valid.Add((rot, variance, facesRoad));
 
-            bestVariance = variance;
-            bestRotation = rot;
+            if (variance < bestVariance) bestVariance = variance;
         }
 
-        return bestRotation;
+        if (valid.Count == 0) return -1;
+
+        const float TOLERANCE = 0.05f;
+        var candidates = valid.FindAll(_e => _e.variance <= bestVariance + TOLERANCE);
+
+        var roadFacing = candidates.FindAll(_e => _e.facesRoad);
+        if (roadFacing.Count > 0) candidates = roadFacing;
+
+        var pick = _rng?.Next(candidates.Count) ?? 0;
+        return candidates[pick].rot;
     }
 
     /// <summary>

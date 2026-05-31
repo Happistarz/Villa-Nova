@@ -158,7 +158,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
                     if (buildingData && buildingData.buildingArea is { Count: > 0 })
                     {
-                        rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid);
+                        rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid,
+                                       GameManager.Instance.RandomEngine);
                         if (rotation < 0)
                             continue;
                     }
@@ -181,7 +182,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                         var heightStep2 = MapGenerator.Instance.heightStep;
                         BuildingAreaHelper.FlattenArea(buildingData, bestPos, 0, _grid, heightStep2);
 
-                        bestRotation = BuildingAreaHelper.FindBestRotation(buildingData, bestPos, _grid);
+                        bestRotation = BuildingAreaHelper.FindBestRotation(buildingData, bestPos, _grid,
+                                           GameManager.Instance.RandomEngine);
                         if (bestRotation < 0) bestRotation = 0;
                     }
                     else

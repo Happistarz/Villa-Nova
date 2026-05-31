@@ -51,9 +51,7 @@ public class TerrainRenderer : AbstractRenderer
             {
                 var cell = WorldGrid.Instance.Cells[x, y];
 
-                var color = cell.POI
-                    ? cell.POI.debugColor
-                    : cell.Type switch
+                var color = cell.Type switch
                     {
                         WorldGrid.CellType.PLAIN  => _colorConfig.plainColor,
                         WorldGrid.CellType.WATER  => _colorConfig.waterColor,

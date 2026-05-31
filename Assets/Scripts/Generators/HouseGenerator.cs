@@ -128,7 +128,8 @@ public class HouseGenerator : MonoBehaviour
     /// <summary>Returns true if the house was successfully placed.</summary>
     private bool PlaceHouseAt(Vector2Int _pos, BuildingData _buildingData)
     {
-        var rotation = BuildingAreaHelper.FindBestRotation(_buildingData, _pos, _grid);
+        var rng      = GameManager.Instance.RandomEngine;
+        var rotation = BuildingAreaHelper.FindBestRotation(_buildingData, _pos, _grid, rng);
         if (rotation < 0) return false;
 
         BuildingAreaHelper.FlattenArea(_buildingData, _pos, rotation, _grid, MapGenerator.Instance.heightStep);
