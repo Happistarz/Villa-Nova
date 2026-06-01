@@ -140,7 +140,7 @@ public class HouseGenerator : MonoBehaviour
         var buildingPosition = BuildingAreaHelper.GetAreaCenter(_buildingData, _pos, rotation, _grid);
 
         if (cityGenerator.cityRenderer)
-            cityGenerator.cityRenderer.AddBuilding(
+            cityGenerator.cityRenderer.AddInstance(
                 buildingPosition,
                 rotation, _buildingData);
 

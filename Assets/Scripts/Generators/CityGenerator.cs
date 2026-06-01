@@ -21,7 +21,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
     public UrbanityConfig urbanityConfig;
 
     [Header("Renderers")]
-    public CityRenderer cityRenderer;
+    public InstancedMeshRenderer cityRenderer;
 
     public DebugRenderer debugRenderer;
 
@@ -159,7 +159,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                     if (buildingData && buildingData.buildingArea is { Count: > 0 })
                     {
                         rotation = BuildingAreaHelper.FindBestRotation(buildingData, pos, _grid,
-                                       GameManager.Instance.RandomEngine);
+                                                                       GameManager.Instance.RandomEngine);
                         if (rotation < 0)
                             continue;
                     }
@@ -183,7 +183,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                         BuildingAreaHelper.FlattenArea(buildingData, bestPos, 0, _grid, heightStep2);
 
                         bestRotation = BuildingAreaHelper.FindBestRotation(buildingData, bestPos, _grid,
-                                           GameManager.Instance.RandomEngine);
+                                                                           GameManager.Instance.RandomEngine);
                         if (bestRotation < 0) bestRotation = 0;
                     }
                     else
@@ -202,7 +202,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                     BuildingAreaHelper.MarkAreaAsPoi(buildingData, bestPos, bestRotation, _grid, poiData);
 
                     if (cityRenderer)
-                        cityRenderer.AddBuilding(
+                        cityRenderer.AddInstance(
                             BuildingAreaHelper.GetAreaCenter(buildingData, bestPos, bestRotation, _grid),
                             bestRotation, buildingData);
                 }

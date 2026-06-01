@@ -280,6 +280,7 @@ MonoBehaviour:
   zoomImage: {fileID: 1332070324}
   generateButton: {fileID: 71977947}
   generateButtonText: {fileID: 1040328315}
+  freeCamSpeedText: {fileID: 0}
   terrainRenderer: {fileID: 163266147}
   debugRenderer: {fileID: 1431205998}
   cameraMainButton: {fileID: 295562611}
@@ -685,6 +686,9 @@ MonoBehaviour:
   renderEnabled: {fileID: 11400000, guid: d0f237bf68470e14fa6d4b8ff67c2dd1, type: 2}
   meshRenderer: {fileID: 163266145}
   meshFilter: {fileID: 163266146}
+  Features:
+  - {fileID: 1327768808}
+  - {fileID: 278934493}
 --- !u!114 &163266148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -883,6 +887,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1327768807}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &278934490
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 278934491}
+  - component: {fileID: 278934493}
+  m_Layer: 0
+  m_Name: PropsRenderer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &278934491
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278934490}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1060733103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &278934493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 278934490}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91991e75715a402b844b221968c6af7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MeshRenderer
+  defaultMaterial: {fileID: 2100000, guid: add0df45044c05641b7f249b9260d296, type: 2}
+  lodRebakeThreshold: 5
 --- !u!1 &295562609
 GameObject:
   m_ObjectHideFlags: 0
@@ -2277,6 +2327,8 @@ Transform:
   - {fileID: 1431205997}
   - {fileID: 1124133846}
   - {fileID: 1485734547}
+  - {fileID: 278934491}
+  - {fileID: 1572047243}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1060733104
@@ -2593,9 +2645,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1327768805}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d25b3b00cf6541f8a67bf421b194ddfc, type: 3}
+  m_Script: {fileID: 11500000, guid: 91991e75715a402b844b221968c6af7e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CityRenderer
+  m_EditorClassIdentifier: Assembly-CSharp::MeshRenderer
   defaultMaterial: {fileID: 2100000, guid: dd0ec31d5920810428fbece91247139e, type: 2}
   lodRebakeThreshold: 5
 --- !u!1 &1332070322
@@ -3273,6 +3325,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1572047242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1572047243}
+  - component: {fileID: 1572047244}
+  m_Layer: 0
+  m_Name: PropsGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1572047243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572047242}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1060733103}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1572047244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1572047242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d5fefcfc1f647c1b0dc7178bde90c5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PropsGenerator
+  dontDestroyOnLoad: 0
+  gameConfig: {fileID: 11400000, guid: cb1acac4b0227af4c807d7deacee3293, type: 2}
+  spawnThreshold: 0.5
+  spawnFadeWidth: 0.15
+  waterAttractionRadius: 4
+  waterAttractionBonus: 0.08
+  propsRenderer: {fileID: 278934493}
 --- !u!1 &1702916883
 GameObject:
   m_ObjectHideFlags: 0

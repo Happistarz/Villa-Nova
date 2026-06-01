@@ -8,6 +8,8 @@ public class GameConfig : ScriptableObject
     public BuildingData[] buildingDataList;
     
     public BuildingData[] GetHousesData() => System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.HOUSE);
+
+    public BuildingData[] GetTreesData() => System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.TREE);
     
     [System.Serializable]
     public struct BiomeColorConfig
@@ -29,6 +31,7 @@ public class GameConfig : ScriptableObject
 
         [Header("Buildings")]
         public Color houseColor;
+        public Color treeColor;
 
         [Header("Walls / Borders")]
         public Color wallColor;
@@ -52,6 +55,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.55f, 0.5f,  0.4f),
             bridgeColor = new Color(0.6f,  0.45f, 0.25f),
             houseColor  = new Color(0.75f, 0.55f, 0.35f),
+            treeColor   = new Color(0.25f, 0.55f, 0.2f),
             wallColor   = new Color(0.45f, 0.3f,  0.1f),
 
             debugPlainColor  = new Color(0.3f, 0.8f,  0.3f,   0.5f),
@@ -79,6 +83,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.65f, 0.55f, 0.35f),
             bridgeColor = new Color(0.7f,  0.55f, 0.3f),
             houseColor  = new Color(0.85f, 0.7f,  0.45f),
+            treeColor   = new Color(0.55f, 0.45f, 0.15f),
             wallColor   = new Color(0.6f,  0.45f, 0.2f),
 
             debugPlainColor  = new Color(0.82f, 0.75f, 0.5f,  0.5f),
@@ -100,6 +105,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.45f, 0.42f, 0.38f),
             bridgeColor = new Color(0.5f,  0.4f,  0.25f),
             houseColor  = new Color(0.6f,  0.5f,  0.35f),
+            treeColor   = new Color(0.15f, 0.4f,  0.25f),
             wallColor   = new Color(0.4f,  0.35f, 0.25f),
 
             debugPlainColor  = new Color(0.3f,  0.5f,  0.3f,  0.5f),
@@ -121,6 +127,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.5f,  0.42f, 0.3f),
             bridgeColor = new Color(0.55f, 0.4f,  0.22f),
             houseColor  = new Color(0.7f,  0.58f, 0.35f),
+            treeColor   = new Color(0.45f, 0.55f, 0.1f),
             wallColor   = new Color(0.5f,  0.35f, 0.15f),
 
             debugPlainColor  = new Color(0.6f,  0.65f, 0.25f, 0.5f),
@@ -142,6 +149,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.4f,  0.38f, 0.3f),
             bridgeColor = new Color(0.45f, 0.38f, 0.2f),
             houseColor  = new Color(0.55f, 0.45f, 0.3f),
+            treeColor   = new Color(0.2f,  0.38f, 0.18f),
             wallColor   = new Color(0.35f, 0.3f,  0.18f),
 
             debugPlainColor  = new Color(0.28f, 0.45f, 0.22f, 0.5f),
@@ -163,6 +171,7 @@ public class GameConfig : ScriptableObject
             roadColor   = new Color(0.6f,  0.58f, 0.55f),
             bridgeColor = new Color(0.55f, 0.48f, 0.35f),
             houseColor  = new Color(0.7f,  0.65f, 0.55f),
+            treeColor   = new Color(0.55f, 0.65f, 0.6f),
             wallColor   = new Color(0.5f,  0.48f, 0.42f),
 
             debugPlainColor  = new Color(0.85f, 0.88f, 0.92f, 0.5f),

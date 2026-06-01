@@ -75,7 +75,7 @@ public class UIManager : MonoBehaviour
         if (generateButtonText)
             _originalButtonText = generateButtonText.text;
 
-        generateMapAction.action.Enable();
+        generateMapAction.action.Disable();
         generateMapAction.action.performed += OnGeneratePerformed;
 
         MapGenerator.Instance.OnGenerationComplete     += OnGenerationComplete;
@@ -125,6 +125,9 @@ public class UIManager : MonoBehaviour
 
     public void OnStartScreenClicked()
     {
+        generateMapAction.action.Enable();
+        if (cameraController) cameraController.EnableAllActions();
+
         startScreen.DOFade(0f, 0.5f).OnComplete(() =>
         {
             startScreen.interactable   = false;

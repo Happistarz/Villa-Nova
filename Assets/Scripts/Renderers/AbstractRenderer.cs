@@ -13,6 +13,8 @@ public abstract class AbstractRenderer : MonoBehaviour
     public MeshRenderer meshRenderer;
     public MeshFilter   meshFilter;
 
+    protected bool MeshReady;
+
     protected event Action OnRenderToggled;
 
     protected void Start()
@@ -22,8 +24,9 @@ public abstract class AbstractRenderer : MonoBehaviour
         if (meshRenderer) meshRenderer.enabled = renderEnabled.Value;
         if (renderToggledEvent) renderToggledEvent?.Raise();
 
-        MapGenerator.Instance.OnGenerationComplete += BuildMesh;
+        MapGenerator.Instance.OnGenerationComplete     += BuildMesh;
         GenerationPipeline.Instance.OnPipelineComplete += BuildMesh;
+        MapGenerator.Instance.OnGenerationComplete     += ResetMeshReady;
     }
 
     protected void Update()
@@ -43,7 +46,7 @@ public abstract class AbstractRenderer : MonoBehaviour
 
         OnRenderToggled?.Invoke();
         if (renderToggledEvent) renderToggledEvent?.Raise();
-        if (renderEnabled.Value) BuildMesh();
+        if (renderEnabled.Value && !MeshReady) BuildMesh();
     }
 
     public abstract void BuildMesh();
@@ -52,8 +55,11 @@ public abstract class AbstractRenderer : MonoBehaviour
     {
         if (!renderEnabled.Value || WorldGrid.Instance.Cells == null) return false;
         meshRenderer.enabled = true;
+        MeshReady            = true;
         return true;
     }
+
+    private void ResetMeshReady() => MeshReady = false;
 
     private void OnEnable()  => toggleAction?.action?.Enable();
     private void OnDisable() => toggleAction?.action?.Disable();
@@ -61,7 +67,10 @@ public abstract class AbstractRenderer : MonoBehaviour
     private void OnDestroy()
     {
         if (MapGenerator.HasInstance)
+        {
             MapGenerator.Instance.OnGenerationComplete -= BuildMesh;
+            MapGenerator.Instance.OnGenerationComplete -= ResetMeshReady;
+        }
 
         if (GenerationPipeline.HasInstance)
             GenerationPipeline.Instance.OnPipelineComplete -= BuildMesh;

@@ -9,14 +9,11 @@ public class TerrainRenderer : AbstractRenderer
     private Mesh                        _mesh;
     private GameConfig.BiomeColorConfig _colorConfig;
 
+    public InstancedMeshRenderer[] Features;
+
     private void Awake()
     {
-        var cr = CityGenerator.Instance.cityRenderer;
-        if (cr)
-        {
-            OnRenderToggled += () => { cr.enabled = renderEnabled.Value; };
-            cr.enabled      =  renderEnabled.Value;
-        }
+        RegisterFeatures();
 
         MapGenerator.Instance.OnGenerationComplete += () =>
         {
@@ -26,6 +23,15 @@ public class TerrainRenderer : AbstractRenderer
 
             GameManager.Instance.ActiveColorConfig = _colorConfig;
         };
+    }
+
+    private void RegisterFeatures()
+    {
+        foreach (var feature in Features)
+        {
+            OnRenderToggled += () => { feature.enabled = renderEnabled.Value; };
+            feature.enabled  =  renderEnabled.Value;
+        }
     }
 
     public override void BuildMesh()

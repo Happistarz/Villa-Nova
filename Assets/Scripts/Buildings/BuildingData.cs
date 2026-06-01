@@ -8,7 +8,8 @@ public class BuildingData : ScriptableObject
     public enum BuildingType
     {
         POI,
-        HOUSE
+        HOUSE,
+        TREE
     }
     
     [Header("General")]
@@ -21,7 +22,7 @@ public class BuildingData : ScriptableObject
 
     [Header("Mesh Placement")]
     public Vector3 meshRotation = Vector3.right * 90;
-    public Vector3 meshScale    = Vector3.one * 90;
+    public Vector3 meshScale    = Vector3.one;
     public Vector3 meshOffset   = Vector3.zero;
 
     [Serializable]

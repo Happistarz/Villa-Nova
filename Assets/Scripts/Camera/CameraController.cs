@@ -74,6 +74,7 @@ public class CameraController : MonoBehaviour
     private CameraCloseState _closeState;
     private CameraFreeState  _freeState;
     private CameraStartState _startState;
+    private bool             _inputEnabled;
 
     private void Start()
     {
@@ -107,8 +108,6 @@ public class CameraController : MonoBehaviour
 
         _fsm = new FiniteStateMachine<CameraController>(_startState);
         _fsm.Start();
-
-        EnableActions();
     }
 
     private void Update()
@@ -140,6 +139,8 @@ public class CameraController : MonoBehaviour
 
     private void HandleModeInput()
     {
+        if (!_inputEnabled) return;
+
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
             RequestedMode = CameraStateType.MAIN;
         else if (Keyboard.current.digit2Key.wasPressedThisFrame)
@@ -201,6 +202,12 @@ public class CameraController : MonoBehaviour
         rotateDelta?.action?.Enable();
         rotateButton?.action?.Enable();
         moveAction?.action?.Enable();
+    }
+
+    public void EnableAllActions()
+    {
+        _inputEnabled = true;
+        EnableActions();
     }
 
     public void OnEnable() => EnableActions();
