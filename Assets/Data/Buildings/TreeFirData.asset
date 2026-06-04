@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8e509e33cc964792b42868a060d3cf5a, type: 3}
-  m_Name: TreeData
+  m_Name: TreeFirData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   buildingSize: 1
   buildingType: 2
@@ -18,11 +18,10 @@ MonoBehaviour:
   - {x: 0, y: 0}
   flatTolerance: 0.1
   meshRotation: {x: 0, y: 0, z: 0}
-  meshScale: {x: 1, y: 1, z: 1}
-  meshOffset: {x: 0, y: 0.7, z: 0}
+  meshScale: {x: 0.5, y: 0.5, z: 0.5}
+  meshOffset: {x: 0, y: 0, z: 0}
+  populationCount: 0
   lods:
-  - mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
-    distanceThreshold: 150
-  - mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+  - mesh: {fileID: 4300000, guid: d7ad634caa1c049d49b730cc6d29c683, type: 3}
     distanceThreshold: 300
   debugColor: {r: 1, g: 0, b: 0, a: 1}

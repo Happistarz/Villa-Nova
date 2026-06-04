@@ -22,6 +22,7 @@ MonoBehaviour:
   meshRotation: {x: 0, y: 90, z: 0}
   meshScale: {x: 2.2, y: 2.2, z: 6}
   meshOffset: {x: 0, y: 0, z: 0}
+  populationCount: 5
   lods:
   - mesh: {fileID: 8067220709519434557, guid: 967b4835746c7594eb55b06130a2db56, type: 3}
     distanceThreshold: 1

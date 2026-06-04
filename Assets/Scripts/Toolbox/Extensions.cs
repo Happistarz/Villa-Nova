@@ -96,6 +96,11 @@ namespace Core.Extensions
             return _min + (float)_rng.NextDouble() * (_max - _min);
         }
 
+        public static float NextFloat(this System.Random _rng)
+        {
+            return (float)_rng.NextDouble();
+        }
+
         #endregion
     }
 }

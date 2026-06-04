@@ -54,7 +54,7 @@ public class InstancedMeshRenderer : MonoBehaviour
     }
 
     /// <summary>Registers an instance to be rendered</summary>
-    public void AddInstance(Vector3 _position, int _rotationSteps, BuildingData _data)
+    public void AddInstance(Vector3 _position, int _rotationSteps, Vector3 _scale, BuildingData _data)
     {
         if (!_data || _data.lods == null || _data.lods.Count == 0) return;
 
@@ -66,7 +66,7 @@ public class InstancedMeshRenderer : MonoBehaviour
 
         var baseRot = Quaternion.Euler(_data.meshRotation);
         var gridRot = Quaternion.Euler(0, _rotationSteps * 90f, 0);
-        var matrix  = Matrix4x4.TRS(_position + _data.meshOffset, gridRot * baseRot, _data.meshScale);
+        var matrix  = Matrix4x4.TRS(_position + _data.meshOffset, gridRot * baseRot, _scale);
 
         group.Instances.Add(new Instance { Position = _position, Matrix = matrix });
     }

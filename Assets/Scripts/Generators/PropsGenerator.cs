@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Core.Extensions;
 using Core.Patterns;
 using Unity.Collections;
 using UnityEngine;
@@ -22,6 +23,8 @@ public class PropsGenerator : MonoSingleton<PropsGenerator>, IGenerator
     [Range(1, 10)] public int waterAttractionRadius = 4;
 
     [Range(0f, 0.25f)] public float waterAttractionBonus = 0.08f;
+
+    [Range(0.4f, 1.2f)] public float scaleVariation = 0.5f;
 
     [Header("Renderer")]
     public InstancedMeshRenderer propsRenderer;
@@ -95,10 +98,11 @@ public class PropsGenerator : MonoSingleton<PropsGenerator>, IGenerator
             var y   = i / WorldGrid.Instance.size;
             var pos = WorldGrid.Instance.CellToWorld(new Vector2Int(x, y));
 
-            var data     = gameConfig.GetTreesData()[rng.Next(0, gameConfig.GetTreesData().Length)];
+            var data     = GameManager.Instance.ActiveColorConfig.treeData;
             var rotation = rng.Next(0, 4);
+            var scale    = data.meshScale * (0.75f + (float)rng.NextDouble() * scaleVariation);
 
-            propsRenderer?.AddInstance(pos, rotation, data);
+            propsRenderer?.AddInstance(pos, rotation, scale, data);
         }
 
         propsRenderer?.BakeBatches();

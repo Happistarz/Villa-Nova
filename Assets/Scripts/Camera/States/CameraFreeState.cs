@@ -1,7 +1,6 @@
 using Core;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 
 public class CameraFreeState : State<CameraController>
 {
@@ -22,6 +21,8 @@ public class CameraFreeState : State<CameraController>
 
     public CameraFreeState(CameraController _context) : base(_context)
     {
+        Context.SetFreeMoveSpeed(Context.freeMoveSpeedMin);
+        Context.UpdateFreeSpeedText();
     }
 
     public override void Enter()
@@ -118,6 +119,8 @@ public class CameraFreeState : State<CameraController>
 
         var next = Context.CurrentFreeMoveSpeed + Mathf.Sign(scroll) * Context.freeMoveSpeedScroll;
         Context.SetFreeMoveSpeed(next);
+
+        Context.UpdateFreeSpeedText();
     }
 
     private void HandleLook()

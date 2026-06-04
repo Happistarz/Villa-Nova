@@ -3,6 +3,7 @@ using Core;
 using Core.Variables;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class CameraController : MonoBehaviour
 {
@@ -28,13 +29,15 @@ public class CameraController : MonoBehaviour
     public CameraModeConfig closeConfig = CameraModeConfig.DefaultClose;
 
     [Header("Free Mode")]
-    public float freeMoveSpeed        = 30f;
-    public float freeMoveSpeedMin     = 5f;
-    public float freeMoveSpeedMax     = 200f;
-    public float freeMoveSpeedScroll  = 5f;
+    public float freeMoveSpeed = 30f;
+
+    public float freeMoveSpeedMin    = 5f;
+    public float freeMoveSpeedMax    = 200f;
+    public float freeMoveSpeedScroll = 5f;
 
     public float   freeLookSensitivity = 0.3f;
     public Vector3 freeBounds          = Vector3.one * 400f;
+    public Text    freeMoveSpeedText;
 
     [Header("Start Mode")]
     public float duration = 2f;
@@ -58,6 +61,7 @@ public class CameraController : MonoBehaviour
     public CameraStateType  ActiveMode    { get; private set; } = CameraStateType.MAIN;
 
     public float CurrentFreeMoveSpeed { get; private set; }
+
     public float FreeMoveSpeedNormalized =>
         Mathf.InverseLerp(freeMoveSpeedMin, freeMoveSpeedMax, CurrentFreeMoveSpeed);
 
@@ -154,6 +158,8 @@ public class CameraController : MonoBehaviour
         if (_fsm.CurrentState == _startState)
             _startState?.StartAnimation();
     }
+    
+    public void UpdateFreeSpeedText() => freeMoveSpeedText.text = $"x{Math.Round(CurrentFreeMoveSpeed)}";
 
     #region Input Helpers
 
@@ -186,7 +192,7 @@ public class CameraController : MonoBehaviour
     {
         return rotateButton?.action != null && rotateButton.action.WasReleasedThisFrame();
     }
-    
+
     public float ReadVerticalMove()
     {
         return verticalMoveAction?.action?.ReadValue<float>() ?? 0f;

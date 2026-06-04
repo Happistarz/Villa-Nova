@@ -35,6 +35,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
 
     public event Action OnGenerationComplete;
 
+    public string CityName;
+
     public Vector2Int                CityCenter         { get; private set; }
     public IReadOnlyList<Vector2Int> PlacedPOIPositions => _placedPOIPositions;
 
@@ -204,7 +206,7 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
                     if (cityRenderer)
                         cityRenderer.AddInstance(
                             BuildingAreaHelper.GetAreaCenter(buildingData, bestPos, bestRotation, _grid),
-                            bestRotation, buildingData);
+                            bestRotation, buildingData.meshScale, buildingData);
                 }
                 else
                 {
@@ -253,6 +255,8 @@ public class CityGenerator : MonoSingleton<CityGenerator>, IGenerator
         WorldGrid.Instance.NearCities = nearCitiesData;
 
         DisplayNearCities(nearCitiesData);
+        
+        CityName = GameManager.Instance.Config.GetUniqueCityName(names ?? new List<string>());
     }
 
     private Vector2Int FindSafeCityPosition(int _edge, int _randomCell, List<WorldGrid.NearCityData> _existing)

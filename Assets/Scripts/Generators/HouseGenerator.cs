@@ -19,6 +19,11 @@ public class HouseGenerator : MonoBehaviour
 
     private readonly List<Vector2Int> _placedPositions = new();
 
+    private int _totalPopulation;
+
+    public int PlacedCount      => _placedPositions.Count;
+    public int TotalPopulation  => _totalPopulation;
+
     private void Start()
     {
         _grid = WorldGrid.Instance;
@@ -35,6 +40,7 @@ public class HouseGenerator : MonoBehaviour
         _noiseSeed = rng.Next();
 
         _placedPositions.Clear();
+        _totalPopulation = 0;
 
         InitHouseDistanceField(gridSize);
 
@@ -136,13 +142,14 @@ public class HouseGenerator : MonoBehaviour
         BuildingAreaHelper.MarkAreaAsHouse(_buildingData, _pos, rotation, _grid);
 
         _placedPositions.Add(_pos);
+        _totalPopulation += _buildingData.populationCount;
 
         var buildingPosition = BuildingAreaHelper.GetAreaCenter(_buildingData, _pos, rotation, _grid);
 
         if (cityGenerator.cityRenderer)
             cityGenerator.cityRenderer.AddInstance(
                 buildingPosition,
-                rotation, _buildingData);
+                rotation, _buildingData.meshScale, _buildingData);
 
         return true;
     }

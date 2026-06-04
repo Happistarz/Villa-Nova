@@ -150,6 +150,26 @@ public class WorldGrid : MonoSingleton<WorldGrid>
         return cell is { IsOccupied: false };
     }
 
+    /// <summary>Returns the number of cells matching the given type(s)</summary>
+    public int CountCellsOfType(params CellType[] _types)
+    {
+        var count = 0;
+        for (var x = 0; x < size; x++)
+            for (var y = 0; y < size; y++)
+            {
+                var cell = Cells[x, y];
+
+                foreach (var t in _types)
+                    if (cell.Type == t)
+                    {
+                        count++;
+                        break;
+                    }
+            }
+
+        return count;
+    }
+
     public void SetCellOccupied(Vector2Int _pos)
     {
         if (!IsInBounds(_pos)) return;

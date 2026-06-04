@@ -299,18 +299,29 @@
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "",
+                    "name": "1D Axis",
                     "id": "bc0c37fc-81a2-4bfa-bc68-894966bb51cf",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
+                    "action": "VerticalMove",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
                     "path": "<Keyboard>/q",
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
                     "action": "VerticalMove",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
+                    "name": "positive",
                     "id": "16ae6621-3ad0-46be-9ad6-1f9d22e243fc",
                     "path": "<Keyboard>/e",
                     "interactions": "",
@@ -318,7 +329,7 @@
                     "groups": ";Keyboard&Mouse",
                     "action": "VerticalMove",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 }
             ]
         },

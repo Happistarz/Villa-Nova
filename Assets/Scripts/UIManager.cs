@@ -181,6 +181,8 @@ public class UIManager : MonoBehaviour
     {
         if (!cameraController) return;
         cameraController.SetMode(_mode);
+        
+        freeCamSpeedText.gameObject.SetActive(_mode == CameraController.CameraStateType.FREE);
     }
 
     private void RefreshCameraButtons(CameraController.CameraStateType _active)

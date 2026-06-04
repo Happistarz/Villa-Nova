@@ -30,6 +30,8 @@ MonoBehaviour:
     roadColor: {r: 0.38, g: 0.34, b: 0.26, a: 1}
     bridgeColor: {r: 0.43, g: 0.32, b: 0.21, a: 1}
     houseColor: {r: 0.72, g: 0.62, b: 0.42, a: 1}
+    treeData: {fileID: 11400000, guid: 2d2ce357cfcd45e43bae51b32874d8fd, type: 2}
+    treeColor: {r: 0.25, g: 0.55, b: 0.2, a: 1}
     wallColor: {r: 0.27, g: 0.25, b: 0.23, a: 1}
     debugPlainColor: {r: 0.35, g: 0.52, b: 0.2, a: 0.5}
     debugWaterColor: {r: 0.18, g: 0.62, b: 0.72, a: 0.5}
@@ -45,6 +47,8 @@ MonoBehaviour:
     roadColor: {r: 0.52, g: 0.44, b: 0.28, a: 1}
     bridgeColor: {r: 0.48, g: 0.34, b: 0.18, a: 1}
     houseColor: {r: 0.77, g: 0.63, b: 0.35, a: 1}
+    treeData: {fileID: 11400000, guid: 07b8d1ea2cee3874caa10df1519a277c, type: 2}
+    treeColor: {r: 0.55, g: 0.45, b: 0.15, a: 1}
     wallColor: {r: 0.32, g: 0.24, b: 0.14, a: 1}
     debugPlainColor: {r: 0.77, g: 0.7, b: 0.4, a: 0.5}
     debugWaterColor: {r: 0.18, g: 0.58, b: 0.68, a: 0.5}
@@ -60,6 +64,8 @@ MonoBehaviour:
     roadColor: {r: 0.28, g: 0.26, b: 0.22, a: 1}
     bridgeColor: {r: 0.35, g: 0.26, b: 0.16, a: 1}
     houseColor: {r: 0.55, g: 0.5, b: 0.38, a: 1}
+    treeData: {fileID: 11400000, guid: 2d2ce357cfcd45e43bae51b32874d8fd, type: 2}
+    treeColor: {r: 0.15, g: 0.4, b: 0.25, a: 1}
     wallColor: {r: 0.2, g: 0.18, b: 0.15, a: 1}
     debugPlainColor: {r: 0.22, g: 0.36, b: 0.16, a: 0.5}
     debugWaterColor: {r: 0.15, g: 0.46, b: 0.56, a: 0.5}
@@ -75,6 +81,8 @@ MonoBehaviour:
     roadColor: {r: 0.48, g: 0.42, b: 0.28, a: 1}
     bridgeColor: {r: 0.44, g: 0.32, b: 0.17, a: 1}
     houseColor: {r: 0.74, g: 0.6, b: 0.36, a: 1}
+    treeData: {fileID: 11400000, guid: 2d2ce357cfcd45e43bae51b32874d8fd, type: 2}
+    treeColor: {r: 0.45, g: 0.55, b: 0.1, a: 1}
     wallColor: {r: 0.32, g: 0.26, b: 0.14, a: 1}
     debugPlainColor: {r: 0.62, g: 0.62, b: 0.22, a: 0.5}
     debugWaterColor: {r: 0.18, g: 0.56, b: 0.7, a: 0.5}
@@ -90,6 +98,8 @@ MonoBehaviour:
     roadColor: {r: 0.36, g: 0.32, b: 0.22, a: 1}
     bridgeColor: {r: 0.38, g: 0.28, b: 0.16, a: 1}
     houseColor: {r: 0.55, g: 0.44, b: 0.26, a: 1}
+    treeData: {fileID: 11400000, guid: 2d2ce357cfcd45e43bae51b32874d8fd, type: 2}
+    treeColor: {r: 0.2, g: 0.38, b: 0.18, a: 1}
     wallColor: {r: 0.22, g: 0.2, b: 0.14, a: 1}
     debugPlainColor: {r: 0.3, g: 0.38, b: 0.18, a: 0.5}
     debugWaterColor: {r: 0.18, g: 0.34, b: 0.38, a: 0.5}
@@ -105,6 +115,8 @@ MonoBehaviour:
     roadColor: {r: 0.5, g: 0.48, b: 0.46, a: 1}
     bridgeColor: {r: 0.42, g: 0.36, b: 0.26, a: 1}
     houseColor: {r: 0.6, g: 0.56, b: 0.48, a: 1}
+    treeData: {fileID: 11400000, guid: 8b1b0f0592d88b94895ff0faf6c4f092, type: 2}
+    treeColor: {r: 0.55, g: 0.65, b: 0.6, a: 1}
     wallColor: {r: 0.32, g: 0.3, b: 0.28, a: 1}
     debugPlainColor: {r: 0.82, g: 0.86, b: 0.92, a: 0.5}
     debugWaterColor: {r: 0.2, g: 0.5, b: 0.7, a: 0.5}

@@ -24,6 +24,9 @@ public class BuildingData : ScriptableObject
     public Vector3 meshRotation = Vector3.right * 90;
     public Vector3 meshScale    = Vector3.one;
     public Vector3 meshOffset   = Vector3.zero;
+    
+    [Header("Misc")]
+    public int populationCount = 0;
 
     [Serializable]
     public class BuildingLOD

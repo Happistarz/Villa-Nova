@@ -32,10 +32,11 @@ public struct PropsGenerationJob : IJobParallelFor
             return;
         }
 
-        var wx    = MathHelper.FBm(x * 0.007f + 100f, y * 0.007f, 2,                 0.5f, 1f);
-        var wy    = MathHelper.FBm(x                    * 0.007f, y * 0.007f + 200f, 2,    0.5f, 1f);
-        var warpX = x + (wx                                                  - 0.5f) * 32f;
-        var warpY = y + (wy                                                  - 0.5f) * 32f;
+        var wx = MathHelper.FBm(x * 0.007f + 100f, y * 0.007f, 2,                 0.5f, 1f);
+        var wy = MathHelper.FBm(x                    * 0.007f, y * 0.007f + 200f, 2,    0.5f, 1f);
+
+        var warpX = x + (wx - 0.5f) * 32f;
+        var warpY = y + (wy - 0.5f) * 32f;
 
         var patchMask = MathHelper.FBm(warpX, warpY, 3, 0.5f, 0.009f);
 

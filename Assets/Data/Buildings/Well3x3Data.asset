@@ -26,9 +26,10 @@ MonoBehaviour:
   - {x: 1, y: 1}
   flatTolerance: 0.5
   meshRotation: {x: 0, y: 0, z: 0}
-  meshScale: {x: 1, y: 1, z: 1}
+  meshScale: {x: 0.22, y: 0.22, z: 0.22}
   meshOffset: {x: 0, y: 0, z: 0}
+  populationCount: 0
   lods:
-  - mesh: {fileID: -2054831242631504740, guid: 13ed4def4b4c52145934eb05243bc18b, type: 3}
+  - mesh: {fileID: -2054831242631504740, guid: 5f00e8b6d7b9c5c4982a2fedad7312d7, type: 3}
     distanceThreshold: 1
   debugColor: {r: 1, g: 0, b: 0, a: 1}

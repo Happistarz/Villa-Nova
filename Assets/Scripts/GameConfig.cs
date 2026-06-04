@@ -6,11 +6,13 @@ public class GameConfig : ScriptableObject
 {
     [Header("Building Registry")]
     public BuildingData[] buildingDataList;
-    
-    public BuildingData[] GetHousesData() => System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.HOUSE);
 
-    public BuildingData[] GetTreesData() => System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.TREE);
-    
+    public BuildingData[] GetHousesData() =>
+        System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.HOUSE);
+
+    public BuildingData[] GetTreesData() =>
+        System.Array.FindAll(buildingDataList, _data => _data.buildingType == BuildingData.BuildingType.TREE);
+
     [System.Serializable]
     public struct BiomeColorConfig
     {
@@ -31,7 +33,9 @@ public class GameConfig : ScriptableObject
 
         [Header("Buildings")]
         public Color houseColor;
-        public Color treeColor;
+
+        public BuildingData treeData;
+        public Color        treeColor;
 
         [Header("Walls / Borders")]
         public Color wallColor;
@@ -58,13 +62,13 @@ public class GameConfig : ScriptableObject
             treeColor   = new Color(0.25f, 0.55f, 0.2f),
             wallColor   = new Color(0.45f, 0.3f,  0.1f),
 
-            debugPlainColor  = new Color(0.3f, 0.8f,  0.3f,   0.5f),
-            debugWaterColor  = new Color(0.2f, 0.4f,  0.8f,   0.5f),
-            debugRiverColor  = new Color(0.1f, 0.3f,  0.7f,   0.5f),
-            debugRoadColor   = new Color(0.5f, 0.5f,  0.5f,   0.5f),
-            debugBridgeColor = new Color(0.6f, 0.45f, 0.25f,  0.5f),
-            debugCityColor   = new Color(1f,   0.92f, 0.016f, 1f),
-            debugHouseColor  = new Color(0.75f, 0.55f, 0.35f, 0.7f)
+            debugPlainColor  = new Color(0.3f,  0.8f,  0.3f,   0.5f),
+            debugWaterColor  = new Color(0.2f,  0.4f,  0.8f,   0.5f),
+            debugRiverColor  = new Color(0.1f,  0.3f,  0.7f,   0.5f),
+            debugRoadColor   = new Color(0.5f,  0.5f,  0.5f,   0.5f),
+            debugBridgeColor = new Color(0.6f,  0.45f, 0.25f,  0.5f),
+            debugCityColor   = new Color(1f,    0.92f, 0.016f, 1f),
+            debugHouseColor  = new Color(0.75f, 0.55f, 0.35f,  0.7f)
         };
     }
 
@@ -212,5 +216,16 @@ public class GameConfig : ScriptableObject
         }
 
         return result;
+    }
+
+    /// <summary> Picks a random name from the pool that is not in the given exclusion list, or null if none available</summary>
+    public string GetUniqueCityName(List<string> _exclude)
+    {
+        var rng  = GameManager.Instance.RandomEngine;
+        var pool = new List<string>(cityNames);
+
+        foreach (var _name in _exclude) pool.Remove(_name);
+
+        return pool.Count == 0 ? null : pool[rng.Next(0, pool.Count)];
     }
 }
